@@ -1,0 +1,77 @@
+body {
+   background-color: #F3F3E0;
+ }
+ .sidebar {
+   background-color: #133E87;
+   color: white;
+   min-height: 100vh;
+ }
+ .sidebar a {
+   color: white;
+   text-decoration: none;
+ }
+ .sidebar .nav-item .active,
+   .sidebar .nav-item > .nav-link:hover {
+   background-color: #608BC1;
+   color: white;
+   border-radius: 0.375rem;
+   padding-left: 10px;
+ }
+ .topbar {
+   background-color: #CBDCEB;
+   padding: 1rem;
+ }
+ .board {
+   background-color: #CBDCEB;
+   padding: 1rem;
+ }
+ .thead {
+   background-color: #CBDCEB;
+   padding: 1rem;
+ }
+ .inactive{
+     color:red;
+ }
+ .content-box {
+   background-color: white;
+   border-radius: 8px;
+   padding: 1rem;
+   margin-bottom: 1rem;
+ }
+ .tab-content {
+   padding-top: 1rem;
+ }
+ .material-box {
+   background-color: #CBDCEB;
+   padding: 0.5rem;
+   border-radius: 6px;
+ }
+ .btn-download {
+   float: right;
+ }
+ a{
+   text-decoration: none;
+ }
+ .title-sekolah{
+   background-color: #133E87;
+   color: white;
+   position: sticky;
+   top: 0;
+   z-index: 1030;
+ }
+
+ .main-content{
+   margin-left: auto;
+ }
+
+ .key-content{
+   overflow-y: auto;
+ }
+
+ .sidebar{
+   height: 100vh;
+   position: fixed;
+   /* top: 0; */
+   overflow: hidden;
+   z-index: 1040;
+ }
