@@ -52,6 +52,68 @@ body {
  a{
    text-decoration: none;
  }
+ .class-box {
+   background-color: white;
+   border-radius: 8px;
+   padding: 1rem;
+   margin-bottom: 1rem;
+   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+ }
+
+ .class-header {
+   font-weight: bold;
+ }
+
+ .btn-small {
+   font-size: 0.9rem;
+   padding: 0.3rem 0.6rem;
+ }
+ .grid-container {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+   gap: 20px;
+ }
+
+ .grid-item {
+   background-color: white;
+   border: 1px solid #ddd;
+   padding: 20px;
+   text-align: center;
+   border-radius: 0.375rem;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+ }
+
+ .grid-item i {
+   font-size: 3rem;
+   color: #133E87;
+ }
+
+ .grid-item h5 {
+   margin-top: 10px;
+   font-weight: bold;
+ }
+
+ .grid-item p {
+   color: #555;
+ }
+
+ .scroll-box {
+   overflow-x: auto;
+   white-space: nowrap;
+ }
+
+ .scroll-box .card {
+   display: inline-block;
+   min-width: 200px;
+   margin-right: 10px;
+ }
+
+ .timetable-table th,
+ .timetable-table td {
+   text-align: center;
+   vertical-align: middle;
+ }
+
  .title-sekolah{
    background-color: #133E87;
    color: white;
