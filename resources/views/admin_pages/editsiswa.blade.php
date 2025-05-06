@@ -9,38 +9,45 @@
     <button class="btn btn-danger"><a style="text-decoration: none;">Back</a></button><br><br>
     <div class="material-box">
     <br>
-    <h4 style="text-align: center;">Edit Siswa</h4>
-    <div class="mb-3">
+    <h4 style="text-align: center;">Edit Siswa</h4><br>
+    <form action="{{ url('/admin/editsiswa/' . urlencode($siswa->ID_SISWA)) }}" method="POST">
+      @csrf
+      @method('PUT')
+      <div class="mb-3">
       <label for="exampleFormControlInput1" class="form-label">ID</label>
-      <input class="form-control" type="text" placeholder="2200001" aria-label="default input example" readonly>
-    </div>
-    <div class="mb-3">
+      <input class="form-control" type="text" name="id" placeholder="G001" aria-label="default input example" readonly
+        value="{{ $siswa->ID_SISWA }}">
+      </div>
+      <div class="mb-3">
       <label for="exampleFormControlInput1" class="form-label">Nama lengkap</label>
-      <input class="form-control" type="text" placeholder="Andi Saputra" aria-label="default input example">
-    </div>
-    <div class="mb-3">
+      <input class="form-control" type="text" name="nama" placeholder="Daniel" aria-label="default input example"
+        value="{{ $siswa->NAMA_SISWA }}" required>
+      </div>
+      <div class="mb-3">
       <label for="exampleFormControlTextarea1" class="form-label">Email</label>
-      <input class="form-control" type="text" placeholder="andi.saputra@gmail.com" aria-label="default input example">
-    </div>
-    <div class="mb-3">
+      <input class="form-control" type="email" name="email" placeholder="daniel@gmail.com"
+        aria-label="default input example" value="{{ $siswa->EMAIL_SISWA }}" required>
+      </div>
+      <div class="mb-3">
       <label for="exampleFormControlTextarea1" class="form-label">Alamat sekarang</label>
-      <input class="form-control" type="text" placeholder="Jl. Pahlawan No. 10" aria-label="default input example">
-    </div>
-    <div class="mb-3">
+      <input class="form-control" type="text" name="alamat" placeholder="Jl. Merdeka No. 10"
+        aria-label="default input example" value="{{ $siswa->ALAMAT_SISWA }}" required>
+      </div>
+      <div class="mb-3">
       <label for="exampleFormControlTextarea1" class="form-label">Nomor telepon</label>
-      <input class="form-control" type="text" placeholder="081234567891" aria-label="default input example">
-    </div>
-    <div class="mb-3">
+      <input class="form-control" type="text" name="telp" placeholder="081234567891"
+        aria-label="default input example" value="{{ $siswa->NO_TELPON_SISWA }}" required>
+      </div>
+      <div class="mb-3">
       <label for="exampleFormControlTextarea1" class="form-label">Status</label>
-      <select class="form-select" aria-label="Default select example">
-      <option selected>Aktif</option>
-      <option value="1">In aktif</option>
+      <select class="form-select" name="status" aria-label="Default select example" requireds>
+        <option value="Inactive" {{ $siswa->STATUS_SISWA == "Inactive" ? 'selected' : '' }}>In aktif</option>
+        <option value="Active" {{ $siswa->STATUS_SISWA == "Active" ? 'selected' : '' }}>Aktif</option>
       </select>
+      </div>
+      <div class="d-grid gap-2">
+      <button class="btn btn-success" type="submit">Edit</button>
+      </div>
+    </form>
     </div>
-    <div class="d-grid gap-2">
-      <button class="btn btn-success" type="button">Edit</button>
-    </div>
-    </div>
-
-  </div>
-@endsection
+  @endsection

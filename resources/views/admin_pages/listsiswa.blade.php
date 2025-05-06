@@ -7,7 +7,7 @@
 
   <div>
     <h4>List Siswa</h4><br>
-    <button class="btn btn-success"><a style="text-decoration: none; color: white;" href="tambahsiswa.php">Tambah
+    <button class="btn btn-success"><a style="text-decoration: none; color: white;" href="tambahsiswa">Tambah
       Siswa</a></button><br><br>
     <table class="table table-bordered align-middle">
     <thead>
@@ -23,9 +23,25 @@
       </tr>
     </thead>
     <tbody>
-    <tbody>
-    <tbody>
-      <tr>
+      <?php foreach ($allsiswa as $g): ?>
+      <tr class="{{ $g->STATUS_SISWA == "Active" ? "" : "inactive" }}">
+      <td>{{ $g->ID_SISWA }}</td>
+      <td>{{ $g->NAMA_SISWA}}</td>
+      <td>{{ $g->EMAIL_SISWA}}</td>
+      <td>{{ $g->ALAMAT_SISWA}}</td>
+      <td>{{ $g->NO_TELPON_SISWA}}</td>
+      <td>{{ $g->STATUS_SISWA == "Active" ? "Aktif" : "Inaktif" }}</td>
+      <td>
+        <div style="display: flex; gap: 5px;">
+        <button class="btn btn-primary"><a href="{{ url('/admin/editsiswa/' . urlencode($g->ID_SISWA)) }}"
+          style="text-decoration: none; color: white;">Edit</a></button>
+        <button class="btn btn-danger"><a href="{{ url('/admin/listsiswa/' . urlencode($g->ID_SISWA)) }}"
+          style="text-decoration: none; color: white;">{{ $g->STATUS_SISWA == "Active" ? "Hapus" : "Buat Aktif" }}</a></button>
+        </div>
+      </td>
+      </tr>
+      <?php endforeach; ?>
+      <!-- <tr>
       <td>2200001</td>
       <td>Andi Saputra</td>
       <td>andi.saputra@gmail.com</td>
@@ -33,10 +49,10 @@
       <td>081234567891</td>
       <td>Aktif</td>
       <td>
-        <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary"><a style="color: white;" href="editsiswa.php">Edit</a></button>
-        <button class="btn btn-danger">Hapus</button>
-        </div>
+      <div style="display: flex; gap: 5px;">
+      <button class="btn btn-primary"><a style="color: white;" href="editsiswa.php">Edit</a></button>
+      <button class="btn btn-danger">Hapus</button>
+      </div>
       </td>
       </tr>
       <tr class="inactive">
@@ -47,10 +63,10 @@
       <td style="color: red;">081298765432</td>
       <td style="color: red;">In aktif</td>
       <td>
-        <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
-        </div>
+      <div style="display: flex; gap: 5px;">
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
+      </div>
       </td>
       </tr>
       <tr>
@@ -61,10 +77,10 @@
       <td>081276543210</td>
       <td>Aktif</td>
       <td>
-        <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
-        </div>
+      <div style="display: flex; gap: 5px;">
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
+      </div>
       </td>
       </tr>
       <tr>
@@ -75,10 +91,10 @@
       <td>081212345678</td>
       <td>Aktif</td>
       <td>
-        <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
-        </div>
+      <div style="display: flex; gap: 5px;">
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
+      </div>
       </td>
       </tr>
       <tr class="inactive">
@@ -89,10 +105,10 @@
       <td style="color: red;">081322334455</td>
       <td style="color: red;">In aktif</td>
       <td>
-        <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
-        </div>
+      <div style="display: flex; gap: 5px;">
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
+      </div>
       </td>
       </tr>
       <tr>
@@ -103,10 +119,10 @@
       <td>081344556677</td>
       <td>Aktif</td>
       <td>
-        <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
-        </div>
+      <div style="display: flex; gap: 5px;">
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
+      </div>
       </td>
       </tr>
       <tr class="inactive">
@@ -117,10 +133,10 @@
       <td style="color: red;">081377788899</td>
       <td style="color: red;">In aktif</td>
       <td>
-        <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
-        </div>
+      <div style="display: flex; gap: 5px;">
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
+      </div>
       </td>
       </tr>
       <tr>
@@ -131,10 +147,10 @@
       <td>081366677788</td>
       <td>Aktif</td>
       <td>
-        <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
-        </div>
+      <div style="display: flex; gap: 5px;">
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
+      </div>
       </td>
       </tr>
       <tr>
@@ -145,10 +161,10 @@
       <td>081399988877</td>
       <td>Aktif</td>
       <td>
-        <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
-        </div>
+      <div style="display: flex; gap: 5px;">
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
+      </div>
       </td>
       </tr>
       <tr class="inactive">
@@ -159,13 +175,12 @@
       <td style="color: red;">081311122233</td>
       <td style="color: red;">In aktif</td>
       <td>
-        <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
-        </div>
+      <div style="display: flex; gap: 5px;">
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
+      </div>
       </td>
-      </tr>
-    </tbody>
+      </tr> -->
 
     </tbody>
     </table>

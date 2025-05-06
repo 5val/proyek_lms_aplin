@@ -11,39 +11,134 @@ class AdminController extends Controller
     {
         return view('admin_pages.home');
     }
-
+    // ========================================= Guru ===================================================
     public function geteditguru($id_guru)
     {
-      $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
-      if(count($guru) <= 0) {
-         $allGuru = DB::select("select * from guru");
-         return view('admin_pages.listguru', ["allGuru" => $allGuru]);
-     } else {
-         return view('admin_pages.editguru', ["guru" => $guru[0]]);
-     }
+        $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
+        if (count($guru) <= 0) {
+            $allGuru = DB::select("select * from guru");
+            return view('admin_pages.listguru', ["allGuru" => $allGuru]);
+        } else {
+            return view('admin_pages.editguru', ["guru" => $guru[0]]);
+        }
     }
     public function editguru(Request $request, $id_guru)
     {
-      $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
-      if(count($guru) > 0) {
-         $id = $request->input("id");
-         $nama = $request->input("nama");
-         $email = $request->input("email");
-         $alamat = $request->input("alamat");
-         $telp = $request->input("telp");
-         $status = $request->input("status");
-         DB::update("update guru set nama_guru = ?, email_guru = ?, alamat_guru = ?, no_telpon_guru = ?, status_guru = ? where id_guru = ?", [$nama, $email, $alamat, $telp, $status, $id]);
-      }
-      return redirect('/admin/listguru');
+        $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
+        if (count($guru) > 0) {
+            $id = $request->input("id");
+            $nama = $request->input("nama");
+            $email = $request->input("email");
+            $alamat = $request->input("alamat");
+            $telp = $request->input("telp");
+            $status = $request->input("status");
+            DB::update("update guru set nama_guru = ?, email_guru = ?, alamat_guru = ?, no_telpon_guru = ?, status_guru = ? where id_guru = ?", [$nama, $email, $alamat, $telp, $status, $id]);
+        }
+        return redirect('/admin/listguru');
     }
+    public function listguru()
+    {
+        $allGuru = DB::select("select * from guru");
+        return view('admin_pages.listguru', ["allGuru" => $allGuru]);
+    }
+    public function hapusguru($id_guru)
+    {
+        $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
+        if (count($guru) > 0) {
+            $status = '';
+            if ($guru[0]->STATUS_GURU == "Active") {
+                $status = "Inactive";
+            } else {
+                $status = "Active";
+            }
+            DB::update("update guru set status_guru = ? where id_guru = ?", [$status, $id_guru]);
+        }
+        return redirect('/admin/listguru');
+    }
+    public function postguru(Request $request)
+    {
+        $nama = $request->input("nama");
+        $email = $request->input("email");
+        $password = $request->input("password");
+        $alamat = $request->input("alamat");
+        $telp = $request->input("telp");
+        $status = $request->input("status");
+        $guru = DB::select("select * from guru where email_guru = ?", [$email]);
+        if (count($guru) <= 0) {
+            DB::insert("insert into guru (nama_guru, email_guru, password_guru, alamat_guru, no_telpon_guru, status_guru) values(?,?,?,?,?,?)", [$nama, $email, $password, $alamat, $telp, $status]);
+            return redirect('/admin/listguru');
+        } else {
+            return view('admin_pages.tambahguru');
+        }
+    }
+    // ========================================= Pengumuman ============================================
     public function editpengumuman()
     {
         return view('admin_pages.editpengumuman');
     }
-    public function editsiswa()
+    // ========================================= Siswa =================================================
+    public function geteditsiswa($id_siswa)
     {
-        return view('admin_pages.editsiswa');
+        $siswa = DB::select("select * from siswa where id_siswa = ?", [$id_siswa]);
+        if (count($siswa) <= 0) {
+            $allsiswa = DB::select("select * from siswa");
+            return view('admin_pages.listsiswa', ["allsiswa" => $allsiswa]);
+        } else {
+            return view('admin_pages.editsiswa', ["siswa" => $siswa[0]]);
+        }
     }
+    public function editsiswa(Request $request, $id_siswa)
+    {
+        $siswa = DB::select("select * from siswa where id_siswa = ?", [$id_siswa]);
+        if (count($siswa) > 0) {
+            $id = $request->input("id");
+            $nama = $request->input("nama");
+            $email = $request->input("email");
+            $alamat = $request->input("alamat");
+            $telp = $request->input("telp");
+            $status = $request->input("status");
+            DB::update("update siswa set nama_siswa = ?, email_siswa = ?, alamat_siswa = ?, no_telpon_siswa = ?, status_siswa = ? where id_siswa = ?", [$nama, $email, $alamat, $telp, $status, $id]);
+        }
+        return redirect('/admin/listsiswa');
+    }
+    public function listsiswa()
+    {
+        $allsiswa = DB::select("select * from siswa");
+        return view('admin_pages.listsiswa', ["allsiswa" => $allsiswa]);
+    }
+    public function hapussiswa($id_siswa)
+    {
+        $siswa = DB::select("select * from siswa where id_siswa = ?", [$id_siswa]);
+        if (count($siswa) > 0) {
+            $status = '';
+            if ($siswa[0]->STATUS_SISWA == "Active") {
+                $status = "Inactive";
+            } else {
+                $status = "Active";
+            }
+            DB::update("update siswa set status_siswa = ? where id_siswa = ?", [$status, $id_siswa]);
+        }
+        return redirect('/admin/listsiswa');
+    }
+    public function postsiswa(Request $request)
+    {
+        $nama = $request->input("nama");
+        $email = $request->input("email");
+        $password = $request->input("password");
+        $alamat = $request->input("alamat");
+        $telp = $request->input("telp");
+        $status = $request->input("status");
+        $siswa = DB::select("select * from siswa where email_siswa = ?", [$email]);
+        if (count($siswa) <= 0) {
+            DB::insert("insert into siswa (nama_siswa, email_siswa, password_siswa, alamat_siswa, no_telpon_siswa, status_siswa) values(?,?,?,?,?,?)", [$nama, $email, $password, $alamat, $telp, $status]);
+            return redirect('/admin/listsiswa');
+        } else {
+            return view('admin_pages.tambahsiswa');
+        }
+    }
+
+    // ========================================= Laporan ============================================
+
     public function laporanguru()
     {
         return view('admin_pages.laporanguru');
@@ -174,19 +269,12 @@ class AdminController extends Controller
         ];
         return view('admin_pages.list_tambah_siswa_ke_kelas', compact('asistenList', 'kelasList'));
     }
-    public function listguru()
-    {
-      $allGuru = DB::select("select * from guru");
-      return view('admin_pages.listguru', ["allGuru" => $allGuru]);
-    }
+
     public function listpengumuman()
     {
         return view('admin_pages.listpengumuman');
     }
-    public function listsiswa()
-    {
-        return view('admin_pages.listsiswa');
-    }
+
     public function tambah_kelas()
     {
         return view('admin_pages.tambah_kelas');
@@ -203,36 +291,7 @@ class AdminController extends Controller
     {
         return view('admin_pages.tambahguru');
     }
-    public function hapusguru($id_guru)
-    {
-      $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
-      if(count($guru) > 0) {
-         $status = '';
-         if($guru[0]->STATUS_GURU == "Active") {
-            $status = "Inactive";
-         } else {
-            $status = "Active";
-         }
-         DB::update("update guru set status_guru = ? where id_guru = ?", [$status, $id_guru]);
-      }
-      return redirect('/admin/listguru');
-    }
-    public function postguru(Request $request)
-    {
-      $nama = $request->input("nama");
-      $email = $request->input("email");
-      $password = $request->input("password");
-      $alamat = $request->input("alamat");
-      $telp = $request->input("telp");
-      $status = $request->input("status");
-      $guru = DB::select("select * from guru where email_guru = ?", [$email]);
-      if(count($guru) <= 0) {
-         DB::insert("insert into guru (nama_guru, email_guru, password_guru, alamat_guru, no_telpon_guru, status_guru) values(?,?,?,?,?,?)", [$nama, $email, $password, $alamat, $telp, $status]);
-         return redirect('/admin/listguru');
-      } else {
-         return view('admin_pages.tambahguru');
-      }
-    }
+
     public function tambahpengumuman()
     {
         return view('admin_pages.tambahpengumuman');

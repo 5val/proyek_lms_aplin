@@ -17,32 +17,53 @@ Route::get('/admin', function () {
 
 Route::prefix('admin')->group(function () {
    Route::get('/', [AdminController::class, 'index']);
+   // ===================================== Guru ===============================================
    Route::get('/editguru/{id_guru}', [AdminController::class, 'geteditguru'])
-   ->where('id_guru', '.*');
+      ->where('id_guru', '.*');
    Route::put('/editguru/{id_guru}', [AdminController::class, 'editguru'])
-   ->where('id_guru', '.*');
+      ->where('id_guru', '.*');
+   Route::get('/listguru', [AdminController::class, 'listguru']);
+   Route::get('/listguru/{id_guru}', [AdminController::class, 'hapusguru'])
+      ->where('id_guru', '.*');
+   Route::get('/tambahguru', [AdminController::class, 'tambahguru']);
+   Route::post('/tambahguru', [AdminController::class, 'postguru']);
+
+   // ===================================== Pengumuman ===============================================
    Route::get('/editpengumuman', [AdminController::class, 'editpengumuman']);
-   Route::get('/editsiswa', [AdminController::class, 'editsiswa']);
+   Route::get('/listpengumuman', [AdminController::class, 'listpengumuman']);
+   // ===================================== Siswa ===============================================
+   Route::get('/editsiswa/{id_siswa}', [AdminController::class, 'geteditsiswa'])
+      ->where('id_siswa', '.*');
+   Route::put('/editsiswa/{id_siswa}', [AdminController::class, 'editsiswa'])
+      ->where('id_siswa', '.*');
+   Route::get('/listsiswa', [AdminController::class, 'listsiswa']);
+   Route::get('/listsiswa/{id_siswa}', [AdminController::class, 'hapussiswa'])
+      ->where('id_siswa', '.*');
+   Route::get('/tambahsiswa', [AdminController::class, 'tambahsiswa']);
+   Route::post('/tambahsiswa', [AdminController::class, 'postsiswa']);
+
+
+   // ===================================== Laporan ===============================================
    Route::get('/laporanguru', [AdminController::class, 'laporanguru']);
    Route::get('/laporankelas', [AdminController::class, 'laporankelas']);
    Route::get('/laporanmapel', [AdminController::class, 'laporanmapel']);
    Route::get('/laporansiswa', [AdminController::class, 'laporansiswa']);
+
+
+   // ======================================= Kelas ===============================================
    Route::get('/list_kelas', [AdminController::class, 'list_kelas']);
    Route::get('/list_mata_pelajaran', [AdminController::class, 'list_mata_pelajaran']);
    Route::get('/list_pelajaran', [AdminController::class, 'list_pelajaran']);
    Route::get('/list_tambah_siswa_ke_kelas', [AdminController::class, 'list_tambah_siswa_ke_kelas']);
-   Route::get('/listguru', [AdminController::class, 'listguru']);
-   Route::get('/listguru/{id_guru}', [AdminController::class, 'hapusguru'])
-   ->where('id_guru', '.*');
-   Route::get('/listpengumuman', [AdminController::class, 'listpengumuman']);
-   Route::get('/listsiswa', [AdminController::class, 'listsiswa']);
+
+
+
    Route::get('/tambah_kelas', [AdminController::class, 'tambah_kelas']);
    Route::get('/tambah_mata_pelajaran', [AdminController::class, 'tambah_mata_pelajaran']);
    Route::get('/tambah_pelajaran', [AdminController::class, 'tambah_pelajaran']);
-   Route::get('/tambahguru', [AdminController::class, 'tambahguru']);
-   Route::post('/tambahguru', [AdminController::class, 'postguru']);
+
    Route::get('/tambahpengumuman', [AdminController::class, 'tambahpengumuman']);
-   Route::get('/tambahsiswa', [AdminController::class, 'tambahsiswa']);
+
    Route::get('/upload_file', [AdminController::class, 'upload_file']);
    // Add more admin routes here...
 });
