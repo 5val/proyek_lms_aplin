@@ -8,7 +8,7 @@
 
     <div>
     <h4>List Guru</h4><br>
-    <button class="btn btn-success"><a style="text-decoration: none; color: white;" href="tambahguru.php">Tambah
+    <button class="btn btn-success"><a style="text-decoration: none; color: white;" href="/admin/tambahguru">Tambah
       Guru</a></button><br><br>
     <table class="table table-bordered align-middle">
       <thead>
@@ -25,22 +25,25 @@
       </thead>
       <tbody>
       <tbody>
-      <tr class="inactive">
-        <td style="color: red;">G001</td>
-        <td style="color: red;">Daniel</td>
-        <td style="color: red;">daniel@gmail.com</td>
-        <td style="color: red;">Jl. Merdeka No. 10</td>
-        <td style="color: red;">081234567891</td>
-        <td style="color: red;">In aktif</td>
-        <td>
-        <div style="display: flex; gap: 5px;">
-          <button class="btn btn-primary"><a href="/admin/editguru"
-            style="text-decoration: none; color: white;">Edit</a></button>
-          <button class="btn btn-danger">Hapus</button>
-        </div>
-        </td>
-      </tr>
-      <tr>
+         <?php foreach ($allGuru as $g): ?>
+            <tr class="{{ $g->STATUS_GURU == "Active" ? "" : "inactive" }}">
+              <td>{{ $g->ID_GURU }}</td>
+              <td>{{ $g->NAMA_GURU }}</td>
+              <td>{{ $g->EMAIL_GURU }}</td>
+              <td>{{ $g->ALAMAT_GURU }}</td>
+              <td>{{ $g->NO_TELPON_GURU }}</td>
+              <td>{{ $g->STATUS_GURU == "Active" ? "Aktif" : "In aktif" }}</td>
+              <td>
+              <div style="display: flex; gap: 5px;">
+                <button class="btn btn-primary"><a href="{{ url('/admin/editguru/' . urlencode($g->ID_GURU)) }}"
+                  style="text-decoration: none; color: white;">Edit</a></button>
+                <button class="btn btn-danger"><a href="{{ url('/admin/listguru/' . urlencode($g->ID_GURU)) }}"
+                style="text-decoration: none; color: white;">{{ $g->STATUS_GURU == "Active" ? "Hapus" : "Buat Aktif" }}</a></button>
+              </div>
+              </td>
+            </tr>
+         <?php endforeach; ?>
+      <!-- <tr>
         <td>G002</td>
         <td>Samantha</td>
         <td>samantha@gmail.com</td>
@@ -95,7 +98,7 @@
           <button class="btn btn-danger">Hapus</button>
         </div>
         </td>
-      </tr>
+      </tr> -->
       </tbody>
     </table>
     </div>

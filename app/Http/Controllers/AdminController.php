@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -10,9 +11,30 @@ class AdminController extends Controller
     {
         return view('admin_pages.home');
     }
-    public function editguru()
+
+    public function geteditguru($id_guru)
     {
-        return view('admin_pages.editguru');
+      $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
+      if(count($guru) <= 0) {
+         $allGuru = DB::select("select * from guru");
+         return view('admin_pages.listguru', ["allGuru" => $allGuru]);
+     } else {
+         return view('admin_pages.editguru', ["guru" => $guru[0]]);
+     }
+    }
+    public function editguru(Request $request, $id_guru)
+    {
+      $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
+      if(count($guru) > 0) {
+         $id = $request->input("id");
+         $nama = $request->input("nama");
+         $email = $request->input("email");
+         $alamat = $request->input("alamat");
+         $telp = $request->input("telp");
+         $status = $request->input("status");
+         DB::update("update guru set nama_guru = ?, email_guru = ?, alamat_guru = ?, no_telpon_guru = ?, status_guru = ? where id_guru = ?", [$nama, $email, $alamat, $telp, $status, $id]);
+      }
+      return redirect('/admin/listguru');
     }
     public function editpengumuman()
     {
@@ -154,7 +176,8 @@ class AdminController extends Controller
     }
     public function listguru()
     {
-        return view('admin_pages.listguru');
+      $allGuru = DB::select("select * from guru");
+      return view('admin_pages.listguru', ["allGuru" => $allGuru]);
     }
     public function listpengumuman()
     {
@@ -179,6 +202,36 @@ class AdminController extends Controller
     public function tambahguru()
     {
         return view('admin_pages.tambahguru');
+    }
+    public function hapusguru($id_guru)
+    {
+      $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
+      if(count($guru) > 0) {
+         $status = '';
+         if($guru[0]->STATUS_GURU == "Active") {
+            $status = "Inactive";
+         } else {
+            $status = "Active";
+         }
+         DB::update("update guru set status_guru = ? where id_guru = ?", [$status, $id_guru]);
+      }
+      return redirect('/admin/listguru');
+    }
+    public function postguru(Request $request)
+    {
+      $nama = $request->input("nama");
+      $email = $request->input("email");
+      $password = $request->input("password");
+      $alamat = $request->input("alamat");
+      $telp = $request->input("telp");
+      $status = $request->input("status");
+      $guru = DB::select("select * from guru where email_guru = ?", [$email]);
+      if(count($guru) <= 0) {
+         DB::insert("insert into guru (nama_guru, email_guru, password_guru, alamat_guru, no_telpon_guru, status_guru) values(?,?,?,?,?,?)", [$nama, $email, $password, $alamat, $telp, $status]);
+         return redirect('/admin/listguru');
+      } else {
+         return view('admin_pages.tambahguru');
+      }
     }
     public function tambahpengumuman()
     {

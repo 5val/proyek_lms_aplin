@@ -29,7 +29,7 @@ body {
    background-color: #CBDCEB;
    padding: 1rem;
  }
- .inactive{
+ .inactive td{
      color:red;
  }
  .content-box {
