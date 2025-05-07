@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengumuman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -72,9 +73,38 @@ class AdminController extends Controller
         }
     }
     // ========================================= Pengumuman ============================================
-    public function editpengumuman()
+    public function geteditpengumuman($id)
     {
-        return view('admin_pages.editpengumuman');
+        $pengumuman = Pengumuman::find($id);
+        return view('admin_pages.editpengumuman', ["pengumuman" => $pengumuman]);
+    }
+    public function editpengumuman(Request $request, $id)
+    {
+        $pengumuman = Pengumuman::find($id);
+        $pengumuman->Judul = $request->input('Judul');
+        $pengumuman->Deskripsi = $request->input('Deskripsi');
+        $pengumuman->save();
+        return redirect('/admin/listpengumuman');
+    }
+    public function listpengumuman()
+    {
+        $allpengumuman = Pengumuman::all();
+        return view('admin_pages.listpengumuman', ["allpengumuman" => $allpengumuman]);
+    }
+    public function postpengumuman(Request $request)
+    {
+        $validatedData = $request->validate([
+            'Judul' => 'required|max:255',
+            'Deskripsi' => 'required',
+        ]);
+        $pengumuman = Pengumuman::create($validatedData);
+        return redirect('/admin/listpengumuman');
+    }
+    public function hapuspengumuman($id_pengumuman)
+    {
+        $pengumuman = Pengumuman::find($id_pengumuman);
+        $pengumuman->delete();
+        return redirect('/admin/listpengumuman');
     }
     // ========================================= Siswa =================================================
     public function geteditsiswa($id_siswa)
@@ -155,6 +185,8 @@ class AdminController extends Controller
     {
         return view('admin_pages.laporansiswa');
     }
+
+    // ================================== Tambah Kelas ===============================================
     public function list_kelas()
     {
         $semesters = [
@@ -270,10 +302,7 @@ class AdminController extends Controller
         return view('admin_pages.list_tambah_siswa_ke_kelas', compact('asistenList', 'kelasList'));
     }
 
-    public function listpengumuman()
-    {
-        return view('admin_pages.listpengumuman');
-    }
+
 
     public function tambah_kelas()
     {
@@ -291,7 +320,6 @@ class AdminController extends Controller
     {
         return view('admin_pages.tambahguru');
     }
-
     public function tambahpengumuman()
     {
         return view('admin_pages.tambahpengumuman');

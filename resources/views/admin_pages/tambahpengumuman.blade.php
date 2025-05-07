@@ -9,21 +9,21 @@
     <br>
     <h4 style="text-align: center;">Tambah Pengumuman</h4><br>
     <div class="mb-3">
-    <label for="exampleFormControlInput1" class="form-label">Judul Pengumuman</label>
-    <input class="form-control" type="text" placeholder="Default input" aria-label="default input example">
+    <form action="/admin/tambahpengumuman" method="POST">
+      @csrf
+      <label for="exampleFormControlInput1" class="form-label">Judul Pengumuman</label>
+      <input class="form-control" type="text" name="Judul" placeholder="Default input"
+      aria-label="default input example">
     </div>
     <div class="mb-3">
     <label for="exampleFormControlTextarea1" class="form-label">Isi</label>
-    <textarea class="form-control" type="text" placeholder="Default input"
+    <textarea class="form-control" type="text" name="Deskripsi" placeholder="Default input"
       aria-label="default input example"></textarea>
     </div>
-    <div class="mb-3">
-    <label for="exampleFormControlTextarea1" class="form-label">Tanggal</label>
-    <input class="form-control" type="date" placeholder="Default input" aria-label="default input example">
-    </div>
     <div class="d-grid gap-2">
-    <button class="btn btn-success" type="button">Tambah</button>
+    <button class="btn btn-success" type="submit">Tambah</button>
     </div>
+    </form>
   </div>
   </div>
 @endsection
