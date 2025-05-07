@@ -13,7 +13,7 @@
             <!-- Pelajaran yang Diajarkan -->
             <h5 class="mt-4">Pelajaran yang Diajarkan</h5>
             <div class="scroll-box mb-4 d-flex flex-row flex-nowrap overflow-auto">
-               <a href="detail_pelajaran.php">
+               <a href="/guru/detail_pelajaran">
                <div class="card p-3 me-3 text-center">
                   <div class="card-body">
                   <i class="fas fa-calculator fa-2x mb-2"></i>
@@ -38,7 +38,7 @@
             <!-- Tugas yang Sedang Berlangsung -->
             <h5 class="mt-4">Tugas yang Sedang Berlangsung</h5>
             <div class="scroll-box mb-4 d-flex flex-row flex-nowrap overflow-auto">
-               <a href="hlm_detail_tugas.php">
+               <a href="/guru/hlm_detail_tugas">
             <div class="card p-3 me-3">
                 <strong>Matematika</strong>
                 <p>Membuat soal turunan fungsi</p>

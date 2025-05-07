@@ -17,9 +17,9 @@ class MainController extends Controller
         if ($username == "admin" && $password == "admin") {
             return redirect('/admin');
         } else if ($username == "guru" && $password == "guru") {
-            return redirect('/guru/home');
+            return redirect('/guru');
         } else if ($username == "siswa" && $password == "siswa") {
-            return redirect('/siswa/home');
+            return redirect('/siswa');
         }
         return view('login')->with('error', 'Username atau password salah');
     }

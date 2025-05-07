@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\GuruController;
+use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Route;
 
@@ -76,9 +78,46 @@ Route::prefix('admin')->group(function () {
 });
 
 
-Route::get('/guru_home', function () {
+Route::get('/guru', function () {
    return view('guru_pages/home');
 });
-Route::get('/siswa_home', function () {
+
+Route::prefix('guru')->group(function () {
+   Route::get('/', [GuruController::class, 'index']);
+   Route::get('/detail_pelajaran', [GuruController::class, 'detail_pelajaran']);
+   Route::get('/editmateri', [GuruController::class, 'editmateri']);
+   Route::get('/editpengumuman', [GuruController::class, 'editpengumuman']);
+   Route::get('/edittugas', [GuruController::class, 'edittugas']);
+   Route::get('/hlm_about', [GuruController::class, 'hlm_about']);
+   Route::get('/hlm_detail_pengumuman', [GuruController::class, 'hlm_detail_pengumuman']);
+   Route::get('/hlm_detail_tugas', [GuruController::class, 'hlm_detail_tugas']);
+   Route::get('/hlm_edit_about', [GuruController::class, 'hlm_edit_about']);
+   Route::get('/hlm_jadwal', [GuruController::class, 'hlm_jadwal']);
+   Route::get('/hlm_kelas', [GuruController::class, 'hlm_kelas']);
+   Route::get('/hlm_laporan_tugas', [GuruController::class, 'hlm_laporan_tugas']);
+   Route::get('/hlm_laporan_ujian', [GuruController::class, 'hlm_laporan_ujian']);
+   Route::get('/tambahpengumuman', [GuruController::class, 'tambahpengumuman']);
+   Route::get('/tambahpertemuan', [GuruController::class, 'tambahpertemuan']);
+   Route::get('/uploadmateri', [GuruController::class, 'uploadmateri']);
+   Route::get('/uploadtugas', [GuruController::class, 'uploadtugas']);
+   Route::get('/walikelas', [GuruController::class, 'walikelas']);
+   // Add more admin routes here...
+});
+
+Route::get('/siswa', function () {
    return view('siswa_pages/home');
+});
+
+Route::prefix('siswa')->group(function () {
+   Route::get('/', [SiswaController::class, 'index']);
+   Route::get('/detail_pelajaran', [SiswaController::class, 'detail_pelajaran']);
+   Route::get('/hlm_about', [SiswaController::class, 'hlm_about']);
+   Route::get('/hlm_detail_tugas', [SiswaController::class, 'hlm_detail_tugas']);
+   Route::get('/hlm_edit_about', [SiswaController::class, 'hlm_edit_about']);
+   Route::get('/hlm_about', [SiswaController::class, 'hlm_about']);
+   Route::get('/hlm_jadwal', [SiswaController::class, 'hlm_jadwal']);
+   Route::get('/hlm_kelas', [SiswaController::class, 'hlm_kelas']);
+   Route::get('/hlm_laporan_tugas', [SiswaController::class, 'hlm_laporan_tugas']);
+   Route::get('/hlm_laporan_ujian', [SiswaController::class, 'hlm_laporan_ujian']);
+   // Add more admin routes here...
 });

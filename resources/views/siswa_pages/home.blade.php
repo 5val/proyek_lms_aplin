@@ -7,7 +7,7 @@
           <!-- Pelajaran Siswa -->
           <h5 class="mt-4">Pelajaran</h5>
           <div class="scroll-box mb-4">
-            <a href="detail_pelajaran.php">
+            <a href="/siswa/detail_pelajaran">
             <div class="card p-3">
               <div class="card-body">
                 <i class="fas fa-calculator"></i>
@@ -57,7 +57,7 @@
           <!-- Tugas yang Sedang Berlangsung -->
           <h5 class="mt-4">Tugas yang Sedang Berlangsung</h5>
           <div class="scroll-box mb-4">
-          <a href="hlm_detail_tugas.php">
+          <a href="/siswa/hlm_detail_tugas">
             <div class="card p-3">
               <strong>Matematika</strong>
               <p>Kerjakan soal fungsi kuadrat</p>
