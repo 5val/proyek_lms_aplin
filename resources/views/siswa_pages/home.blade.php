@@ -6,52 +6,53 @@
 
           <!-- Pelajaran Siswa -->
           <h5 class="mt-4">Pelajaran</h5>
+          <button class="toggle-btn" id="toggleBtn">Tampilkan Semua Pelajaran</button>
           <div class="scroll-box mb-4">
-            <a href="/siswa/detail_pelajaran">
-            <div class="card p-3">
-              <div class="card-body">
-                <i class="fas fa-calculator"></i>
-                <h5>Matematika</h5>
+              <a href="/siswa/detail_pelajaran">
+                  <div class="card p-3">
+                      <div class="card-body">
+                          <i class="fas fa-calculator"></i>
+                          <h5>Matematika</h5>
+                      </div>
+                  </div>
+              </a>
+              <div class="card p-3">
+                  <div class="card-body">
+                      <i class="fas fa-leaf"></i>
+                      <h5>Biologi</h5>
+                  </div>
               </div>
-            </div>
-            </a>
-            <div class="card p-3">
-              <div class="card-body">
-                <i class="fas fa-leaf"></i>
-                <h5>Biologi</h5>
+              <div class="card p-3">
+                  <div class="card-body">
+                      <i class="fas fa-book-open"></i>
+                      <h5>Bahasa Inggris</h5>
+                  </div>
               </div>
-            </div>
-            <div class="card p-3">
-              <div class="card-body">
-                <i class="fas fa-book-open"></i>
-                <h5>Bahasa Inggris</h5>
+              <!-- Elemen tersembunyi di awal -->
+              <div class="card p-3 hidden-card" style="display:none;">
+                  <div class="card-body">
+                      <i class="fas fa-flask"></i>
+                      <h5>Fisika</h5>
+                  </div>
               </div>
-            </div>
-            <div class="card p-3">
-              <div class="card-body">
-                <i class="fas fa-flask"></i>
-                <h5>Fisika</h5>
+              <div class="card p-3 hidden-card" style="display:none;">
+                  <div class="card-body">
+                      <i class="fas fa-vial"></i>
+                      <h5>Kimia</h5>
+                  </div>
               </div>
-            </div>
-            <div class="card p-3">
-              <div class="card-body">
-                <i class="fas fa-vial"></i>
-                <h5>Kimia</h5>
+              <div class="card p-3 hidden-card" style="display:none;">
+                  <div class="card-body">
+                      <i class="fas fa-pencil-alt"></i>
+                      <h5>Bahasa Indonesia</h5>
+                  </div>
               </div>
-            </div>
-            <div class="card p-3">
-              <div class="card-body">
-                <i class="fas fa-pencil-alt"></i>
-                <h5>Bahasa Indonesia</h5>
+              <div class="card p-3 hidden-card" style="display:none;">
+                  <div class="card-body">
+                      <i class="fas fa-history"></i>
+                      <h5>Sejarah</h5>
+                  </div>
               </div>
-            </div>
-            <div class="card p-3">
-              <div class="card-body">
-                <i class="fas fa-history"></i>
-                <h5>Sejarah</h5>
-
-              </div>
-            </div>
           </div>
 
           <!-- Tugas yang Sedang Berlangsung -->
@@ -138,4 +139,24 @@
                 </tr>
               </tbody>
             </table>
+            
+@endsection
+
+@section('custom-scripts')
+<script>
+   document.getElementById('toggleBtn').addEventListener('click', function() {
+      const hiddenCards = document.querySelectorAll('.hidden-card');
+      const btn = document.getElementById('toggleBtn');
+      
+      hiddenCards.forEach(card => {
+          if (card.style.display === 'none') {
+              card.style.display = 'block'; // Mengubah display menjadi block
+              btn.textContent = 'Sembunyikan Pelajaran Tambahan';
+          } else {
+              card.style.display = 'none';
+              btn.textContent = 'Tampilkan Semua Pelajaran';
+          }
+      });
+  });
+</script>
 @endsection

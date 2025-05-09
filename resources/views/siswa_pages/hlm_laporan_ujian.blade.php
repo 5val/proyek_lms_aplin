@@ -35,17 +35,40 @@
             <p><strong>Feedback Guru:</strong> Perlu perhatian di konsep reaksi kimia.</p>
           </div>
 
+
           <!-- Card rata-rata -->
-          <div class="average-card">
-            <h5>Rata-Rata Nilai Ujian</h5>
-            <ul class="list-unstyled mt-3">
-              <li><strong>Matematika:</strong> 88</li>
-              <li><strong>Biologi:</strong> 84</li>
-              <li><strong>Fisika:</strong> 79</li>
-              <li><strong>Bahasa Inggris:</strong> 91</li>
-              <li><strong>Kimia:</strong> 76</li>
-            </ul>
+          <div class="average-card-custom">
+              <h5 class="average-card-title">Rata-Rata Nilai Ujian per Mata Pelajaran</h5>
+              
+              <!-- Table for average scores -->
+              <table class="average-table table-bordered table-lg">
+                  <thead class="table-header-custom">
+                      <tr>
+                          <th>Mata Pelajaran</th>
+                          <th>Nilai</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td><strong>Matematika:</strong></td>
+                          <td>87.5</td>
+                      </tr>
+                      <tr>
+                          <td><strong>Biologi:</strong></td>
+                          <td>88</td>
+                      </tr>
+                      <tr>
+                          <td><strong>Fisika:</strong></td>
+                          <td>-</td>
+                      </tr>
+                      <tr>
+                          <td><strong>Bahasa Inggris:</strong></td>
+                          <td>92</td>
+                      </tr>
+                  </tbody>
+              </table>
           </div>
+
 
         </div>
 @endsection
