@@ -12,6 +12,8 @@ class Pelajaran extends Model
 
     protected $table = 'PELAJARAN';
     protected $primaryKey = 'ID_PELAJARAN';
+    protected $keyType = 'string';
+   public $incrementing = false;
     public $timestamps = false;
     protected $fillable = ['ID_PELAJARAN', 'NAMA_PELAJARAN'];
 

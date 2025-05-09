@@ -14,6 +14,9 @@ class Siswa extends Model
     protected $table = 'SISWA';
     protected $primaryKey = 'ID_SISWA';
     public $timestamps = false;
+    protected $casts = [
+        'ID_SISWA' => 'string',
+    ];
     protected $fillable = ['ID_SISWA', 'NAMA_SISWA', 'EMAIL_SISWA', 'ALAMAT_SISWA', 'NO_TELPON_SISWA', 'PASSWORD_SISWA', 'STATUS_SISWA'];
 
     /**

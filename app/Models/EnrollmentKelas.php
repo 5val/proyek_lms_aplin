@@ -14,6 +14,10 @@ class EnrollmentKelas extends Model
     protected $primaryKey = ['ID_SISWA', 'ID_KELAS'];
     public $incrementing = false;
     public $timestamps = false;
+    protected $casts = [
+        'ID_KELAS' => 'string',
+        'ID_SISWA' => 'string',
+    ];
     protected $fillable = ['ID_SISWA', 'ID_KELAS'];
 
     /**

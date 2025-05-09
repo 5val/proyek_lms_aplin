@@ -13,6 +13,9 @@ class Tugas extends Model
     protected $table = 'TUGAS';
     protected $primaryKey = 'ID_TUGAS';
     public $timestamps = false;
+    protected $casts = [
+        'ID_MATA_PELAJARAN' => 'string',
+    ];
     protected $fillable = ['ID_TUGAS', 'ID_MATA_PELAJARAN', 'NAMA_TUGAS', 'DESKRIPSI_TUGAS', 'DEADLINE_TUGAS'];
 
     /**

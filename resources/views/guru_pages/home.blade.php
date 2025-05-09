@@ -2,70 +2,54 @@
 
 @section('guru_content')
 <h4 class="mb-3">Home Guru</h4>
-            <p><strong>Nama Guru:</strong> Darren Susanto &nbsp; | &nbsp; <strong>NIP:</strong> G/001</p>
+            <p><strong>Nama Guru:</strong> {{ session('userActive')->NAMA_GURU }} &nbsp; | &nbsp; <strong>NIP:</strong> {{ session('userActive')->ID_GURU }}</p>
             
             <!-- Info Wali Kelas -->
-            <h5 class="mt-4">Wali Kelas</h5>
-            <div class="bg-white shadow-sm rounded p-3 mb-4">
-            <p>Anda merupakan wali dari kelas: <strong>XII IPA 1</strong></p>
-            </div>
+             <?php if($wali_kelas): ?>
+               <h5 class="mt-4">Wali Kelas</h5>
+               <div class="bg-white shadow-sm rounded p-3 mb-4">
+               <p>Anda merupakan wali dari kelas: <strong>{{ $wali_kelas->NAMA_KELAS }}</strong></p>
+               </div>
+             <?php endif; ?>
 
             <!-- Pelajaran yang Diajarkan -->
             <h5 class="mt-4">Pelajaran yang Diajarkan</h5>
             <div class="scroll-box mb-4 d-flex flex-row flex-nowrap overflow-auto">
-               <a href="/guru/detail_pelajaran">
-               <div class="card p-3 me-3 text-center">
-                  <div class="card-body">
-                  <i class="fas fa-calculator fa-2x mb-2"></i>
-                  <h5>Matematika</h5>
-                  </div>
-               </div>
-            </a>
-            <div class="card p-3 me-3 text-center">
-                <div class="card-body">
-                <i class="fas fa-flask fa-2x mb-2"></i>
-                <h5>Fisika</h5>
-                </div>
-            </div>
-            <div class="card p-3 me-3 text-center">
-                <div class="card-body">
-                <i class="fas fa-vial fa-2x mb-2"></i>
-                <h5>Kimia</h5>
-                </div>
-            </div>
+               <?php foreach ($mata_pelajaran as $m) : ?>
+                  <a href="/guru/detail_pelajaran">
+                     <div class="card p-3 me-3 text-center">
+                        <div class="card-body">
+                        <i class="fas fa-calculator fa-2x mb-2"></i>
+                        <h5>{{ $m->pelajaran->NAMA_PELAJARAN }}</h5>
+                        <p>Kelas: {{ $m->kelas->ID_DETAIL_KELAS }}</p>
+                        </div>
+                     </div>
+                  </a>
+               <?php endforeach; ?>
             </div>
 
             <!-- Tugas yang Sedang Berlangsung -->
             <h5 class="mt-4">Tugas yang Sedang Berlangsung</h5>
             <div class="scroll-box mb-4 d-flex flex-row flex-nowrap overflow-auto">
-               <a href="/guru/hlm_detail_tugas">
-            <div class="card p-3 me-3">
-                <strong>Matematika</strong>
-                <p>Membuat soal turunan fungsi</p>
-                <small>Tenggat: 24 Apr 2025</small>
-            </div>
-            </a>
-            <div class="card p-3 me-3">
-                <strong>Fisika</strong>
-                <p>Praktikum Hukum Newton</p>
-                <small>Tenggat: 26 Apr 2025</small>
-            </div>
-            <div class="card p-3 me-3">
-                <strong>Kimia</strong>
-                <p>Analisis Reaksi Asam Basa</p>
-                <small>Tenggat: 28 Apr 2025</small>
-            </div>
+               <?php foreach ($all_tugas as $t) : ?>
+                  <a href="/guru/hlm_detail_tugas">
+                  <div class="card p-3 me-3">
+                     <strong>{{ $t->mataPelajaran->pelajaran->NAMA_PELAJARAN }}</strong>
+                     <p>{{ $t->DESKRIPSI_TUGAS }}</p>
+                     <small>Tenggat: {{ $t->DEADLINE_TUGAS }}</small>
+                  </div>
+               </a>
+               <?php endforeach; ?>
             </div>
 
             <!-- Pengumuman -->
             <h5>Pengumuman</h5>
-            <div class="bg-white shadow-sm rounded p-3 mb-3">
-            <h6 class="fw-bold">Rapat Koordinasi Guru</h6>
-            <p>Rapat akan diadakan pada Jumat, 25 April 2025 pukul 13.00 WIB di ruang rapat 1.</p>
-            </div>
-            <div class="bg-white shadow-sm rounded p-3 mb-4">
-            <h6 class="fw-bold">Pengumpulan RPP Semester Ganjil</h6>
-            <p>Mohon dikumpulkan paling lambat tanggal 30 April 2025.</p>
+            <?php foreach ($all_pengumuman as $p) : ?>
+               <div class="bg-white shadow-sm rounded p-3 mb-3">
+                  <h6 class="fw-bold">{{ $p->Judul }}</h6>
+                  <p>{{ $p->Deskripsi }}</p>
+               </div>
+            <?php endforeach; ?>
             </div>
 
             <!-- Jadwal Mengajar Guru -->

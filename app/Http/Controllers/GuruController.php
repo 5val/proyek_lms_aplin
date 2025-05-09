@@ -2,13 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailKelas;
+use App\Models\EnrollmentKelas;
+use App\Models\Kelas;
+use App\Models\MataPelajaran;
+use App\Models\Pengumuman;
+use App\Models\Tugas;
 use Illuminate\Http\Request;
 
 class GuruController extends Controller
 {
     public function index()
     {
-        return view('guru_pages.home');
+      $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->first();
+      $allMataPelajaran = MataPelajaran::with(['kelas', 'pelajaran'])->where('ID_GURU', '=', session('userActive')->ID_GURU)->get();
+      $allTugas = Tugas::with(['mataPelajaran.pelajaran'])
+         ->whereHas('mataPelajaran', function ($id) {
+            $id->where('id_guru', '=', session('userActive')->ID_GURU);
+         })->get();
+      $allPengumuman = Pengumuman::all();
+      if($kelas != null) {
+         $waliKelas = DetailKelas::find($kelas->ID_DETAIL_KELAS);
+         return view('guru_pages.home', ['wali_kelas' => $waliKelas, 'mata_pelajaran' => $allMataPelajaran, 'all_tugas' => $allTugas, 'all_pengumuman' => $allPengumuman]);
+      } else {
+         return view('guru_pages.home', ['wali_kelas' => null, 'mata_pelajaran' => $allMataPelajaran, 'all_tugas' => $allTugas, 'all_pengumuman' => $allPengumuman]);
+      }
     }
     public function detail_pelajaran()
     {
@@ -49,7 +67,8 @@ class GuruController extends Controller
     }
     public function hlm_kelas()
     {
-        return view('guru_pages.hlm_kelas');
+      $all_kelas = MataPelajaran::with(['kelas', 'pelajaran'])->where('ID_GURU', '=', session('userActive')->ID_GURU)->get();
+      return view('guru_pages.hlm_kelas', ['all_kelas' => $all_kelas]);
     }
     public function hlm_laporan_tugas()
     {
@@ -78,7 +97,16 @@ class GuruController extends Controller
     }
     public function walikelas()
     {
-        return view('guru_pages.walikelas');
+      $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->first();
+      if($kelas != null) {
+         $waliKelas = DetailKelas::find($kelas->ID_DETAIL_KELAS);
+         $jumlah = EnrollmentKelas::where('ID_KELAS', '=', $kelas->ID_KELAS)->count();
+         $semester = substr($kelas->ID_KELAS, -1) == '1'? 'Ganjil' : 'Genap';
+         $daftar_siswa = EnrollmentKelas::with('siswa')->where('ID_KELAS', '=', $kelas->ID_KELAS)->get();
+         return view('guru_pages.walikelas', ['wali_kelas' => $waliKelas, 'jumlah' => $jumlah, 'semester' => $semester, 'daftar_siswa' => $daftar_siswa]);
+      } else {
+         return view('guru_pages.walikelas', ['wali_kelas' => null]);
+      }
     }
 
 

@@ -13,7 +13,13 @@ class MataPelajaran extends Model
 
     protected $table = 'MATA_PELAJARAN';
     protected $primaryKey = 'ID_MATA_PELAJARAN';
+    protected $keyType = 'string';
+   public $incrementing = false;
     public $timestamps = false;
+
+    protected $casts = [
+        'ID_GURU' => 'string',
+    ];
     protected $fillable = ['ID_MATA_PELAJARAN', 'ID_GURU', 'ID_PELAJARAN', 'ID_KELAS', 'JAM_PELAJARAN', 'HARI_PELAJARAN'];
 
     /**
