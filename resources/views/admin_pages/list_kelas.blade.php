@@ -77,7 +77,7 @@
       <td>${kelas.nama_kelas}</td>
       <td>
       <div class="d-grid gap-1">
-      <a href="/admin/list_mata_pelajaran" class="btn btn-primary btn-sm">Detail Kelas</a>
+      <a href="/admin/list_mata_pelajaran/${kelas.id_kelas}" class="btn btn-primary btn-sm">Detail Kelas</a>
       <a href="/admin/list_tambah_siswa_ke_kelas" class="btn btn-primary btn-sm">List Siswa</a>
       <a href="/admin/edit_kelas/${kelas.id_kelas}" class="btn btn-primary btn-sm">Edit</a>
       <button class="btn btn-danger btn-sm delete-class data-id='${kelas.id_kelas}'">Delete</button>

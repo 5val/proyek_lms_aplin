@@ -1,23 +1,14 @@
-<?php
-// Mock data
-
-?>
-
 @extends('layouts.admin_app')
 
 @section('admin_content')
-    <div class="container mt-5">
-        <div class="top-bar d-flex justify-content-between align-items-center border-bottom">
-            <div>
-                <a href="/admin/list_mata_pelajaran"><button class="btn btn-primary me-1">List</button></a>
-                <a href="/admin/tambah_mata_pelajaran"><button class="btn me-1">Tambah</button></a>
-                <button class="btn me-1">Upload Jadwal</button>
-            </div>
-        </div>
-        <h3>List Mata Pelajaran</h3>
+    <div class="container mt-2">
+        <a href="/admin/list_kelas" class="btn btn-danger">Back</a>
+        @include('admin_pages.tambah_mata_pelajaran')
 
         <!-- Table -->
-        <div class="container mt-4">
+        <div class="container mt-5">
+            <hr>
+            <h3>List Mata Pelajaran</h3>
             <table class="table table-bordered align-middle">
                 <thead class="table-light">
                     <tr>
@@ -30,13 +21,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($kelasList as $kelas): ?>
+                    <?php foreach ($kelasList as $pelajaran): ?>
                     <tr>
-                        <td><?= $kelas['id_mata_pelajaran'] ?></td>
-                        <td><?= $kelas['nama_pelajaran'] ?></td>
-                        <td><?= $kelas['nama_guru'] ?></td>
-                        <td><?= $kelas['hari_pelajaran'] ?></td>
-                        <td><?= $kelas['jam_pelajaran'] ?></td>
+                        <td><?= $pelajaran->ID_MATA_PELAJARAN?></td>
+                        <td><?= $pelajaran->pelajaran->NAMA_PELAJARAN ?></td>
+                        <td><?= $pelajaran->guru->NAMA_GURU ?></td>
+                        <td><?= $pelajaran->HARI_PELAJARAN ?></td>
+                        <td><?= $pelajaran->JAM_PELAJARAN?></td>
                         <td>
                             <div class="d-grid gap-1">
                                 <button class="btn btn-primary btn-sm">List Pertemuan</button>

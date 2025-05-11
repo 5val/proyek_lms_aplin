@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\DetailKelas;
 use App\Models\Guru;
 use App\Models\Kelas;
+use App\Models\MataPelajaran;
+use App\Models\Pelajaran;
 use App\Models\Pengumuman;
 use App\Models\Periode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -171,8 +174,38 @@ class AdminController extends Controller
         }
     }
 
-    // ========================================= Laporan ============================================
+    // ========================================= Pelajaran ============================================
+    public function list_pelajaran()
+    {
+        $kelasList = Pelajaran::all();
+        return view('admin_pages.list_pelajaran', compact('kelasList'));
+    }
+    public function tambah_pelajaran()
+    {
+        return view('admin_pages.tambah_pelajaran');
+    }
+    public function postpelajaran(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|unique:pelajaran,NAMA_PELAJARAN',
+        ], [
+            'name.unique' => 'Nama Pelajaran sudah digunakan. Silakan pilih nama lain.'
+        ]);
+        Pelajaran::create([
+            'NAMA_PELAJARAN' => $request->input('name'),
+        ]);
+        return redirect()->route('list_pelajaran')->with('success', 'Nama berhasil disimpan!');
+    }
+    public function hapuspelajaran($id)
+    {
+        $pelajaran = Pelajaran::find($id);
+        $pelajaran->status == "Active" ? $pelajaran->status = "Inactive" : $pelajaran->status = "Active";
+        $pelajaran->save();
+        return redirect()->route('list_pelajaran')->with('success', 'Berhasil update!');
 
+    }
+
+    // ========================================= Laporan ============================================
     public function laporanguru()
     {
         return view('admin_pages.laporanguru');
@@ -301,71 +334,69 @@ class AdminController extends Controller
     }
 
 
-
     // ================================== Mata Pelajaran =================================================
-    public function list_mata_pelajaran()
+    public function list_mata_pelajaran($id)
     {
-        $semesters = [
-            '2023 - 2024 GANJIL',
-            '2023 - 2024 GENAP',
-            '2024 - 2025 GANJIL',
-            '2024 - 2025 GENAP'
-        ];
-
-        $kelasList = [
-            [
-                'id_mata_pelajaran' => 'XIIMIPA1PKN20242',
-                'nama_pelajaran' => 'PKN',
-                'nama_guru' => 'SAUD',
-                'hari_pelajaran' => 'SELASA',
-                'jam_pelajaran' => '10.15 - 12.15',
-            ],
-            [
-                'id_mata_pelajaran' => 'XIIMIPA1BI20242',
-                'nama_pelajaran' => 'Bahasa Indonesia',
-                'nama_guru' => 'MAM YANTI',
-                'hari_pelajaran' => 'SELASA',
-                'jam_pelajaran' => '13.15 - 15.15',
-            ],
-            [
-                'id_mata_pelajaran' => 'XIIMIPA1MAT20242',
-                'nama_pelajaran' => 'Matematika',
-                'nama_guru' => 'Valen',
-                'hari_pelajaran' => 'SELASA',
-                'jam_pelajaran' => '15.15 - 18.15',
-            ],
-
-        ];
-        return view('admin_pages.list_mata_pelajaran', compact('semesters', 'kelasList'));
+        $kelasList = MataPelajaran::where('ID_KELAS', $id)->with(['guru', 'pelajaran'])->get();
+        $guruList = Guru::all();
+        $pelajaranList = Pelajaran::all();
+        $id_kelas = $id;
+        return view('admin_pages.list_mata_pelajaran', compact('id_kelas', 'kelasList', 'guruList', 'pelajaranList'));
     }
-    public function list_pelajaran()
+    public function add_mata_pelajaran(Request $request, $id_kelas)
     {
-        $semesters = [
-            '2023 - 2024 GANJIL',
-            '2023 - 2024 GENAP',
-            '2024 - 2025 GANJIL',
-            '2024 - 2025 GENAP'
-        ];
+        $validator = Validator::make($request->all(), [
+            'pengajar' => 'required|exists:guru,ID_GURU',
+            'kelas' => 'required|exists:kelas,ID_KELAS',
+            'hari' => 'required',
+            'waktu' => 'required',
+        ]);
 
-        $kelasList = [
-            [
-                'id_pelajaran' => 'BI',
-                'nama_pelajaran' => 'Bahasa Indonesia',
-            ],
-            [
-                'id_pelajaran' => 'PKN',
-                'nama_pelajaran' => 'PKN',
-            ],
-            [
-                'id_pelajaran' => 'MAT',
-                'nama_pelajaran' => 'MATEMATIKA',
-            ],
-        ];
-        return view('admin_pages.list_pelajaran', compact('kelasList', 'semesters'));
-    }
-    public function get_list_pelajaran()
-    {
+        // Custom validation for schedule conflicts
+        $validator->after(function ($validator) use ($request) {
+            $time = $request->waktu;
+            $day = $request->hari;
+            $class = Kelas::find($request->kelas);
+            if (!$class)
+                return;
+            $semester = $class->ID_PERIODE;
 
+            $teacherBusy = MataPelajaran::whereHas('kelas', function ($query) use ($semester) {
+                $query->where('ID_PERIODE', $semester);
+            })
+                ->where('ID_GURU', $request->pengajar)
+                ->where('HARI_PELAJARAN', $day)
+                ->where(function ($query) use ($time) {
+                    $query->where('JAM_PELAJARAN', [$time]);
+                })->exists();
+            if ($teacherBusy) {
+                $validator->errors()->add('pengajar', 'Guru sudah memiliki jadwal pada waktu tersebut.');
+            }
+            // Check class conflict
+            $classBusy = MataPelajaran::whereHas('kelas', function ($query) use ($semester) {
+                $query->where('ID_PERIODE', $semester);
+            })
+                ->where('ID_KELAS', $request->kelas)
+                ->where('HARI_PELAJARAN', $day)
+                ->where(function ($query) use ($time) {
+                    $query->where('JAM_PELAJARAN', [$time]);
+                })->exists();
+
+            if ($classBusy) {
+                $validator->errors()->add('waktu', 'Kelas sudah memiliki pelajaran pada waktu tersebut.');
+            }
+        });
+
+        $validator->validate();
+
+        MataPelajaran::create([
+            'ID_GURU' => $request->pengajar,
+            'ID_KELAS' => $request->kelas,
+            'ID_PELAJARAN' => $request->pelajaran,
+            'HARI_PELAJARAN' => $request->hari,
+            'JAM_PELAJARAN' => $request->waktu
+        ]);
+        return redirect()->route('list_mata_pelajaran', ['id_kelas' => $request->kelas])->with('success', 'Jadwal berhasil ditambahkan.');
     }
 
     public function list_tambah_siswa_ke_kelas()
@@ -393,18 +424,6 @@ class AdminController extends Controller
             ],
         ];
         return view('admin_pages.list_tambah_siswa_ke_kelas', compact('asistenList', 'kelasList'));
-    }
-
-
-
-
-    public function tambah_mata_pelajaran()
-    {
-        return view('admin_pages.tambah_mata_pelajaran');
-    }
-    public function tambah_pelajaran()
-    {
-        return view('admin_pages.tambah_pelajaran');
     }
     public function tambahguru()
     {
