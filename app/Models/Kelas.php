@@ -15,7 +15,7 @@ class Kelas extends Model
     protected $table = 'KELAS';
     protected $primaryKey = 'ID_KELAS';
     protected $keyType = 'string';
-   public $incrementing = false;
+    public $incrementing = false;
     public $timestamps = false;
     protected $casts = [
         'ID_DETAIL_KELAS' => 'string',

@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailKelas;
+use App\Models\Guru;
+use App\Models\Kelas;
 use App\Models\Pengumuman;
+use App\Models\Periode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -187,34 +191,118 @@ class AdminController extends Controller
     }
 
     // ================================== Tambah Kelas ===============================================
+
+    // ================================== Kelas ======================================================
     public function list_kelas()
     {
-        $semesters = [
-            '2023 - 2024 GANJIL',
-            '2023 - 2024 GENAP',
-            '2024 - 2025 GANJIL',
-            '2024 - 2025 GENAP'
-        ];
+        $semesters = Periode::all();
+        $latestPeriode = Periode::orderByDesc('ID_PERIODE')->first()->ID_PERIODE;
+        $classes = Kelas::where('ID_PERIODE', $latestPeriode)
+            ->with(['detailKelas', 'wali'])
+            ->get();
+        $kelasList = $classes->map(function ($item) {
+            return [
+                'id_kelas' => $item->ID_KELAS ?? '-',
+                'ruangan_kelas' => $item->detailKelas->RUANGAN_KELAS,
+                'nama_kelas' => $item->detailKelas->NAMA_KELAS,
+                'nama_wali' => $item->wali->NAMA_GURU,
+            ];
+        });
 
-        $kelasList = [
-            [
-                'id_kelas' => 'XIIMIPA1/2024/2',
-                'nama_wali' => 'VALEN',
-                'ruangan' => 'XIIMIPA1',
-            ],
-            [
-                'id_kelas' => 'XIIMIPA2/2024/2',
-                'nama_wali' => 'OVALDO',
-                'ruangan' => 'XIIMIPA2',
-            ],
-            [
-                'id_kelas' => 'XIIMIPA3/2024/2',
-                'nama_wali' => 'JESSI',
-                'ruangan' => 'XIIMIPA3',
-            ],
-        ];
-        return view('admin_pages.list_kelas', compact('kelasList', 'semesters'));
+        return view('admin_pages.list_kelas', compact('kelasList', 'semesters', 'latestPeriode'));
     }
+    public function delete_kelas($id_kelas)
+    {
+        $kelas = Kelas::find($id_kelas)->delete();
+        return redirect("admin/list_kelas");
+    }
+    public function get_list_kelas($semesterId)
+    {
+        $classes = Kelas::where('ID_PERIODE', $semesterId)
+            ->with(['detailKelas', 'wali'])
+            ->get();
+        $kelasList = $classes->map(function ($item) {
+            return [
+                'id_kelas' => $item->ID_KELAS ?? '-',
+                'ruangan_kelas' => $item->detailKelas->RUANGAN_KELAS,
+                'nama_kelas' => $item->detailKelas->NAMA_KELAS,
+                'nama_wali' => $item->wali->NAMA_GURU,
+            ];
+        });
+        return response()->json($kelasList);
+    }
+    public function tambah_kelas()
+    {
+        $currPeriode = Periode::orderByDesc('ID_PERIODE')->first()->ID_PERIODE;
+        $availableRooms = DetailKelas::whereDoesntHave('kelas', function ($query) use ($currPeriode) {
+            $query->where('ID_PERIODE', $currPeriode);
+        })->get();
+        $availableGuru = Guru::whereDoesntHave('waliKelas', function ($query) use ($currPeriode) {
+            $query->where('ID_PERIODE', $currPeriode);
+        })->get();
+
+        return view('admin_pages.tambah_kelas', ['availableRooms' => $availableRooms, 'availableGuru' => $availableGuru]);
+    }
+
+    public function edit_kelas($id)
+    {
+        // Find the class by its ID
+        $kelas = Kelas::with(['detailKelas', 'wali'])->find($id);
+
+        if (!$kelas) {
+            return redirect()->route('list_kelas')->with('error', 'Class not found!');
+        }
+        $currPeriode = $kelas->ID_PERIODE;
+        $availableRooms = DetailKelas::whereDoesntHave('kelas', function ($query) use ($currPeriode) {
+            $query->where('ID_PERIODE', $currPeriode);
+        })->get();
+        $availableGuru = Guru::whereDoesntHave('waliKelas', function ($query) use ($currPeriode) {
+            $query->where('ID_PERIODE', $currPeriode);
+        })->get();
+
+        // Pass the class data to the edit view
+        return view('admin_pages.edit_kelas', compact('kelas', 'availableRooms', 'availableGuru'));
+    }
+    public function update_kelas(Request $request, $id)
+    {
+        // Find the class by ID
+        $kelas = Kelas::find($id);
+
+        if (!$kelas) {
+            return redirect()->route('list_kelas')->with('error', 'Class not found!');
+        }
+
+        // Update the class details
+        $kelas->ID_DETAIL_KELAS = $request->input('ruangan');
+        $kelas->ID_GURU = $request->input('wali_kelas');
+
+        $kelas->save();
+
+        return redirect()->route('list_kelas')->with('success', 'Class added successfully.');
+    }
+    public function add_kelas(Request $request)
+    {
+        $currPeriode = Periode::orderByDesc('ID_PERIODE')->first()->ID_PERIODE;
+
+        // Validate input
+        $validated = $request->validate([
+            'ruangan' => 'required|exists:detail_kelas,ID_DETAIL_KELAS', // Adjust as needed
+            'wali_kelas' => 'required|exists:guru,ID_GURU', // Adjust as needed
+        ]);
+
+        // Create new class
+        $kelas = Kelas::create([
+            'ID_DETAIL_KELAS' => $validated['ruangan'],
+            'ID_GURU' => $validated['wali_kelas'],
+            'ID_PERIODE' => $currPeriode,
+        ]);
+
+        return redirect()->route('list_kelas')->with('success', 'Class added successfully.');
+    }
+
+
+
+    // ================================== Mata Pelajaran =================================================
     public function list_mata_pelajaran()
     {
         $semesters = [
@@ -275,6 +363,11 @@ class AdminController extends Controller
         ];
         return view('admin_pages.list_pelajaran', compact('kelasList', 'semesters'));
     }
+    public function get_list_pelajaran()
+    {
+
+    }
+
     public function list_tambah_siswa_ke_kelas()
     {
         $asistenList = ['Ovaldo', 'Ovaldo OOO', 'Rafael'];
@@ -304,10 +397,7 @@ class AdminController extends Controller
 
 
 
-    public function tambah_kelas()
-    {
-        return view('admin_pages.tambah_kelas');
-    }
+
     public function tambah_mata_pelajaran()
     {
         return view('admin_pages.tambah_mata_pelajaran');

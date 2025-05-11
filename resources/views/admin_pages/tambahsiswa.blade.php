@@ -21,6 +21,10 @@
       required>
     </div>
     <div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label">Password</label>
+    <input class="form-control" type="text" name="password" aria-label="default input example" required>
+    </div>
+    <div class="mb-3">
     <label for="exampleFormControlTextarea1" class="form-label">Alamat sekarang</label>
     <input class="form-control" type="text" name="alamat" placeholder="Default input" aria-label="default input example"
       required>

@@ -61,14 +61,26 @@ Route::prefix('admin')->group(function () {
 
 
    // ======================================= Kelas ===============================================
-   Route::get('/list_kelas', [AdminController::class, 'list_kelas']);
+   Route::get('/list_kelas', [AdminController::class, 'list_kelas'])->name('list_kelas');
+   Route::get('/get_classes/{id_periode}', [AdminController::class, 'get_list_kelas']);
+   Route::delete('/delete_class/{id}', [AdminController::class, 'delete_kelas']);
+   Route::get('/tambah_kelas', [AdminController::class, 'tambah_kelas']);
+   Route::get('/edit_kelas/{id}', [AdminController::class, 'edit_kelas'])->name('edit_kelas')
+      ->where('id', expression: '.*');
+   Route::post('/add_kelas', [AdminController::class, 'add_kelas'])->name('add_kelas');
+   Route::put('/update_kelas/{id}', [AdminController::class, 'update_kelas'])->name('update_kelas')
+      ->where('id', expression: '.*');
+
+
+
+
    Route::get('/list_mata_pelajaran', [AdminController::class, 'list_mata_pelajaran']);
    Route::get('/list_pelajaran', [AdminController::class, 'list_pelajaran']);
    Route::get('/list_tambah_siswa_ke_kelas', [AdminController::class, 'list_tambah_siswa_ke_kelas']);
 
 
 
-   Route::get('/tambah_kelas', [AdminController::class, 'tambah_kelas']);
+
    Route::get('/tambah_mata_pelajaran', [AdminController::class, 'tambah_mata_pelajaran']);
    Route::get('/tambah_pelajaran', [AdminController::class, 'tambah_pelajaran']);
 
@@ -99,7 +111,7 @@ Route::prefix('guru')->group(function () {
    Route::get('/tambahpengumuman/{id_mata_pelajaran}', [GuruController::class, 'tambahpengumuman'])->where('id_mata_pelajaran', '.*');
    Route::get('/tambahpertemuan/{id_mata_pelajaran}', [GuruController::class, 'tambahpertemuan'])->where('id_mata_pelajaran', '.*');
    Route::get('/uploadmateri/{id_mata_pelajaran}', [GuruController::class, 'uploadmateri'])
-   ->where('id_mata_pelajaran', '.*');
+      ->where('id_mata_pelajaran', '.*');
    Route::post('/uploadmateri', [GuruController::class, 'postmateri']);
    Route::get('/uploadtugas/{id_mata_pelajaran}', [GuruController::class, 'uploadtugas'])
       ->where('id_mata_pelajaran', '.*');
