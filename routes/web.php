@@ -75,19 +75,11 @@ Route::prefix('admin')->group(function () {
    Route::put('/update_kelas/{id}', [AdminController::class, 'update_kelas'])->name('update_kelas')
       ->where('id', expression: '.*');
 
-
-
-
-   Route::get('/list_mata_pelajaran', [AdminController::class, 'list_mata_pelajaran']);
-
-
-   Route::get('/list_tambah_siswa_ke_kelas', [AdminController::class, 'list_tambah_siswa_ke_kelas']);
-
-
-
-
-   Route::get('/tambah_mata_pelajaran', [AdminController::class, 'tambah_mata_pelajaran']);
-
+   // ======================================== Mata Pelajaran =====================================
+   Route::get('/list_mata_pelajaran/{id_kelas}', [AdminController::class, 'list_mata_pelajaran'])
+      ->where('id_kelas', expression: '.*')->name('list_mata_pelajaran');
+   Route::post('/list_mata_pelajaran/{id_kelas}', [AdminController::class, 'add_mata_pelajaran'])
+      ->where('id_kelas', expression: '.*');
 
    Route::get('/upload_file', [AdminController::class, 'upload_file']);
    // Add more admin routes here...

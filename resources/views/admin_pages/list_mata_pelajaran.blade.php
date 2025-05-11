@@ -1,8 +1,3 @@
-<?php
-// Mock data
-
-?>
-
 @extends('layouts.admin_app')
 
 @section('admin_content')
@@ -26,13 +21,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($kelasList as $kelas): ?>
+                    <?php foreach ($kelasList as $pelajaran): ?>
                     <tr>
-                        <td><?= $kelas['id_mata_pelajaran'] ?></td>
-                        <td><?= $kelas['nama_pelajaran'] ?></td>
-                        <td><?= $kelas['nama_guru'] ?></td>
-                        <td><?= $kelas['hari_pelajaran'] ?></td>
-                        <td><?= $kelas['jam_pelajaran'] ?></td>
+                        <td><?= $pelajaran->ID_MATA_PELAJARAN?></td>
+                        <td><?= $pelajaran->pelajaran->NAMA_PELAJARAN ?></td>
+                        <td><?= $pelajaran->guru->NAMA_GURU ?></td>
+                        <td><?= $pelajaran->HARI_PELAJARAN ?></td>
+                        <td><?= $pelajaran->JAM_PELAJARAN?></td>
                         <td>
                             <div class="d-grid gap-1">
                                 <button class="btn btn-primary btn-sm">List Pertemuan</button>

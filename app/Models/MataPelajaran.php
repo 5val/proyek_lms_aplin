@@ -14,7 +14,7 @@ class MataPelajaran extends Model
     protected $table = 'MATA_PELAJARAN';
     protected $primaryKey = 'ID_MATA_PELAJARAN';
     protected $keyType = 'string';
-   public $incrementing = false;
+    public $incrementing = false;
     public $timestamps = false;
 
     protected $casts = [
