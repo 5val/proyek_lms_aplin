@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DetailKelas;
 use App\Models\Guru;
 use App\Models\Kelas;
+use App\Models\Pelajaran;
 use App\Models\Pengumuman;
 use App\Models\Periode;
 use Illuminate\Http\Request;
@@ -171,8 +172,38 @@ class AdminController extends Controller
         }
     }
 
-    // ========================================= Laporan ============================================
+    // ========================================= Pelajaran ============================================
+    public function list_pelajaran()
+    {
+        $kelasList = Pelajaran::all();
+        return view('admin_pages.list_pelajaran', compact('kelasList'));
+    }
+    public function tambah_pelajaran()
+    {
+        return view('admin_pages.tambah_pelajaran');
+    }
+    public function postpelajaran(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|unique:pelajaran,NAMA_PELAJARAN',
+        ], [
+            'name.unique' => 'Nama Pelajaran sudah digunakan. Silakan pilih nama lain.'
+        ]);
+        Pelajaran::create([
+            'NAMA_PELAJARAN' => $request->input('name'),
+        ]);
+        return redirect()->route('list_pelajaran')->with('success', 'Nama berhasil disimpan!');
+    }
+    public function hapuspelajaran($id)
+    {
+        $pelajaran = Pelajaran::find($id);
+        $pelajaran->status == "Active" ? $pelajaran->status = "Inactive" : $pelajaran->status = "Active";
+        $pelajaran->save();
+        return redirect()->route('list_pelajaran')->with('success', 'Berhasil update!');
 
+    }
+
+    // ========================================= Laporan ============================================
     public function laporanguru()
     {
         return view('admin_pages.laporanguru');
@@ -301,7 +332,6 @@ class AdminController extends Controller
     }
 
 
-
     // ================================== Mata Pelajaran =================================================
     public function list_mata_pelajaran()
     {
@@ -338,35 +368,6 @@ class AdminController extends Controller
         ];
         return view('admin_pages.list_mata_pelajaran', compact('semesters', 'kelasList'));
     }
-    public function list_pelajaran()
-    {
-        $semesters = [
-            '2023 - 2024 GANJIL',
-            '2023 - 2024 GENAP',
-            '2024 - 2025 GANJIL',
-            '2024 - 2025 GENAP'
-        ];
-
-        $kelasList = [
-            [
-                'id_pelajaran' => 'BI',
-                'nama_pelajaran' => 'Bahasa Indonesia',
-            ],
-            [
-                'id_pelajaran' => 'PKN',
-                'nama_pelajaran' => 'PKN',
-            ],
-            [
-                'id_pelajaran' => 'MAT',
-                'nama_pelajaran' => 'MATEMATIKA',
-            ],
-        ];
-        return view('admin_pages.list_pelajaran', compact('kelasList', 'semesters'));
-    }
-    public function get_list_pelajaran()
-    {
-
-    }
 
     public function list_tambah_siswa_ke_kelas()
     {
@@ -401,10 +402,6 @@ class AdminController extends Controller
     public function tambah_mata_pelajaran()
     {
         return view('admin_pages.tambah_mata_pelajaran');
-    }
-    public function tambah_pelajaran()
-    {
-        return view('admin_pages.tambah_pelajaran');
     }
     public function tambahguru()
     {

@@ -7,12 +7,7 @@
 
 @section('admin_content')
     <div class="container mt-5">
-        <div class="top-bar d-flex justify-content-between align-items-center border-bottom">
-            <div>
-                <a href="/admin/list_pelajaran" class="btn btn-primary me-1">List</a>
-                <a href="/admin/tambah_pelajaran" class="btn me-1">Tambah</a>
-            </div>
-        </div>
+        <a href="/admin/tambah_pelajaran" class="btn btn-success me-1">Tambah</a>
         <h3>List Kelas</h3>
 
         <!-- Table -->
@@ -22,18 +17,20 @@
                     <tr>
                         <th>ID Pelajaran</th>
                         <th>Nama Pelajaran</th>
+                        <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($kelasList as $kelas): ?>
-                    <tr>
-                        <td><?= $kelas['id_pelajaran'] ?></td>
-                        <td><?= $kelas['nama_pelajaran'] ?></td>
+                    <?php foreach ($kelasList as $pelajaran): ?>
+                    <tr class="{{ $pelajaran->status == "Active" ? "" : "inactive" }}">
+                        <td><?= $pelajaran->ID_PELAJARAN ?></td>
+                        <td><?= $pelajaran->NAMA_PELAJARAN ?></td>
+                        <td>{{ $pelajaran->status == "Active" ? "Aktif" : "Inaktif" }}</td>
                         <td>
                             <div class="d-grid gap-1">
-                                <button class="btn btn-primary btn-sm">Edit</button>
-                                <button class="btn btn-danger btn-sm">Delete</button>
+                                <a href="{{ url('/admin/list_pelajaran/' . $pelajaran->ID_PELAJARAN) }}"
+                                    class="btn btn-danger btn-sm">{{ $pelajaran->status == "Active" ? "Hapus" : "Buat Aktif" }}</a>
                             </div>
                         </td>
                     </tr>

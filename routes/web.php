@@ -51,7 +51,11 @@ Route::prefix('admin')->group(function () {
       ->where('id_siswa', '.*');
    Route::get('/tambahsiswa', [AdminController::class, 'tambahsiswa']);
    Route::post('/tambahsiswa', [AdminController::class, 'postsiswa']);
-
+   // ===================================== Pelajaran =============================================
+   Route::get('/list_pelajaran', [AdminController::class, 'list_pelajaran'])->name('list_pelajaran');
+   Route::get('/list_pelajaran/{id_pelajaran}', [AdminController::class, 'hapuspelajaran'])->name('hapuspelajaran');
+   Route::get('/tambah_pelajaran', [AdminController::class, 'tambah_pelajaran']);
+   Route::post('/tambah_pelajaran', [AdminController::class, 'postpelajaran']);
 
    // ===================================== Laporan ===============================================
    Route::get('/laporanguru', [AdminController::class, 'laporanguru']);
@@ -75,14 +79,14 @@ Route::prefix('admin')->group(function () {
 
 
    Route::get('/list_mata_pelajaran', [AdminController::class, 'list_mata_pelajaran']);
-   Route::get('/list_pelajaran', [AdminController::class, 'list_pelajaran']);
+
+
    Route::get('/list_tambah_siswa_ke_kelas', [AdminController::class, 'list_tambah_siswa_ke_kelas']);
 
 
 
 
    Route::get('/tambah_mata_pelajaran', [AdminController::class, 'tambah_mata_pelajaran']);
-   Route::get('/tambah_pelajaran', [AdminController::class, 'tambah_pelajaran']);
 
 
    Route::get('/upload_file', [AdminController::class, 'upload_file']);
