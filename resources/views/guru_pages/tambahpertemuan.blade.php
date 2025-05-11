@@ -16,18 +16,20 @@
         <div class="content-box">
             <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/detail_pelajaran/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}">Back</a></button><br><br>
        <div class="material-box2">
+        <form method="POST" action="/guru/tambahpertemuan">
+         @csrf
          <h4 style="text-align: center;">Tambah Pertemuan</h4><br>
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Detail pertemuan</label>
-            <textarea class="form-control" type="text" placeholder="Default input" aria-label="default input example"></textarea>
+            <textarea class="form-control" type="text" placeholder="Default input" name="DETAIL_PERTEMUAN" aria-label="default input example"></textarea>
           </div>
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Tanggal</label>
-            <input class="form-control" type="datetime-local" placeholder="Default input" aria-label="default input example">
+            <input class="form-control" type="datetime-local" placeholder="Default input" name="TANGGAL_PERTEMUAN" aria-label="default input example">
           </div>
-          
           <div class="d-grid gap-2">
-            <button class="btn btn-success" type="button">Tambah</button>
+            <button class="btn btn-success" type="submit">Tambah</button>
           </div>
+          </form>
           </div>
 @endsection

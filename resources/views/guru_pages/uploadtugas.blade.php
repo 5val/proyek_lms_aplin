@@ -16,27 +16,31 @@
 <div class="content-box">
     <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/detail_pelajaran/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}">Back</a></button><br><br>
        <div class="material-box2">
+         <form method="POST" action="/guru/uploadtugas" enctype="multipart/form-data">
+         @csrf
          <h4 style="text-align: center;">Upload Tugas</h4><br>
+            <input type="hidden" name="ID_MATA_PELAJARAN" value="{{ $mata_pelajaran->ID_MATA_PELAJARAN }}">
          <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label">Nama Tugas</label>
-            <input class="form-control" type="text" placeholder="Default input" aria-label="default input example">
+            <input class="form-control" type="text" placeholder="Default input" name="NAMA_TUGAS" aria-label="default input example">
           </div>
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Deskripsi Tugas</label>
-            <textarea class="form-control" type="text" placeholder="Default input" aria-label="default input example"></textarea>
+            <textarea class="form-control" type="text" placeholder="Default input" name="DESKRIPSI_TUGAS" aria-label="default input example"></textarea>
           </div>
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Soal Tugas</label>
-            <input class="form-control" type="file" placeholder="Default input" aria-label="default input example">
+            <input class="form-control" type="file" name="FILE_TUGAS" placeholder="Default input" aria-label="default input example">
           </div>
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Deadline</label>
-            <input class="form-control" type="datetime-local" placeholder="Default input" aria-label="default input example">
+            <input class="form-control" type="datetime-local" placeholder="Default input" name="DEADLINE_TUGAS" aria-label="default input example">
           </div>
           
           <div class="d-grid gap-2">
-            <button class="btn btn-success" type="button">Upload</button>
+            <button class="btn btn-success" type="submit">Upload</button>
           </div>
+           </form>
         </div>
 </div>
 @endsection
