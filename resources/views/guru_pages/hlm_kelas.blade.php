@@ -6,7 +6,7 @@
           <h5 class="mt-4">Kelas yang Anda Ajar:</h5>
         <div class="grid-container">
          <?php foreach ($all_kelas as $k) : ?>
-            <a href="/guru/detail_pelajaran" class="text-decoration-none text-dark">
+            <a href="{{ url('/guru/detail_pelajaran/' . urlencode($k->ID_MATA_PELAJARAN)) }}" class="text-decoration-none text-dark">
                <div class="grid-item">
                <i class="fas fa-calculator"></i>
                <h5>{{ $k->pelajaran->NAMA_PELAJARAN }}</h5>

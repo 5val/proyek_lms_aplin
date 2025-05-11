@@ -13,7 +13,7 @@ class Materi extends Model
     protected $table = 'MATERI';
     protected $primaryKey = 'ID_MATERI';
     public $timestamps = false;
-    protected $fillable = ['ID_MATERI', 'ID_MATA_PELAJARAN', 'NAMA_MATERI', 'DESKRIPSI_MATERI', 'FILE_MATERI'];
+    protected $fillable = ['ID_MATA_PELAJARAN', 'NAMA_MATERI', 'DESKRIPSI_MATERI', 'FILE_MATERI'];
 
     /**
      * Get the mataPelajaran that owns the Materi.

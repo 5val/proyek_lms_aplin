@@ -1,6 +1,7 @@
 @extends('layouts.guru_app')
 
 @section('guru_content')
+
 <h4 class="mb-3">Home Guru</h4>
             <p><strong>Nama Guru:</strong> {{ session('userActive')->NAMA_GURU }} &nbsp; | &nbsp; <strong>NIP:</strong> {{ session('userActive')->ID_GURU }}</p>
             
@@ -16,12 +17,12 @@
             <h5 class="mt-4">Pelajaran yang Diajarkan</h5>
             <div class="scroll-box mb-4 d-flex flex-row flex-nowrap overflow-auto">
                <?php foreach ($mata_pelajaran as $m) : ?>
-                  <a href="/guru/detail_pelajaran">
+                  <a href="{{ url('/guru/detail_pelajaran/' . urlencode($m->ID_MATA_PELAJARAN)) }}">
                      <div class="card p-3 me-3 text-center">
                         <div class="card-body">
                         <i class="fas fa-calculator fa-2x mb-2"></i>
                         <h5>{{ $m->pelajaran->NAMA_PELAJARAN }}</h5>
-                        <p>Kelas: {{ $m->kelas->ID_DETAIL_KELAS }}</p>
+                        <p>Kelas: {{ $m->kelas->detailKelas->NAMA_KELAS }}</p>
                         </div>
                      </div>
                   </a>
@@ -54,6 +55,9 @@
 
             <!-- Jadwal Mengajar Guru -->
             <h5>Jadwal Mengajar (Senin - Jumat)</h5>
+            <?php $listHari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+            $listJam = ['07:00', '08:30', '10:30', '12:30'];
+            ?>
             <div class="table-responsive">
             <table class="table table-bordered timetable-table bg-white">
                 <thead class="table-secondary">
@@ -66,41 +70,18 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>Senin</td>
-                    <td>Matematika (XII IPA 1)</td>
-                    <td>-</td>
-                    <td>Fisika (XII IPA 2)</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>Selasa</td>
-                    <td>Kimia (XI IPA 1)</td>
-                    <td>Matematika (XII IPA 1)</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>Rabu</td>
-                    <td>Fisika (XII IPA 2)</td>
-                    <td>-</td>
-                    <td>Kimia (XI IPA 1)</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>Kamis</td>
-                    <td>Matematika (XII IPA 1)</td>
-                    <td>Fisika (XII IPA 2)</td>
-                    <td>-</td>
-                    <td>Kimia (XI IPA 1)</td>
-                </tr>
-                <tr>
-                    <td>Jumat</td>
-                    <td>Kimia (XI IPA 1)</td>
-                    <td>Fisika (XII IPA 2)</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
+                  <?php foreach ($listHari as $hari): ?>
+                     <tr>
+                        <td>{{ $hari }}</td>
+                        <?php foreach ($listJam as $jam): ?>
+                           <?php if(isset($jadwal[$hari][$jam])): ?>
+                              <td>{{ $jadwal[$hari][$jam]->pelajaran->NAMA_PELAJARAN }} ({{ $jadwal[$hari][$jam]->kelas->detailKelas->NAMA_KELAS }})</td>
+                           <?php else: ?>
+                              <td>-</td>
+                           <?php endif; ?>
+                        <?php endforeach; ?>
+                     </tr>
+                  <?php endforeach; ?>
                 </tbody>
             </table>
 @endsection

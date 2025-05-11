@@ -2,14 +2,14 @@
 
 @section('guru_content')
 <div class="topbar rounded mt-3">
-          <h3>Fisika</h3>
-          <p class="text-muted">XII IPA 1 2025</p>
+          <h3>{{ $mata_pelajaran->pelajaran->NAMA_PELAJARAN }}</h3>
+          <p class="text-muted">{{ $kelas->detailKelas->NAMA_KELAS }}</p>
           <div class="row">
-            <div class="col">Jumlah Murid<br><strong>26</strong></div>
-            <div class="col">Ruang Kelas<br><strong>F3/01</strong></div>
-            <div class="col">Hari<br><strong>Selasa</strong></div>
-            <div class="col">Jam<br><strong>08.00</strong></div>
-            <div class="col">Semester<br><strong>Ganjil</strong></div>
+            <div class="col">Jumlah Murid<br><strong>{{ $jumlah }}</strong></div>
+            <div class="col">Ruang Kelas<br><strong>{{ $kelas->ID_DETAIL_KELAS }}</strong></div>
+            <div class="col">Hari<br><strong>{{ $mata_pelajaran->HARI_PELAJARAN }}</strong></div>
+            <div class="col">Jam<br><strong>{{ $mata_pelajaran->JAM_PELAJARAN }}</strong></div>
+            <div class="col">Semester<br><strong>{{ $semester }}</strong></div>
           </div>
         </div>
 
@@ -28,90 +28,31 @@
          <div class="tab-content" id="myTabContent">
             <!-- Materi Tab -->
             <div class="tab-pane fade show active" id="materi-tab-content" role="tabpanel">
-                  <button class="btn btn-primary" onclick="window.location.href='/guru/uploadmateri'">Tambah Materi</button>
+                  <button class="btn btn-primary"><a href="{{ url('/guru/uploadmateri/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Materi</a></button>
                 <!-- Grid Materi -->
                 <div class="row mt-3">
-                  <div class="col-md-4 mb-4">
-                     <div class="card h-100 d-flex flex-column">
-                       <div class="card-body d-flex flex-column">
-                         <h5 class="card-title">Materi 1</h5>
-                         <p class="card-text flex-grow-1">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laboriosam, temporibus? Eius in architecto impedit mollitia nisi exercitationem, ab ex,</p>
-                         <div class="mt-auto">
-                           <a href="" class="d-block mb-2">Download Materi</a>
-                           <div class="d-flex gap-2">
-                             <button class="btn btn-sm btn-outline-primary w-50" onclick="window.location.href='/guru/editmateri'">Edit</button>
-                             <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
+                  <?php foreach ($materi as $m): ?>
+                     <div class="col-md-4 mb-4">
+                        <div class="card h-100 d-flex flex-column">
+                        <div class="card-body d-flex flex-column">
+                           <h5 class="card-title">{{ $m->NAMA_MATERI }}</h5>
+                           <p class="card-text flex-grow-1">{{ $m->DESKRIPSI_MATERI }}</p>
+                           <div class="mt-auto">
+                              <a href="{{ asset('storage/uploads/materi/' . $m->FILE_MATERI) }}" download class="d-block mb-2">Download Materi</a>
+                              <div class="d-flex gap-2">
+                              <button class="btn btn-sm btn-outline-primary w-50" onclick="window.location.href='/guru/editmateri'">Edit</button>
+                              <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
+                              </div>
                            </div>
-                         </div>
-                       </div>
+                        </div>
+                        </div>
                      </div>
-                   </div>
-                  <div class="col-md-4 mb-4">
-                     <div class="card h-100 d-flex flex-column">
-                       <div class="card-body d-flex flex-column">
-                         <h5 class="card-title">Materi 2</h5>
-                         <p class="card-text flex-grow-1">Lorem, ipsum dolor sit amet consectetur adipisicing elit.,</p>
-                         <div class="mt-auto">
-                           <a href="" class="d-block mb-2">Download Materi</a>
-                           <div class="d-flex gap-2">
-                             <button class="btn btn-sm btn-outline-primary w-50">Edit</button>
-                             <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
-                           </div>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
-                  <div class="col-md-4 mb-4">
-                     <div class="card h-100 d-flex flex-column">
-                       <div class="card-body d-flex flex-column">
-                         <h5 class="card-title">Materi 3</h5>
-                         <p class="card-text flex-grow-1">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laboriosam, temporibus? Eius in architecto impedit mollitia nisi exercitationem, ab ex,</p>
-                         <div class="mt-auto">
-                           <a href="" class="d-block mb-2">Download Materi</a>
-                           <div class="d-flex gap-2">
-                             <button class="btn btn-sm btn-outline-primary w-50">Edit</button>
-                             <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
-                           </div>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
-                  <div class="col-md-4 mb-4">
-                     <div class="card h-100 d-flex flex-column">
-                       <div class="card-body d-flex flex-column">
-                         <h5 class="card-title">Materi 4</h5>
-                         <p class="card-text flex-grow-1">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laboriosam, temporibus? Eius in architecto impedit mollitia nisi exercitationem, ab ex,</p>
-                         <div class="mt-auto">
-                           <a href="" class="d-block mb-2">Download Materi</a>
-                           <div class="d-flex gap-2">
-                             <button class="btn btn-sm btn-outline-primary w-50">Edit</button>
-                             <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
-                           </div>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
-                  <div class="col-md-4 mb-4">
-                     <div class="card h-100 d-flex flex-column">
-                       <div class="card-body d-flex flex-column">
-                         <h5 class="card-title">Materi 5</h5>
-                         <p class="card-text flex-grow-1">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laboriosam, temporibus? Eius in architecto impedit mollitia nisi exercitationem, ab ex,</p>
-                         <div class="mt-auto">
-                           <a href="" class="d-block mb-2">Download Materi</a>
-                           <div class="d-flex gap-2">
-                             <button class="btn btn-sm btn-outline-primary w-50">Edit</button>
-                             <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
-                           </div>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
-                </div>
+                  <?php endforeach; ?>
             </div>
 
             <!-- Tugas Tab -->
             <div class="tab-pane fade" id="tugas-tab-content" role="tabpanel">
-               <button class="btn btn-primary" onclick="window.location.href='/guru/uploadtugas'">Tambah Tugas</button>
+               <button class="btn btn-primary"><a href="{{ url('/guru/uploadtugas/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Tugas</a></button>
                <div class="row mt-3">
                   <div class="col-md-4 mb-4">
                      <a href="/guru/hlm_detail_tugas" class="card h-100 p-3 d-flex flex-column">
@@ -186,7 +127,7 @@
              <!-- Pertemuan Tab -->
              <div class="tab-pane fade" id="pertemuan-tab-content" role="tabpanel">
                <div>
-                  <button class="btn btn-primary mb-3" onclick="window.location.href='/guru/tambahpertemuan'">Tambah Pertemuan</button>
+                  <button class="btn btn-primary mb-3"><a href="{{ url('/guru/tambahpertemuan/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Pertemuan</a></button>
                   <div class="bg-white shadow-sm border rounded p-3 mb-3">
                     <h6 class="fw-bold">Pertemuan 1</h6>
                     <p class="mb-0 text-muted">Pengenalan tentang materi-materi yang akan diajarkan</p>
@@ -405,7 +346,7 @@
              <!-- Pengumuman Tab -->
              <div class="tab-pane fade" id="pengumuman-tab-content" role="tabpanel">
                <div>
-                 <button class="btn btn-primary mb-3" onclick="window.location.href='/guru/tambahpengumuman'">Tambah Pengumuman</button>
+                 <button class="btn btn-primary mb-3"><a href="{{ url('/guru/tambahpengumuman/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Pengumuman</a></button>
                  <div class="bg-white shadow-sm rounded p-3 mb-3">
                   <h5 class="fw-bold">Bahan UTS dan tugas tambahan</h5>
                   <p>UTS akan diadakan pada tanggal 30 April. Materi yang diujikan sampai Bab 6. Silakan kerjakan tugas tambahan yang telah diupload untuk membantu belajar. Batas pengumpulan hingga Jumat malam.</p>

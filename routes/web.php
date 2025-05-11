@@ -84,7 +84,7 @@ Route::get('/guru', function () {
 
 Route::prefix('guru')->group(function () {
    Route::get('/', [GuruController::class, 'index']);
-   Route::get('/detail_pelajaran', [GuruController::class, 'detail_pelajaran']);
+   Route::get('/detail_pelajaran/{id_mata_pelajaran}', [GuruController::class, 'detail_pelajaran'])->where('id_mata_pelajaran', '.*');
    Route::get('/editmateri', [GuruController::class, 'editmateri']);
    Route::get('/editpengumuman', [GuruController::class, 'editpengumuman']);
    Route::get('/edittugas', [GuruController::class, 'edittugas']);
@@ -96,10 +96,13 @@ Route::prefix('guru')->group(function () {
    Route::get('/hlm_kelas', [GuruController::class, 'hlm_kelas']);
    Route::get('/hlm_laporan_tugas', [GuruController::class, 'hlm_laporan_tugas']);
    Route::get('/hlm_laporan_ujian', [GuruController::class, 'hlm_laporan_ujian']);
-   Route::get('/tambahpengumuman', [GuruController::class, 'tambahpengumuman']);
-   Route::get('/tambahpertemuan', [GuruController::class, 'tambahpertemuan']);
-   Route::get('/uploadmateri', [GuruController::class, 'uploadmateri']);
-   Route::get('/uploadtugas', [GuruController::class, 'uploadtugas']);
+   Route::get('/tambahpengumuman/{id_mata_pelajaran}', [GuruController::class, 'tambahpengumuman'])->where('id_mata_pelajaran', '.*');
+   Route::get('/tambahpertemuan/{id_mata_pelajaran}', [GuruController::class, 'tambahpertemuan'])->where('id_mata_pelajaran', '.*');
+   Route::get('/uploadmateri/{id_mata_pelajaran}', [GuruController::class, 'uploadmateri'])
+   ->where('id_mata_pelajaran', '.*');
+   Route::post('/uploadmateri', [GuruController::class, 'postmateri']);
+   Route::get('/uploadtugas/{id_mata_pelajaran}', [GuruController::class, 'uploadtugas'])
+      ->where('id_mata_pelajaran', '.*');
    Route::get('/walikelas', [GuruController::class, 'walikelas']);
    // Add more admin routes here...
 });
