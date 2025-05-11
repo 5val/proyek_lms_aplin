@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\Materi;
 use App\Models\Pengumuman;
+use App\Models\Pertemuan;
 use App\Models\Tugas;
 use Illuminate\Http\Request;
 
@@ -42,17 +43,55 @@ class GuruController extends Controller
       $materi = Materi::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
       return view('guru_pages.detail_pelajaran', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'materi' => $materi]);
     }
-    public function editmateri()
+    public function editmateri($id_mata_pelajaran)
     {
-        return view('guru_pages.editmateri');
+       $mataPelajaran = MataPelajaran::with('pelajaran')->where('ID_MATA_PELAJARAN', $id_mata_pelajaran)->first();
+        $jumlah = EnrollmentKelas::where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->count();
+        $kelas = Kelas::with('detailKelas')->where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->first();
+        $semester = substr($mataPelajaran->ID_KELAS, -1) == '1'? 'Ganjil' : 'Genap';
+        $materi = Materi::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
+        return view('guru_pages.editmateri', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'materi' => $materi]);
     }
-    public function editpengumuman()
-    {
-        return view('guru_pages.editpengumuman');
+     public function updatemateri(Request $request, $id_materi){
+        $materi = Materi::find($id_materi);
+        $materi->Nama_materi = $request->input('NAMA_MATERI');
+        $materi->Deskripsi_materi = $request->input('DESKRIPSI_MATERI');
+        $materi->File_materi = $request->file('FILE_MATERI');
+        $materi->save();
+        return redirect(url('/guru/detail_pelajaran/' . urlencode($request->ID_MATA_PELAJARAN)));
     }
-    public function edittugas()
+    public function editpengumuman($id_mata_pelajaran)
     {
-        return view('guru_pages.edittugas');
+        $mataPelajaran = MataPelajaran::with('pelajaran')->where('ID_MATA_PELAJARAN', $id_mata_pelajaran)->first();
+        $jumlah = EnrollmentKelas::where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->count();
+        $kelas = Kelas::with('detailKelas')->where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->first();
+        $semester = substr($mataPelajaran->ID_KELAS, -1) == '1'? 'Ganjil' : 'Genap';
+        $pengumuman = Pengumuman::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
+        return view('guru_pages.editpengumuman', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'pengumuman' => $pengumuman]);
+    }
+    public function updatepengumuman(Request $request, $id){
+        $pengumuman = Pengumuman::find($id);
+        $pengumuman->Judul = $request->input('Judul');
+        $pengumuman->Deskripsi = $request->input('Deskripsi');
+        $pengumuman->save();
+        return redirect(url('/guru/detail_pelajaran/' . urlencode($request->ID_MATA_PELAJARAN)));
+    }
+    public function edittugas($id_mata_pelajaran)
+    {
+       $mataPelajaran = MataPelajaran::with('pelajaran')->where('ID_MATA_PELAJARAN', $id_mata_pelajaran)->first();
+        $jumlah = EnrollmentKelas::where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->count();
+        $kelas = Kelas::with('detailKelas')->where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->first();
+        $semester = substr($mataPelajaran->ID_KELAS, -1) == '1'? 'Ganjil' : 'Genap';
+        $tugas = Tugas::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
+        return view('guru_pages.edittugas',["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'tugas' => $tugas]);
+    }
+    public function updatetugas(Request $request, $id_tugas){
+        $tugas = Tugas::find($id_tugas);
+        $tugas->Nama_tugas = $request->input('NAMA_TUGAS');
+        $tugas->Deskripsi_tugas = $request->input('DESKRIPSI_TUGAS');
+        $tugas->File_tugas = $request->file('FILE_TUGAS');
+        $tugas->save();
+        return redirect(url('/guru/detail_pelajaran/' . urlencode($request->ID_MATA_PELAJARAN)));
     }
     public function hlm_about()
     {
@@ -94,8 +133,8 @@ class GuruController extends Controller
       $jumlah = EnrollmentKelas::where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->count();
       $kelas = Kelas::with('detailKelas')->where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->first();
       $semester = substr($mataPelajaran->ID_KELAS, -1) == '1'? 'Ganjil' : 'Genap';
-      $materi = Materi::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
-      return view('guru_pages.tambahpengumuman', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'materi' => $materi]);
+      $pengumuman = Pengumuman::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
+      return view('guru_pages.tambahpengumuman', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'pengumuman' => $pengumuman]);
     }
 
      public function postpengumuman(Request $request)
@@ -113,7 +152,7 @@ class GuruController extends Controller
             'JUDUL_PENGUMUMAN' => 'required|max:255',
             'DETAIL_PENGUMUMAN' => 'required',
         ]);
-        $pengumuman = Tugas::create($validatedData);
+        $pengumuman = Pengumuman::create($validatedData);
         return redirect(url('/guru/detail_pelajaran/' . urlencode($request->ID_MATA_PELAJARAN)));
     }
 
@@ -123,8 +162,8 @@ class GuruController extends Controller
       $jumlah = EnrollmentKelas::where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->count();
       $kelas = Kelas::with('detailKelas')->where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->first();
       $semester = substr($mataPelajaran->ID_KELAS, -1) == '1'? 'Ganjil' : 'Genap';
-      $materi = Materi::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
-      return view('guru_pages.tambahpertemuan', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'materi' => $materi]);
+      $pertemuan = Pertemuan::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
+      return view('guru_pages.tambahpertemuan', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'pertemuan' => $pertemuan]);
     }
     
      public function postpertemuan(Request $request)
@@ -142,7 +181,7 @@ class GuruController extends Controller
             'DETAIL_PERTEMUAN' => 'required|max:255',
             'TANGGAL_PERTEMUAN' => 'required',
         ]);
-        $pertemuan = Tugas::create($validatedData);
+        $pertemuan = Pertemuan::create($validatedData);
         return redirect(url('/guru/detail_pelajaran/' . urlencode($request->ID_MATA_PELAJARAN)));
     }
 

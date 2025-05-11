@@ -97,9 +97,12 @@ Route::get('/guru', function () {
 Route::prefix('guru')->group(function () {
    Route::get('/', [GuruController::class, 'index']);
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [GuruController::class, 'detail_pelajaran'])->where('id_mata_pelajaran', '.*');
-   Route::get('/editmateri', [GuruController::class, 'editmateri']);
-   Route::get('/editpengumuman', [GuruController::class, 'editpengumuman']);
-   Route::get('/edittugas', [GuruController::class, 'edittugas']);
+   Route::get('/editmateri/{id_materi}', [GuruController::class, 'editmateri'])->where('id_materi', '.*');
+   Route::post('/editmateri', [GuruController::class, 'updatemateri']);
+   Route::get('/editpengumuman/{id}', [GuruController::class, 'editpengumuman'])->where('id', '.*');
+   Route::get('/editpengumuman', [GuruController::class, 'updatepengumuman']);
+   Route::get('/edittugas/{id_tugas}', [GuruController::class, 'edittugas'])->where('id_tugas', '.*');
+   Route::get('/edittugas', [GuruController::class, 'updatetugas']);
    Route::get('/hlm_about', [GuruController::class, 'hlm_about']);
    Route::get('/hlm_detail_pengumuman', [GuruController::class, 'hlm_detail_pengumuman']);
    Route::get('/hlm_detail_tugas', [GuruController::class, 'hlm_detail_tugas']);
