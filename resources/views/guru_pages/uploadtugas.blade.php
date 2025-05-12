@@ -28,10 +28,10 @@
             <label for="exampleFormControlTextarea1" class="form-label">Deskripsi Tugas</label>
             <textarea class="form-control" type="text" placeholder="Default input" name="DESKRIPSI_TUGAS" aria-label="default input example"></textarea>
           </div>
-          <div class="mb-3">
+          <!-- <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Soal Tugas</label>
             <input class="form-control" type="file" name="FILE_TUGAS" placeholder="Default input" aria-label="default input example">
-          </div>
+          </div> -->
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Deadline</label>
             <input class="form-control" type="datetime-local" placeholder="Default input" name="DEADLINE_TUGAS" aria-label="default input example">

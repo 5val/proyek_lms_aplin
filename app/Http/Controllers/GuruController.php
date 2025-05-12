@@ -11,6 +11,7 @@ use App\Models\Pengumuman;
 use App\Models\Pertemuan;
 use App\Models\Tugas;
 use Illuminate\Http\Request;
+use App\Models\Guru;
 
 class GuruController extends Controller
 {
@@ -41,7 +42,8 @@ class GuruController extends Controller
       $kelas = Kelas::with('detailKelas')->where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->first();
       $semester = substr($mataPelajaran->ID_KELAS, -1) == '1'? 'Ganjil' : 'Genap';
       $materi = Materi::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
-      return view('guru_pages.detail_pelajaran', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'materi' => $materi]);
+      $tugas = Tugas::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
+      return view('guru_pages.detail_pelajaran', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'materi' => $materi, 'tugas' => $tugas]);
     }
     public function editmateri($id_mata_pelajaran)
     {
@@ -95,20 +97,75 @@ class GuruController extends Controller
     }
     public function hlm_about()
     {
-        return view('guru_pages.hlm_about');
+       $guru = Guru::find(session('userActive')->ID_GURU);
+
+        if (!$guru) {
+            return response()->json(['message' => 'Guru tidak ditemukan.'], 404);
+        }
+        $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->first();
+        $waliKelas = DetailKelas::find($kelas->ID_DETAIL_KELAS);  
+        return view('guru_pages.hlm_about', [
+          'guru' => $guru,
+          'waliKelas' => $waliKelas
+        ]);
     }
     public function hlm_detail_pengumuman()
     {
         return view('guru_pages.hlm_detail_pengumuman');
     }
-    public function hlm_detail_tugas()
+    public function hlm_detail_tugas($id_tugas)
     {
-        return view('guru_pages.hlm_detail_pengumuman');
+        $id_tugas = str_replace('+', ' ', $id_tugas);
+        $tugas = Tugas::find($id_tugas);
+        return view('guru_pages.hlm_detail_tugas', [
+          'tugas' => $tugas
+        ]);
     }
 
     public function hlm_edit_about()
     {
-        return view('guru_pages.hlm_edit_about');
+       $guru = Guru::find(session('userActive')->ID_GURU);
+
+        if (!$guru) {
+            return response()->json(['message' => 'Guru tidak ditemukan.'], 404);
+        }
+
+        return view('guru_pages.hlm_edit_about', [
+          'guru' => $guru
+        ]);
+    }
+    public function update_biodata(Request $request)
+    {
+        // Ambil data siswa berdasarkan session
+        $guru = Guru::find(session('userActive')->ID_GURU);
+
+        if (!$guru) {
+            return response()->json(['message' => 'Guru tidak ditemukan.'], 404);
+        }
+
+        // Validasi data yang diterima
+        $validatedData = $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'alamat' => 'required|string|max:255',
+            'telepon' => 'required|string|max:15',
+            'password' => 'nullable|string|min:5', // Jika password diubah
+        ]);
+
+        // Update data siswa
+        $guru->NAMA_GURU = $validatedData['nama'];
+        $guru->EMAIL_GURU = $validatedData['email'];
+        $guru->ALAMAT_GURU = $validatedData['alamat'];
+        $guru->NO_TELPON_GURU = $validatedData['telepon'];
+
+        // Update password jika ada perubahan
+        if ($request->has('password') && !empty($validatedData['password'])) {
+            $guru->PASSWORD_GURU = $validatedData['password'];  // Encrypt password
+        }
+
+        $guru->save();
+
+        return redirect('/guru/hlm_about')->with('success', 'Biodata berhasil diperbarui');
     }
     public function hlm_jadwal()
     {
@@ -237,16 +294,8 @@ class GuruController extends Controller
             'ID_MATA_PELAJARAN' => 'required|max:255',
             'NAMA_TUGAS' => 'required|max:255',
             'DESKRIPSI_TUGAS' => 'required',
-            'FILE_TUGAS' => 'required',
             'DEADLINE_TUGAS' => 'required',
         ]);
-
-        if ($request->hasFile('FILE_TUGAS')) {
-            $file = $request->file('FILE_TUGAS');
-            $filename = $file->getClientOriginalName();
-            $filepath = $file->storeAs('uploads/tugas', $filename, 'public');
-            $validatedData['FILE_TUGAS'] = $filename;
-         }
 
         $tugas = Tugas::create($validatedData);
       

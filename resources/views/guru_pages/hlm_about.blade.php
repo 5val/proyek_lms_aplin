@@ -7,8 +7,8 @@
             <img src="../asset/default_img.png" alt="Avatar" class="rounded-circle" width="100" height="100">
         </div>
         <div class="col">
-            <h4 class="mb-1">DARREN SUSANTO</h4>
-            <p class="mb-0">G/001</p>
+            <h4 class="mb-1">{{ $guru->NAMA_GURU }}</h4>
+            <p class="mb-0">{{ $guru->ID_GURU }}</p>
             <p class="mb-0">Wali Kelas: XII IPA 1</p>
         </div>
         <div class="col-auto">
@@ -21,9 +21,9 @@
     <div class="col-md-6">
         <h5 class="mb-3">Biodata</h5>
         <table class="table table-borderless">
-            <tr><th>Email</th><td>darsus@gmail.com</td></tr>
-            <tr><th>Alamat</th><td>Jl. AAA No 1</td></tr>
-            <tr><th>No. Telepon</th><td>08123456789</td></tr>
+            <tr><th>Email</th><td>{{ $guru->EMAIL_GURU }}</td></tr>
+            <tr><th>Alamat</th><td>{{ $guru->ALAMAT_GURU }}</td></tr>
+            <tr><th>No. Telepon</th><td>{{ $guru->NO_TELPON_GURU }}</td></tr>
         </table>
     </div>
     </div>

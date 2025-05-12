@@ -3,6 +3,9 @@
 @section('guru_content')
 <div class="p-3">
           <h4 class="mb-3">Jadwal Mengajar</h4>
+           <?php $listHari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+            $listJam = ['07:00', '08:30', '10:30', '12:30'];
+            ?>
           <div class="timetable table-responsive">
             <table class="table table-bordered">
               <thead>
@@ -15,41 +18,18 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th>Senin</th>
-                  <td>Matematika (X IPA 1)</td>
-                  <td>Matematika (X IPA 2)</td>
-                  <td>-</td>
-                  <td>Fisika (XI IPA 1)</td>
-                </tr>
-                <tr>
-                  <th>Selasa</th>
-                  <td>Fisika (XI IPA 2)</td>
-                  <td>Matematika (XII IPA 1)</td>
-                  <td>-</td>
-                  <td>Waktu Luang</td>
-                </tr>
-                <tr>
-                  <th>Rabu</th>
-                  <td>Matematika (X IPA 1)</td>
-                  <td>Fisika (XII IPA 2)</td>
-                  <td>Fisika (X IPA 2)</td>
-                  <td>-</td>
-                </tr>
-                <tr>
-                  <th>Kamis</th>
-                  <td>Matematika (XI IPA 1)</td>
-                  <td>Matematika (XI IPA 2)</td>
-                  <td>-</td>
-                  <td>Fisika (X IPA 1)</td>
-                </tr>
-                <tr>
-                  <th>Jumat</th>
-                  <td>Pembinaan Guru</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                </tr>
+               <?php foreach ($listHari as $hari): ?>
+                     <tr>
+                        <td>{{ $hari }}</td>
+                        <?php foreach ($listJam as $jam): ?>
+                           <?php if(isset($jadwal[$hari][$jam])): ?>
+                              <td>{{ $jadwal[$hari][$jam]->pelajaran->NAMA_PELAJARAN }} ({{ $jadwal[$hari][$jam]->kelas->detailKelas->NAMA_KELAS }})</td>
+                           <?php else: ?>
+                              <td>-</td>
+                           <?php endif; ?>
+                        <?php endforeach; ?>
+                     </tr>
+                  <?php endforeach; ?>
               </tbody>
             </table>
           </div>

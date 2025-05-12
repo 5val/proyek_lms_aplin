@@ -101,8 +101,9 @@ Route::prefix('guru')->group(function () {
    Route::get('/edittugas', [GuruController::class, 'updatetugas']);
    Route::get('/hlm_about', [GuruController::class, 'hlm_about']);
    Route::get('/hlm_detail_pengumuman', [GuruController::class, 'hlm_detail_pengumuman']);
-   Route::get('/hlm_detail_tugas', [GuruController::class, 'hlm_detail_tugas']);
+   Route::get('/hlm_detail_tugas/{id_tugas}', [GuruController::class, 'hlm_detail_tugas'])->where('id_tugas', expression: '.*');
    Route::get('/hlm_edit_about', [GuruController::class, 'hlm_edit_about']);
+   Route::put('/update_biodata', [GuruController::class, 'update_biodata'])->name('guru.update_biodata');
    Route::get('/hlm_jadwal', [GuruController::class, 'hlm_jadwal']);
    Route::get('/hlm_kelas', [GuruController::class, 'hlm_kelas']);
    Route::get('/hlm_laporan_tugas', [GuruController::class, 'hlm_laporan_tugas']);

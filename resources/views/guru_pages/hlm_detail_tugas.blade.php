@@ -7,10 +7,16 @@
 <h4 class="mb-3">Detail Tugas</h4>
 <div class="card mb-4">
     <div class="card-body">
-        <h5 class="card-title">Tugas: Soal Aljabar</h5>
-        <p class="card-text"><strong>Deskripsi:</strong> Selesaikan soal-soal aljabar di buku halaman 45-50.</p>
-        <p class="card-text"><strong>Deadline:</strong> 25 April 2025</p>
-        <p class="card-text"><strong>Status:</strong> <span class="status-belum">Belum Mengumpulkan</span></p>
+        <h5 class="card-title">Tugas: {{ $tugas->NAMA_TUGAS }}</h5>
+        <p class="card-text"><strong>Deskripsi:</strong>{{ $tugas->DESKRIPSI_TUGAS }}</p>
+        <p class="card-text"><strong>Deadline:</strong>{{ $tugas->DEADLINE_TUGAS }}</p>
+        <p class="card-text"><strong>Status:</strong>
+        @if ($submission)
+            <span class="status-selesai">Sudah Dikumpulkan</span>
+        @else
+            <span class="status-belum">Belum Mengumpulkan</span>
+        @endif
+        </p>
     </div>
 </div>
     <div class="btn-group">

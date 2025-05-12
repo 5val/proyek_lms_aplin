@@ -17,11 +17,11 @@
         <ul class="nav nav-tabs mt-4" id="myTab" role="tablist">
           <li class="nav-item" role="presentation"><button class="nav-link active" id="materi-tab" data-bs-toggle="tab" data-bs-target="#materi-tab-content" type="button">Materi</button></li>
           <li class="nav-item" role="presentation"><button class="nav-link" id="tugas-tab" data-bs-toggle="tab" data-bs-target="#tugas-tab-content" type="button">Tugas</button></li>
-          <li class="nav-item" role="presentation"><button class="nav-link" id="tugas-tab" data-bs-toggle="tab" data-bs-target="#siswa-tab-content" type="button">Siswa</button></li>
-          <li class="nav-item" role="presentation"><button class="nav-link" id="tugas-tab" data-bs-toggle="tab" data-bs-target="#pertemuan-tab-content" type="button">Pertemuan</button></li>
-          <li class="nav-item" role="presentation"><button class="nav-link" id="tugas-tab" data-bs-toggle="tab" data-bs-target="#absensi-tab-content" type="button">Absensi</button></li>
-          <li class="nav-item" role="presentation"><button class="nav-link" id="tugas-tab" data-bs-toggle="tab" data-bs-target="#laporan-tab-content" type="button">Laporan</button></li>
-          <li class="nav-item" role="presentation"><button class="nav-link" id="tugas-tab" data-bs-toggle="tab" data-bs-target="#pengumuman-tab-content" type="button">Pengumuman</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="siswa-tab" data-bs-toggle="tab" data-bs-target="#siswa-tab-content" type="button">Siswa</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="pertemuan-tab" data-bs-toggle="tab" data-bs-target="#pertemuan-tab-content" type="button">Pertemuan</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="absensi-tab" data-bs-toggle="tab" data-bs-target="#absensi-tab-content" type="button">Absensi</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="laporan-tab" data-bs-toggle="tab" data-bs-target="#laporan-tab-content" type="button">Laporan</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="pengumuman-tab" data-bs-toggle="tab" data-bs-target="#pengumuman-tab-content" type="button">Pengumuman</button></li>
         </ul>
 
         <!-- Tabs Content -->
@@ -54,34 +54,23 @@
             <div class="tab-pane fade" id="tugas-tab-content" role="tabpanel">
                <button class="btn btn-primary"><a href="{{ url('/guru/uploadtugas/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Tugas</a></button>
                <div class="row mt-3">
-                  <div class="col-md-4 mb-4">
-                     <a href="/guru/hlm_detail_tugas" class="card h-100 p-3 d-flex flex-column">
-                       <h5 class="card-title">Tugas 1</h5>
-                       <p class="card-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-                       <p class="card-deadline mt-auto text-end">Deadline: 21 April 2025</p>
-                     </a>
-                   </div>
-                  <div class="col-md-4 mb-4">
-                     <a href="#" class="card h-100 p-3 d-flex flex-column">
-                       <h5 class="card-title">Tugas 2</h5>
-                       <p class="card-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Amet quam quidem nulla explicabo mollitia nam qui, quas, quod iure consectetur quia et optio assumenda aperiam inventore aspernatur saepe cupiditate dignissimos.</p>
-                       <p class="card-deadline mt-auto text-end">Deadline: 21 April 2025</p>
-                     </a>
-                   </div>
-                  <div class="col-md-4 mb-4">
-                     <a href="#" class="card h-100 p-3 d-flex flex-column">
-                       <h5 class="card-title">Tugas 3</h5>
-                       <p class="card-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-                       <p class="card-deadline mt-auto text-end">Deadline: 21 April 2025</p>
-                     </a>
-                   </div>
-                  <div class="col-md-4 mb-4">
-                     <a href="#" class="card h-100 p-3 d-flex flex-column">
-                       <h5 class="card-title">Tugas 4</h5>
-                       <p class="card-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-                       <p class="card-deadline mt-auto text-end">Deadline: 21 April 2025</p>
-                     </a>
-                   </div>
+                  <?php foreach ($tugas as $t): ?>
+                     <div class="col-md-4 mb-4">
+                        <div class="card h-100 d-flex flex-column">
+                        <div class="card-body d-flex flex-column">
+                           <h5 class="card-title">{{ $t->NAMA_TUGAS }}</h5>
+                           <p class="card-text flex-grow-1">{{ $t->DESKRIPSI_TUGAS }}</p>
+                           <div class="mt-auto">
+                              <p class="card-text flex-grow-1">{{ $t->DEADLINE_TUGAS }}</p>
+                              <div class="d-flex gap-2">
+                              <button class="btn btn-sm btn-outline-primary w-50" onclick="window.location.href='/guru/editmateri'">Edit</button>
+                              <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
+                              </div>
+                           </div>
+                        </div>
+                        </div>
+                     </div>
+                  <?php endforeach; ?>
                </div>
              </div>
 
