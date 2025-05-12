@@ -2,13 +2,38 @@
 
 @section('siswa_content')
 <h4 class="mb-3">Home Siswa</h4>
-          <p><strong>Kelas:</strong> XII IPA 1 &nbsp; | &nbsp; <strong>Semester:</strong> Genap</p>
+          <p><strong>Kelas:</strong> {{ $kelas->NAMA_KELAS }} &nbsp; | &nbsp; <strong>Periode:</strong> {{ $kelas->PERIODE }}</p>
 
           <!-- Pelajaran Siswa -->
           <h5 class="mt-4">Pelajaran</h5>
           <button class="toggle-btn" id="toggleBtn">Tampilkan Semua Pelajaran</button>
+          
           <div class="scroll-box mb-4">
-              <a href="/siswa/detail_pelajaran">
+              <?php $counter = 0; // Inisialisasi counter untuk menghitung jumlah mata pelajaran ?>
+              <?php foreach($matapelajaran as $m): ?>
+                  <?php if($counter < 3): // Menampilkan 3 pertama ?>
+                      <a href="{{ url('/siswa/detail_pelajaran/' . urlencode($m->ID_MATA_PELAJARAN)) }}" class="text-decoration-none text-dark">
+                          <div class="card p-3">
+                              <div class="card-body">
+                                  <i class="fas fa-book-open"></i>
+                                  <h5><?= $m->NAMA_PELAJARAN ?></h5> <!-- Ganti dengan nama pelajaran dari database -->
+                              </div>
+                          </div>
+                      </a>
+                  <?php else: // Menyembunyikan mata pelajaran selanjutnya ?>
+                    <a href="{{ url('/siswa/detail_pelajaran/' . urlencode($m->ID_MATA_PELAJARAN)) }}" class="text-decoration-none text-dark">
+                      <div class="card p-3 hidden-card" style="display:none;">
+                          <div class="card-body">
+                              <i class="fas fa-book-open"></i>
+                              <h5><?= $m->NAMA_PELAJARAN ?></h5> <!-- Ganti dengan nama pelajaran dari database -->
+                          </div>
+                      </div>
+                  </a>
+                  <?php endif; ?>
+                  <?php $counter++; // Increment counter ?>
+              <?php endforeach; ?>
+
+              <!-- <a href="/siswa/detail_pelajaran">
                   <div class="card p-3">
                       <div class="card-body">
                           <i class="fas fa-calculator"></i>
@@ -28,7 +53,7 @@
                       <h5>Bahasa Inggris</h5>
                   </div>
               </div>
-              <!-- Elemen tersembunyi di awal -->
+
               <div class="card p-3 hidden-card" style="display:none;">
                   <div class="card-body">
                       <i class="fas fa-flask"></i>
@@ -52,41 +77,35 @@
                       <i class="fas fa-history"></i>
                       <h5>Sejarah</h5>
                   </div>
-              </div>
+              </div> -->
+
           </div>
 
           <!-- Tugas yang Sedang Berlangsung -->
           <h5 class="mt-4">Tugas yang Sedang Berlangsung</h5>
           <div class="scroll-box mb-4">
-          <a href="/siswa/hlm_detail_tugas">
-            <div class="card p-3">
-              <strong>Matematika</strong>
-              <p>Kerjakan soal fungsi kuadrat</p>
-              <small>Tenggat: 25 Apr 2025</small>
-            </div>
-            </a>
-            <div class="card p-3">
-              <strong>Bahasa Indonesia</strong>
-              <p>Tulis teks eksplanasi</p>
-              <small>Tenggat: 26 Apr 2025</small>
-            </div>
-            <div class="card p-3">
-              <strong>Biologi</strong>
-              <p>Infografis organel sel</p>
-              <small>Tenggat: 28 Apr 2025</small>
-            </div>
+
+          @foreach($tugas as $t)
+              <a href="{{ url('/siswa/hlm_detail_tugas/' . urlencode($t->ID_TUGAS)) }}" class="text-decoration-none text-dark">
+              <!-- <a href="/siswa/hlm_detail_tugas/{{ $t->ID_TUGAS }}"> -->
+                  <div class="card p-3">
+                      <strong>{{ $t->NAMA_PELAJARAN }}</strong>
+                      <p>{{ $t->NAMA_TUGAS }}</p>
+                      <small>Tenggat: {{ \Carbon\Carbon::parse($t->DEADLINE_TUGAS)->format('d M Y') }}</small>
+                  </div>
+              </a>
+          @endforeach
+
           </div>
 
           <!-- Pengumuman -->
           <h5>Pengumuman</h5>
+          <?php foreach ($pengumuman as $p): ?>
           <div class="bg-white shadow-sm rounded p-3 mb-3">
-            <h6 class="fw-bold">Pengumpulan Tugas Bahasa Indonesia</h6>
-            <p>Dikumpulkan paling lambat tanggal 25 April 2025.</p>
+            <h6 class="fw-bold">{{ $p->Judul }}</h6>
+            <p>{{ $p->Deskripsi }}</p>
           </div>
-          <div class="bg-white shadow-sm rounded p-3 mb-4">
-            <h6 class="fw-bold">Ujian Akhir Semester</h6>
-            <p>Akan dilaksanakan mulai 10 Juni 2025.</p>
-          </div>
+          <?php endforeach; ?>
 
           <!-- Timetable -->
           <h5>Jadwal Pelajaran (Senin - Jumat)</h5>
@@ -97,12 +116,27 @@
                   <th>Hari</th>
                   <th>Jam ke-1 (07:00 - 08:30)</th>
                   <th>Jam ke-2 (08:30 - 10:00)</th>
-                  <th>Jam ke-3 (10:30 - 12:00)</th>
-                  <th>Jam ke-4 (12:30 - 14:00)</th>
+                  <th>Jam ke-3 (10:00 - 11:30)</th>
+                  <th>Jam ke-4 (12:00 - 13:30)</th>
+                  <th>Jam ke-4 (13:30 - 15:00)</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $hari)
+                    <tr>
+                        <td>{{ $hari }}</td>
+                        @foreach (['07:00-08:30', '08:30-10:00', '10:00-11:30', '12:00-13:30', '13:30-15:00'] as $jam)
+                            <td>
+                                @if(isset($jadwal[$hari][$jam]))
+                                    {{ $jadwal[$hari][$jam] }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+                <!-- <tr>
                   <td>Senin</td>
                   <td>Matematika</td>
                   <td>Biologi</td>
@@ -136,7 +170,7 @@
                   <td>Fisika</td>
                   <td>Kimia</td>
                   <td>Bahasa Indonesia</td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
             

@@ -126,11 +126,13 @@ Route::get('/siswa', function () {
 
 Route::prefix('siswa')->group(function () {
    Route::get('/', [SiswaController::class, 'index']);
-   Route::get('/detail_pelajaran', [SiswaController::class, 'detail_pelajaran']);
+   Route::get('/detail_pelajaran/{id_mata_pelajaran}', [SiswaController::class, 'detail_pelajaran'])
+    ->where('id_mata_pelajaran', expression: '.*');
    Route::get('/hlm_about', [SiswaController::class, 'hlm_about']);
-   Route::get('/hlm_detail_tugas', [SiswaController::class, 'hlm_detail_tugas']);
+   Route::get('/hlm_detail_tugas/{id_tugas}', [SiswaController::class, 'hlm_detail_tugas'])->where('id_tugas', expression: '.*');
    Route::get('/hlm_edit_about', [SiswaController::class, 'hlm_edit_about']);
-   Route::get('/hlm_about', [SiswaController::class, 'hlm_about']);
+   Route::put('/siswa/update_biodata', [SiswaController::class, 'update_biodata'])->name('siswa.update_biodata');
+   Route::get('/hlm_about', [SiswaController::class, 'hlm_about'])->name('siswa.hlm_about');;
    Route::get('/hlm_jadwal', [SiswaController::class, 'hlm_jadwal']);
    Route::get('/hlm_kelas', [SiswaController::class, 'hlm_kelas']);
    Route::get('/hlm_laporan_tugas', [SiswaController::class, 'hlm_laporan_tugas']);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guru;
+use App\Models\Siswa;
 use Illuminate\Http\Request;
 
 class MainController extends Controller
@@ -26,12 +27,19 @@ class MainController extends Controller
          return redirect('/guru');
         }
 
+        // Login siswa
+        $siswa = Siswa::where([
+            ['email_siswa', '=', $email],
+            ['password_siswa', '=', $password]
+        ])->first();
+
+        if ($siswa != null) {
+            session(['userActive' => $siswa]);
+            return redirect('/siswa');
+        }
+
         if ($email == "admin" && $password == "admin") {
             return redirect('/admin');
-        } else if ($email == "guru" && $password == "guru") {
-            return redirect('/guru');
-        } else if ($email == "siswa" && $password == "siswa") {
-            return redirect('/siswa');
         }
         return view('login')->with('error', 'Username atau password salah');
     }

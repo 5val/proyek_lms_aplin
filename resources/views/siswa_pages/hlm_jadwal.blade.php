@@ -8,14 +8,29 @@
               <thead>
                 <tr>
                   <th>Hari</th>
-                  <th>07.00 - 08.30</th>
-                  <th>08.30 - 10.00</th>
-                  <th>10.30 - 12.00</th>
-                  <th>13.00 - 14.30</th>
+                  <th>Jam ke-1 (07:00 - 08:30)</th>
+                  <th>Jam ke-2 (08:30 - 10:00)</th>
+                  <th>Jam ke-3 (10:00 - 11:30)</th>
+                  <th>Jam ke-4 (12:00 - 13:30)</th>
+                  <th>Jam ke-4 (13:30 - 15:00)</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $hari)
+                    <tr>
+                        <th>{{ $hari }}</th>
+                        @foreach (['07:00-08:30', '08:30-10:00', '10:00-11:30', '12:00-13:30', '13:30-15:00'] as $jam)
+                            <td>
+                                @if(isset($jadwal[$hari][$jam]))
+                                    {{ $jadwal[$hari][$jam] }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+                <!-- <tr>
                   <th>Senin</th>
                   <td>Matematika</td>
                   <td>Bahasa Indonesia</td>
@@ -49,7 +64,7 @@
                   <td>PKN</td>
                   <td>Prakarya</td>
                   <td>-</td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </div>

@@ -3,11 +3,20 @@
 @section('siswa_content')
 <div class="p-3">
           <h4 class="mb-3">Kelas Siswa</h4>
-          <p><strong>Kelas:</strong> XII IPA 1 &nbsp; | &nbsp; <strong>Semester:</strong> Genap</p>
+          <p><strong>Kelas:</strong> {{ $kelas->NAMA_KELAS }} &nbsp; | &nbsp; <strong>Periode:</strong> {{ $kelas->PERIODE }}</p>
 
           <h5 class="mt-4">Kelas Pelajaran</h5>
         <div class="grid-container">
-        <a href="/siswa/detail_pelajaran" class="text-decoration-none text-dark">
+            @foreach($matapelajaran as $mp)
+            <a href="{{ url('/siswa/detail_pelajaran/' . urlencode($mp->ID_MATA_PELAJARAN)) }}" class="text-decoration-none text-dark">
+                <div class="grid-item">
+                    <i class="fas fa-book"></i>
+                    <h5>{{ $mp->NAMA_PELAJARAN }}</h5>
+                    <p>Guru: {{ $mp->NAMA_GURU }}</p>
+                </div>
+            </a>
+            @endforeach
+        <!-- <a href="/siswa/detail_pelajaran" class="text-decoration-none text-dark">
             <div class="grid-item">
             <i class="fas fa-calculator"></i>
             <h5>Matematika</h5>
@@ -55,7 +64,7 @@
             <h5>Sejarah</h5>
             <p>Guru: Ibu Lestari</p>
             </div>
-        </a>
+        </a> -->
         </div>
 
         </div>

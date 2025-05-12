@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class EnrollmentKelas extends Model
 {
@@ -34,5 +35,20 @@ class EnrollmentKelas extends Model
     public function kelas(): BelongsTo
     {
         return $this->belongsTo(Kelas::class, 'ID_KELAS', 'ID_KELAS');
+    }
+
+    /**
+     * Get the mata pelajaran through kelas.
+     */
+    public function mataPelajaran(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            MataPelajaran::class, // Target model
+            Kelas::class,          // Intermediate model
+            'ID_KELAS',            // Foreign key on Kelas table
+            'ID_KELAS',            // Foreign key on MataPelajaran table
+            'ID_KELAS',            // Local key on EnrollmentKelas table
+            'ID_KELAS'             // Local key on Kelas table
+        );
     }
 }
