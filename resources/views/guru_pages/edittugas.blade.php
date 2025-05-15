@@ -18,26 +18,22 @@
         <div class="content-box">
           <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/detail_pelajaran/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}">Back</a></button><br><br>
        <div class="material-box2">
-         <form action="{{ url('/guru/editpengumuman/' . urlencode($pengumuman->ID)) }}" method="POST">
+         <form action="{{ route('guru.updatetugas', urlencode($tugas->ID_TUGAS)) }}" method="POST">
           @csrf
           @method("PUT") 
          <h4 style="text-align: center;">Edit Tugas</h4><br>
           <input type="hidden" name="ID_MATA_PELAJARAN" value="{{ $mata_pelajaran->ID_MATA_PELAJARAN }}">
          <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label">Nama Tugas</label>
-            <input class="form-control" type="text" name="NAMA_TUGAS" value="{{ $tugas->Nama_tugas }}" aria-label="default input example">
+            <input class="form-control" type="text" name="NAMA_TUGAS" value="{{ old('NAMA_TUGAS', $tugas->NAMA_TUGAS) }}" aria-label="default input example">
           </div>
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Deskripsi Tugas</label>
-            <textarea class="form-control"  name="DESKRIPSI_TUGAS" aria-label="default input example">{{ $tugas->Deskripsi_tugas }}</textarea>
-          </div>
-          <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Soal Tugas</label>
-            <input class="form-control" type="file" name="FILE_TUGAS" value="{{ $tugas->File_tugas }}" aria-label="default input example">
+            <textarea class="form-control"  name="DESKRIPSI_TUGAS" aria-label="default input example">{{ old('DESKRIPSI_TUGAS', $tugas->DESKRIPSI_TUGAS) }}</textarea>
           </div>
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Deadline</label>
-            <input class="form-control" type="datetime" name="DEADLINE_TUGAS" value="{{ $tugas->Deadline_tugas }}" aria-label="default input example">
+            <input class="form-control" type="datetime-local" name="DEADLINE_TUGAS" value="{{ old('DEADLINE_TUGAS', $tugas->DEADLINE_TUGAS) }}" aria-label="default input example">
           </div>
           
           <div class="d-grid gap-2">

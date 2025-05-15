@@ -9,10 +9,10 @@
         <div class="col">
             <h4 class="mb-1">{{ $guru->NAMA_GURU }}</h4>
             <p class="mb-0">{{ $guru->ID_GURU }}</p>
-            <p class="mb-0">Wali Kelas: XII IPA 1</p>
+            <p class="mb-0">Wali Kelas: {{ $wali_kelas ? $wali_kelas->NAMA_KELAS : '' }}</p>
         </div>
         <div class="col-auto">
-            <button class="btn btn-primary me-2" onclick="window.location.href='/guru/hlm_edit_about'">Edit Biodata</button>
+            <button class="btn btn-primary me-2"><a href="{{ url('/guru/hlm_edit_about') }}" style="color: white; text-decoration: none">Edit Biodata</a></button>
         </div>
     </div>
 

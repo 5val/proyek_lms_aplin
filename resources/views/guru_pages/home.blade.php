@@ -33,7 +33,7 @@
             <h5 class="mt-4">Tugas yang Sedang Berlangsung</h5>
             <div class="scroll-box mb-4 d-flex flex-row flex-nowrap overflow-auto">
                <?php foreach ($all_tugas as $t) : ?>
-                  <a href="/guru/hlm_detail_tugas">
+               <a href="{{ url('/guru/hlm_detail_tugas/' . urlencode($t->ID_TUGAS)) }}">
                   <div class="card p-3 me-3">
                      <strong>{{ $t->mataPelajaran->pelajaran->NAMA_PELAJARAN }}</strong>
                      <p>{{ $t->DESKRIPSI_TUGAS }}</p>

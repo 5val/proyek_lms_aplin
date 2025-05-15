@@ -18,7 +18,7 @@
         <div class="content-box">
           <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/detail_pelajaran/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}">Back</a></button><br><br>
        <div class="material-box2">
-         <form action="{{ url('/guru/editpengumuman/' . urlencode($pengumuman->ID)) }}" method="POST">
+         <form action="{{ route('guru.updatepengumuman', urlencode($pengumuman->ID)) }}" method="POST">
           @csrf
           @method("PUT") 
          <h4 style="text-align: center;">Edit Pengumuman</h4><br>

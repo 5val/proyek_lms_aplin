@@ -19,6 +19,7 @@
         <form method="POST" action="/guru/tambahpertemuan">
          @csrf
          <h4 style="text-align: center;">Tambah Pertemuan</h4><br>
+            <input type="hidden" name="ID_MATA_PELAJARAN" value="{{ $mata_pelajaran->ID_MATA_PELAJARAN }}">
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Detail pertemuan</label>
             <textarea class="form-control" type="text" placeholder="Default input" name="DETAIL_PERTEMUAN" aria-label="default input example"></textarea>

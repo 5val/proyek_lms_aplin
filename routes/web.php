@@ -94,21 +94,27 @@ Route::prefix('guru')->group(function () {
    Route::get('/', [GuruController::class, 'index']);
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [GuruController::class, 'detail_pelajaran'])->where('id_mata_pelajaran', '.*');
    Route::get('/editmateri/{id_materi}', [GuruController::class, 'editmateri'])->where('id_materi', '.*');
-   Route::post('/editmateri', [GuruController::class, 'updatemateri']);
-   Route::get('/editpengumuman/{id}', [GuruController::class, 'editpengumuman'])->where('id', '.*');
-   Route::get('/editpengumuman', [GuruController::class, 'updatepengumuman']);
-   Route::get('/edittugas/{id_tugas}', [GuruController::class, 'edittugas'])->where('id_tugas', '.*');
-   Route::get('/edittugas', [GuruController::class, 'updatetugas']);
+   Route::get('/editmateri', [GuruController::class, 'updatemateri']);
+  Route::get('/editpengumuman/{ID}', [GuruController::class, 'editpengumuman'])
+    ->where('ID', '.*')
+    ->name('guru.editpengumuman');
+   Route::put('/updatepengumuman/{ID}', [GuruController::class, 'updatepengumuman'])->where('ID', '.*')
+    ->name('guru.updatepengumuman');
+Route::get('/edittugas/{id_tugas}', [GuruController::class, 'edittugas'])
+    ->where('id_tugas', '.*')
+    ->name('guru.edittugas');
+   Route::put('/updatetugas/{id_tugas}', [GuruController::class, 'updatetugas'])->where('id_tugas', '.*')
+    ->name('guru.updatetugas');
    Route::get('/hlm_about', [GuruController::class, 'hlm_about']);
    Route::get('/hlm_detail_pengumuman', [GuruController::class, 'hlm_detail_pengumuman']);
-   Route::get('/hlm_detail_tugas/{id_tugas}', [GuruController::class, 'hlm_detail_tugas'])->where('id_tugas', expression: '.*');
-   Route::get('/hlm_edit_about', [GuruController::class, 'hlm_edit_about']);
-   Route::put('/update_biodata', [GuruController::class, 'update_biodata'])->name('guru.update_biodata');
+   Route::get('/hlm_detail_tugas/{id_tugas}', [GuruController::class, 'hlm_detail_tugas'])->where('id_tugas', '.*');
+   Route::get('/hlm_edit_about', [GuruController::class, 'hlm_edit_about'])->name('guru.hlm_about');
+  Route::put('/update_biodata', [GuruController::class, 'update_biodata'])->name('guru.update_biodata');
    Route::get('/hlm_jadwal', [GuruController::class, 'hlm_jadwal']);
    Route::get('/hlm_kelas', [GuruController::class, 'hlm_kelas']);
    Route::get('/hlm_laporan_tugas', [GuruController::class, 'hlm_laporan_tugas']);
    Route::get('/hlm_laporan_ujian', [GuruController::class, 'hlm_laporan_ujian']);
-   Route::get('/tambahpengumuman/{id_mata_pelajaran}', [GuruController::class, 'tambahpengumuman'])->where('id_mata_pelajaran', '.*');
+   Route::get('/tambahpengumuman', [GuruController::class, 'tambahpengumuman']);
    Route::post('/tambahpengumuman', [GuruController::class, 'postpengumuman']);
    Route::get('/tambahpertemuan/{id_mata_pelajaran}', [GuruController::class, 'tambahpertemuan'])->where('id_mata_pelajaran', '.*');
    Route::post('/tambahpertemuan', [GuruController::class, 'postpertemuan']);

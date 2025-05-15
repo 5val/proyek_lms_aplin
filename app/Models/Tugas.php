@@ -12,6 +12,7 @@ class Tugas extends Model
 
     protected $table = 'TUGAS';
     protected $primaryKey = 'ID_TUGAS';
+    protected $keyType = 'string';
     public $timestamps = false;
     protected $casts = [
         'ID_MATA_PELAJARAN' => 'string',
