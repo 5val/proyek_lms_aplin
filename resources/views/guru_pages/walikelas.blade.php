@@ -27,7 +27,7 @@
             <tr>
             <td>{{ $s->siswa->ID_SISWA }}</td>
             <td>{{ $s->siswa->NAMA_SISWA }}</td>
-            <td><button class="btn btn-primary">Lihat Laporan</button></td>
+            <td><button class="btn btn-primary"><a href="{{ url('/guru/laporan_siswa/' . urlencode($s->ID_SISWA)) }}" style="text-decoration: none; color: white;">Lihat Laporan</a></button></td>
             </tr>
          <?php endforeach; ?>
         </tbody>

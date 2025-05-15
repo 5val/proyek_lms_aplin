@@ -11,6 +11,7 @@
                <i class="fas fa-calculator"></i>
                <h5>{{ $k->pelajaran->NAMA_PELAJARAN }}</h5>
                <p>Kelas: {{ $k->kelas->ID_DETAIL_KELAS }}</p>
+               <p>{{ $k->kelas->periode->PERIODE }}</p>
                </div>
             </a>
          <?php endforeach; ?>

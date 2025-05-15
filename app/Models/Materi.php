@@ -12,6 +12,8 @@ class Materi extends Model
 
     protected $table = 'MATERI';
     protected $primaryKey = 'ID_MATERI';
+    protected $keyType = 'string';
+    public $incrementing = false;
     public $timestamps = false;
     protected $fillable = ['ID_MATA_PELAJARAN', 'NAMA_MATERI', 'DESKRIPSI_MATERI', 'FILE_MATERI'];
 

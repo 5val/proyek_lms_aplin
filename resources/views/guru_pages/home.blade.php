@@ -54,9 +54,10 @@
             </div>
 
             <!-- Jadwal Mengajar Guru -->
+             <div class="p-3">
             <h5>Jadwal Mengajar (Senin - Jumat)</h5>
             <?php $listHari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-            $listJam = ['07:00', '08:30', '10:30', '12:30'];
+            $listJam = ['07:00-08:30', '08:30-10:00', '10:00-11:30', '12:00-13:30', '13:30-15:00'];
             ?>
             <div class="table-responsive">
             <table class="table table-bordered timetable-table bg-white">
@@ -65,8 +66,9 @@
                     <th>Hari</th>
                     <th>Jam ke-1 (07:00 - 08:30)</th>
                     <th>Jam ke-2 (08:30 - 10:00)</th>
-                    <th>Jam ke-3 (10:30 - 12:00)</th>
-                    <th>Jam ke-4 (12:30 - 14:00)</th>
+                    <th>Jam ke-3 (10:00 - 11:30)</th>
+                    <th>Jam ke-4 (12:00 - 13:30)</th>
+                    <th>Jam ke-5 (13:30 - 15:00)</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -84,4 +86,5 @@
                   <?php endforeach; ?>
                 </tbody>
             </table>
+            </div>
 @endsection

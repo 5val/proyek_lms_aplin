@@ -1,9 +1,10 @@
 @extends('layouts.guru_app')
 
 @section('guru_content')
-<div class="p-3">
+<?php if($kelas): ?>
+   <div class="p-3">
             <h4 class="mb-3">Halaman Laporan Nilai</h4>
-            <p><strong>Nama Guru:</strong> Darren Susanto &nbsp; | &nbsp; <strong>NIP:</strong> G/001</p>
+            <p><strong>Nama Guru:</strong> {{ session('userActive')->NAMA_GURU }} &nbsp; | &nbsp; <strong>NIP:</strong> {{ session('userActive')->ID_GURU }}</p>
 
             <!-- Laporan Nilai Tugas Siswa -->
             <h5 class="mt-4">Laporan Nilai Tugas Siswa</h5>
@@ -20,38 +21,23 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Andi S</td>
-                    <td>Soal Turunan Fungsi</td>
-                    <td>85</td>
-                    <td><span class="badge bg-success">Lulus</span></td>
-                    <td><a href="/guru/editnilai" class="btn btn-warning btn-sm">Edit</a></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Budi P</td>
-                    <td>Soal Turunan Fungsi</td>
-                    <td>78</td>
-                    <td><span class="badge bg-warning">Perlu Perbaikan</span></td>
-                    <td><a href="/guru/editnilai" class="btn btn-warning btn-sm">Edit</a></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Cici M</td>
-                    <td>Soal Turunan Fungsi</td>
-                    <td>92</td>
-                    <td><span class="badge bg-success">Lulus</span></td>
-                    <td><a href="edit_nilai.php" class="btn btn-warning btn-sm">Edit</a></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Dian R</td>
-                    <td>Soal Turunan Fungsi</td>
-                    <td>70</td>
-                    <td><span class="badge bg-danger">Gagal</span></td>
-                    <td><a href="edit_nilai.php" class="btn btn-warning btn-sm">Edit</a></td>
-                </tr>
+                  <?php $counter = 1; ?>
+                  <?php foreach ($list_nilai as $nilai): ?>
+                     <tr>
+                         <td>{{ $counter++ }}</td>
+                         <td>{{ $nilai->nama_siswa }}</td>
+                         <td>{{ $nilai->nama_tugas }}</td>
+                         <td>{{ $nilai->nilai_tugas }}</td>
+                         <?php if($nilai->nilai_tugas >= 80): ?>
+                           <td><span class="badge bg-success">Lulus</span></td>
+                         <?php elseif($nilai->nilai_tugas >= 70): ?>
+                           <td><span class="badge bg-warning">Perlu Perbaikan</span></td>
+                         <?php else: ?>
+                           <td><span class="badge bg-danger">Gagal</span></td>
+                         <?php endif; ?>
+                         <td><a href="/guru/editnilai" class="btn btn-warning btn-sm">Edit</a></td>
+                     </tr>
+                  <?php endforeach; ?>
                 </tbody>
             </table>
             </div>
@@ -59,10 +45,18 @@
             <!-- Nilai Rata-Rata per Tugas -->
             <div class="mt-4">
             <h5>Rata-Rata Nilai Tugas</h5>
-            <div class="card bg-light p-3">
-                <h6><strong>Rata-Rata Nilai Soal Turunan Fungsi:</strong> 81.25</h6>
-            </div>
+            <?php foreach ($rata2 as $r): ?>
+               <div class="card bg-light p-3">
+                  <h6><strong>Rata-Rata Nilai {{ $r->nama_tugas }}:</strong> {{ $r->rata2 }}</h6>
+               </div>
+            <?php endforeach; ?>
             </div>
 
         </div>
+<?php else: ?>
+   <div class="p-3">
+      <h4 class="mb-3">Bukan Wali Kelas</h4>
+   </div>
+<?php endif; ?>
+
 @endsection

@@ -55,7 +55,7 @@
                             <div class="mt-auto">
                                 <a href="{{ asset('storage/uploads/materi/' . $m->FILE_MATERI) }}" download class="d-block mb-2">Download Materi</a>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-primary w-50" onclick="window.location.href='/guru/editmateri'">Edit</button>
+                                    <button class="btn btn-sm btn-outline-primary w-50"><a href="{{ url('/guru/editmateri/' . urlencode($m->ID_MATERI)) }}" style="text-decoration: none; color: black;">Edit</a></button>
                                     <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
                                 </div>
                             </div>
@@ -107,11 +107,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>220/0001</td><td>Andi Santoso</td></tr>
-                    <tr><td>220/0002</td><td>Budi Wijaya</td></tr>
-                    <tr><td>220/0003</td><td>Citra Lestari</td></tr>
-                    <tr><td>220/0004</td><td>Dewi Kurnia</td></tr>
-                    <tr><td>220/0005</td><td>Eko Prasetyo</td></tr>
+                  <?php foreach ($siswa as $s): ?>
+                     <tr><td>{{ $s->siswa->ID_SISWA }}</td><td>{{ $s->siswa->NAMA_SISWA }}</td></tr>
+                  <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
@@ -123,11 +121,12 @@
             <a href="{{ url('/guru/tambahpertemuan/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Pertemuan</a>
         </button>
         <div class="row">
-            @foreach ($pertemuan as $pt)
+            <?php $counter = 1; ?>
+            <?php foreach ($pertemuan as $pt): ?>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 d-flex flex-column">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Pertemuan</h5>
+                            <h5 class="card-title">Pertemuan {{ $counter++ }}</h5>
                             <p class="card-text flex-grow-1">{{ $pt->DETAIL_PERTEMUAN }}</p>
                             <div class="mt-auto">
                                 <p>{{ $pt->TANGGAL_PERTEMUAN }}</p>
@@ -139,7 +138,7 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            <?php endforeach; ?>
         </div>
     </div>
 
@@ -149,56 +148,33 @@
         <div class="table-responsive">
             <table class="table table-bordered bg-white shadow-sm">
                 <thead class="table-light">
-                    <tr>
+                     <tr>
                         <th style="width: 150px;">ID</th>
                         <th>Nama</th>
-                        <th class="text-center">Pertemuan 1</th>
-                        <th class="text-center">Pertemuan 2</th>
-                        <th class="text-center">Pertemuan 3</th>
-                        <th class="text-center">Pertemuan 4</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>220/0001</td>
-                        <td>Andi Santoso</td>
-                        <td class="text-center"><input type="checkbox"></td>
-                        <td class="text-center"><input type="checkbox" checked></td>
-                        <td class="text-center"><input type="checkbox"></td>
-                        <td class="text-center"><input type="checkbox"></td>
-                    </tr>
-                    <tr>
-                        <td>220/0002</td>
-                        <td>Budi Wijaya</td>
-                        <td class="text-center"><input type="checkbox" checked></td>
-                        <td class="text-center"><input type="checkbox" checked></td>
-                        <td class="text-center"><input type="checkbox" checked></td>
-                        <td class="text-center"><input type="checkbox"></td>
-                    </tr>
-                    <tr>
-                        <td>220/0003</td>
-                        <td>Citra Lestari</td>
-                        <td class="text-center"><input type="checkbox"></td>
-                        <td class="text-center"><input type="checkbox"></td>
-                        <td class="text-center"><input type="checkbox" checked></td>
-                        <td class="text-center"><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>220/0004</td>
-                        <td>Dewi Kurnia</td>
-                        <td class="text-center"><input type="checkbox"></td>
-                        <td class="text-center"><input type="checkbox"></td>
-                        <td class="text-center"><input type="checkbox" checked></td>
-                        <td class="text-center"><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>220/0005</td>
-                        <td>Eko Prasetyo</td>
-                        <td class="text-center"><input type="checkbox"></td>
-                        <td class="text-center"><input type="checkbox"></td>
-                        <td class="text-center"><input type="checkbox" checked></td>
-                        <td class="text-center"><input type="checkbox" checked></td>
-                    </tr>
+                        <?php $counter = 1; ?>
+                        <?php foreach ($pertemuan as $p): ?>
+                           <th class="text-center">Pertemuan {{ $counter++ }}</th>
+                        <?php endforeach; ?>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <?php foreach ($siswa as $s): ?>
+                        <tr>
+                        <td>{{ $s->siswa->ID_SISWA }}</td>
+                        <td>{{ $s->siswa->NAMA_SISWA }}</td>
+                        <?php foreach ($pertemuan as $p): ?>
+                           <?php $a = $absen[$s->siswa->ID_SISWA][$p->ID_PERTEMUAN] ?? null; ?>
+                           <td class="text-center">
+                              <form method="GET" action="/guru/absensi">
+                              <form method="GET" action="{{ url('/guru/absensi') }}">
+                                 <input type="checkbox" {{ $a ? 'checked' : '' }} onchange="this.form.submit()">
+                                 <input type="hidden" name="id_siswa" value="{{ $s->siswa->ID_SISWA }}">
+                                 <input type="hidden" name="id_pertemuan" value="{{ $p->ID_PERTEMUAN }}">
+                              </form>
+                           </td>
+                        <?php endforeach; ?>
+                  </tr>
+                  <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
@@ -219,41 +195,89 @@
         <div class="tab-content mt-3" id="laporanTabContent">
             <!-- Tugas Sub-tab -->
             <div class="tab-pane fade show active" id="tugas" role="tabpanel" aria-labelledby="tugas-subtab">
-                <table class="table table-bordered bg-white shadow-sm">
-                    <thead class="table-light">
+                <table class="table table-bordered bg-white">
+                  <thead class="table-secondary">
+                  <tr>
+                     <th>No.</th>
+                     <th>Nama Siswa</th>
+                     <th>Tugas</th>
+                     <th>Nilai</th>
+                     <th>Status</th>
+                     <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                     <?php $counter = 1; ?>
+                     <?php foreach ($list_nilai_tugas as $nilai): ?>
                         <tr>
-                            <th style="width: 150px;">ID Siswa</th>
-                            <th>Nama Siswa</th>
-                            <th>Nilai Tugas</th>
+                           <td>{{ $counter++ }}</td>
+                           <td>{{ $nilai->nama_siswa }}</td>
+                           <td>{{ $nilai->nama_tugas }}</td>
+                           <td>{{ $nilai->nilai_tugas }}</td>
+                           <?php if($nilai->nilai_tugas >= 80): ?>
+                              <td><span class="badge bg-success">Lulus</span></td>
+                           <?php elseif($nilai->nilai_tugas >= 70): ?>
+                              <td><span class="badge bg-warning">Perlu Perbaikan</span></td>
+                           <?php else: ?>
+                              <td><span class="badge bg-danger">Gagal</span></td>
+                           <?php endif; ?>
+                           <td><a href="/guru/editnilai" class="btn btn-warning btn-sm">Edit</a></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>220/0001</td><td>Andi Santoso</td><td>80</td></tr>
-                        <tr><td>220/0002</td><td>Budi Wijaya</td><td>90</td></tr>
-                        <tr><td>220/0003</td><td>Citra Lestari</td><td>85</td></tr>
-                        <tr><td>220/0004</td><td>Dewi Kurnia</td><td>75</td></tr>
-                        <tr><td>220/0005</td><td>Eko Prasetyo</td><td>95</td></tr>
-                    </tbody>
-                </table>
+                     <?php endforeach; ?>
+                  </tbody>
+               </table>
+
+               <div class="mt-4">
+                  <h5>Rata-Rata Nilai Tugas</h5>
+                  <?php foreach ($rata2_tugas as $r): ?>
+                     <div class="card bg-light p-3">
+                        <h6><strong>Rata-Rata Nilai {{ $r->nama_tugas }}:</strong> {{ $r->rata2 }}</h6>
+                     </div>
+                  <?php endforeach; ?>
+               </div>
             </div>
             <!-- Ujian Sub-tab -->
             <div class="tab-pane fade" id="ujian" role="tabpanel" aria-labelledby="ujian-subtab">
-                <table class="table table-bordered bg-white shadow-sm">
-                    <thead class="table-light">
-                        <tr>
-                            <th style="width: 150px;">ID Siswa</th>
-                            <th>Nama Siswa</th>
-                            <th>Nilai Ujian</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>220/0001</td><td>Andi Santoso</td><td>90</td></tr>
-                        <tr><td>220/0002</td><td>Budi Wijaya</td><td>88</td></tr>
-                        <tr><td>220/0003</td><td>Citra Lestari</td><td>84</td></tr>
-                        <tr><td>220/0004</td><td>Dewi Kurnia</td><td>79</td></tr>
-                        <tr><td>220/0005</td><td>Eko Prasetyo</td><td>92</td></tr>
-                    </tbody>
-                </table>
+                <table class="table table-bordered bg-white">
+                <thead class="table-secondary">
+                <tr>
+                    <th>No.</th>
+                    <th>Nama Siswa</th>
+                    <th>Nilai UTS</th>
+                    <th>Nilai Tugas</th>
+                    <th>Nilai Akhir</th>
+                    <th>Status</th>
+                    <!-- <th>Action</th> -->
+                </tr>
+                </thead>
+                <tbody>
+                  <?php $counter = 1; ?>
+                  <?php foreach ($list_nilai as $nilai): ?>
+                     <tr>
+                         <td>{{ $counter++ }}</td>
+                         <td>{{ $nilai->nama_siswa }}</td>
+                         <td>{{ $nilai->nilai_uts }}</td>
+                         <td>{{ $nilai->nilai_tugas }}</td>
+                         <td>{{ $nilai->nilai_akhir }}</td>
+                         <?php if($nilai->nilai_akhir >= 80): ?>
+                           <td><span class="badge bg-success">Lulus</span></td>
+                         <?php elseif($nilai->nilai_akhir >= 70): ?>
+                           <td><span class="badge bg-warning">Perlu Perbaikan</span></td>
+                         <?php else: ?>
+                           <td><span class="badge bg-danger">Gagal</span></td>
+                         <?php endif; ?>
+                         <!-- <td><a href="/guru/editnilai" class="btn btn-warning btn-sm">Edit</a></td> -->
+                     </tr>
+                  <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <!-- Nilai Rata-Rata per Tugas -->
+            <div class="mt-4">
+               <div class="card bg-light p-3">
+                  <h6><strong>Rata-Rata Nilai Akhir:</strong> {{ $rata2[0]->rata2 }}</h6>
+               </div>
+            </div>
             </div>
         </div>
     </div>
@@ -264,7 +288,7 @@
             <a href="{{ url('/guru/tambahpengumuman/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Pengumuman</a>
         </button>
         <div class="row">
-            @foreach ($pengumuman as $p)
+            <?php foreach ($pengumuman as $p): ?>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 d-flex flex-column">
                         <div class="card-body d-flex flex-column">
@@ -280,7 +304,7 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            <?php endforeach ?>
         </div>
     </div>
 </div>

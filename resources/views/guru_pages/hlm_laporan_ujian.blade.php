@@ -1,68 +1,65 @@
 @extends('layouts.guru_app')
 
 @section('guru_content')
-
-        <div class="p-3">
+<?php if($kelas): ?>
+   <div class="p-3">
             <h4 class="mb-3">Halaman Laporan Nilai</h4>
-            <p><strong>Nama Guru:</strong> Darren Susanto &nbsp; | &nbsp; <strong>NIP:</strong> G/001</p>
+            <p><strong>Nama Guru:</strong> {{ session('userActive')->NAMA_GURU }} &nbsp; | &nbsp; <strong>NIP:</strong> {{ session('userActive')->ID_GURU }}</p>
 
-            <!-- Laporan Nilai Ujian -->
-            <h5 class="mt-4">Laporan Nilai Ujian</h5>
+            <!-- Laporan Nilai Siswa -->
+            <h5 class="mt-4">Laporan Nilai Siswa</h5>
             <div class="table-responsive">
             <table class="table table-bordered bg-white">
                 <thead class="table-secondary">
                 <tr>
                     <th>No.</th>
                     <th>Nama Siswa</th>
-                    <th>Ujian</th>
-                    <th>Nilai</th>
+                    <th>Mata Pelajaran</th>
+                    <th>Nilai UTS</th>
+                    <th>Nilai Tugas</th>
+                    <th>Nilai Akhir</th>
                     <th>Status</th>
-                    <th>Action</th>
+                    <!-- <th>Action</th> -->
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Andi S</td>
-                    <td>Ujian Matematika</td>
-                    <td>88</td>
-                    <td><span class="badge bg-success">Lulus</span></td>
-                    <td><a href="edit_nilai.php" class="btn btn-warning btn-sm">Edit</a></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Budi P</td>
-                    <td>Ujian Matematika</td>
-                    <td>75</td>
-                    <td><span class="badge bg-warning">Perlu Perbaikan</span></td>
-                    <td><a href="edit_nilai.php" class="btn btn-warning btn-sm">Edit</a></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Cici M</td>
-                    <td>Ujian Matematika</td>
-                    <td>95</td>
-                    <td><span class="badge bg-success">Lulus</span></td>
-                    <td><a href="edit_nilai.php" class="btn btn-warning btn-sm">Edit</a></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Dian R</td>
-                    <td>Ujian Matematika</td>
-                    <td>60</td>
-                    <td><span class="badge bg-danger">Gagal</span></td>
-                    <td><a href="edit_nilai.php" class="btn btn-warning btn-sm">Edit</a></td>
-                </tr>
+                  <?php $counter = 1; ?>
+                  <?php foreach ($list_nilai as $nilai): ?>
+                     <tr>
+                         <td>{{ $counter++ }}</td>
+                         <td>{{ $nilai->nama_siswa }}</td>
+                         <td>{{ $nilai->nama_pelajaran }}</td>
+                         <td>{{ $nilai->nilai_uts }}</td>
+                         <td>{{ $nilai->nilai_tugas }}</td>
+                         <td>{{ $nilai->nilai_akhir }}</td>
+                         <?php if($nilai->nilai_akhir >= 80): ?>
+                           <td><span class="badge bg-success">Lulus</span></td>
+                         <?php elseif($nilai->nilai_akhir >= 70): ?>
+                           <td><span class="badge bg-warning">Perlu Perbaikan</span></td>
+                         <?php else: ?>
+                           <td><span class="badge bg-danger">Gagal</span></td>
+                         <?php endif; ?>
+                         <!-- <td><a href="/guru/editnilai" class="btn btn-warning btn-sm">Edit</a></td> -->
+                     </tr>
+                  <?php endforeach; ?>
                 </tbody>
             </table>
             </div>
 
-            <!-- Nilai Rata-Rata per Kelas -->
+            <!-- Nilai Rata-Rata per Tugas -->
             <div class="mt-4">
-            <h5>Rata-Rata Nilai Kelas</h5>
-            <div class="card bg-light p-3">
-                <h6><strong>Rata-Rata Nilai Ujian Matematika:</strong> 79.5</h6>
+            <h5>Rata-Rata Nilai Akhir</h5>
+            <?php foreach ($rata2 as $r): ?>
+               <div class="card bg-light p-3">
+                  <h6><strong>Rata-Rata Nilai Akhir {{ $r->nama_pelajaran }}:</strong> {{ $r->rata2 }}</h6>
+               </div>
+            <?php endforeach; ?>
             </div>
-            </div>
+
         </div>
+<?php else: ?>
+   <div class="p-3">
+      <h4 class="mb-3">Bukan Wali Kelas</h4>
+   </div>
+<?php endif; ?>
 @endsection

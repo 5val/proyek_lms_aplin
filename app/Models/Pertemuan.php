@@ -13,8 +13,10 @@ class Pertemuan extends Model
 
     protected $table = 'PERTEMUAN';
     protected $primaryKey = 'ID_PERTEMUAN';
+    protected $keyType = 'string';
+    public $incrementing = false;
     public $timestamps = false;
-    protected $fillable = ['ID_PERTEMUAN', 'ID_MATA_PELAJARAN', 'DETAIL_PERTEMUAN', 'TANGGAL_PERTEMUAN'];
+    protected $fillable = ['ID_MATA_PELAJARAN', 'DETAIL_PERTEMUAN', 'TANGGAL_PERTEMUAN'];
 
     /**
      * Get the mataPelajaran that owns the Pertemuan.
