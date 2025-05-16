@@ -107,6 +107,7 @@ Route::get('/edittugas/{id_tugas}', [GuruController::class, 'edittugas'])
     ->name('guru.updatetugas');
    Route::get('/hlm_about', [GuruController::class, 'hlm_about']);
    Route::get('/hlm_detail_pengumuman', [GuruController::class, 'hlm_detail_pengumuman']);
+   Route::get('/hlm_detail_pengumpulan', [GuruController::class, 'hlm_detail_pengumpulan']);
    Route::get('/hlm_detail_tugas/{id_tugas}', [GuruController::class, 'hlm_detail_tugas'])->where('id_tugas', '.*');
    Route::get('/hlm_edit_about', [GuruController::class, 'hlm_edit_about'])->name('guru.hlm_about');
   Route::put('/update_biodata', [GuruController::class, 'update_biodata'])->name('guru.update_biodata');

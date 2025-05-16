@@ -41,6 +41,10 @@ class GuruController extends Controller
          return view('guru_pages.home', ['wali_kelas' => null, 'mata_pelajaran' => $allMataPelajaran, 'all_tugas' => $allTugas, 'all_pengumuman' => $allPengumuman, 'jadwal' => $jadwal]);
       }
     }
+
+    public function hlm_detail_pengumpulan(){
+      return view('hlm_detail_pengumpulan');
+    }
     public function detail_pelajaran($id_mata_pelajaran)
     {
       $mataPelajaran = MataPelajaran::with('pelajaran')->where('ID_MATA_PELAJARAN', $id_mata_pelajaran)->first();
