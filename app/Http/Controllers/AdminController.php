@@ -10,8 +10,10 @@ use App\Models\MataPelajaran;
 use App\Models\Pelajaran;
 use App\Models\Pengumuman;
 use App\Models\Periode;
+use App\Models\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
@@ -72,12 +74,30 @@ class AdminController extends Controller
         $alamat = $request->input("alamat");
         $telp = $request->input("telp");
         $status = $request->input("status");
-        $guru = DB::select("select * from guru where email_guru = ?", [$email]);
-        if (count($guru) <= 0) {
-            DB::insert("insert into guru (nama_guru, email_guru, password_guru, alamat_guru, no_telpon_guru, status_guru) values(?,?,?,?,?,?)", [$nama, $email, $password, $alamat, $telp, $status]);
-            return redirect('/admin/listguru');
-        } else {
+        // $guru = DB::select("select * from guru where email_guru = ?", [$email]);
+        // if (count($guru) <= 0) {
+        //     DB::insert("insert into guru (nama_guru, email_guru, password_guru, alamat_guru, no_telpon_guru, status_guru) values(?,?,?,?,?,?)", [$nama, $email, $password, $alamat, $telp, $status]);
+        // } else {
+        //     return view('admin_pages.tambahguru');
+        // }
+        $guru = Guru::where('EMAIL_GURU', $email)->get();
+        if (!$guru->isEmpty()) {
             return view('admin_pages.tambahguru');
+        } else {
+            // dd(Hash::make($password));
+
+            $guru = Guru::create([
+                'NAMA_GURU' => $nama,
+                'EMAIL_GURU' => $email,
+                // nyalain
+                // 'PASSWORD_GURU' => Hash::make($password),
+                'PASSWORD_GURU' => $password,
+                'ALAMAT_GURU' => $alamat,
+                'NO_TELPON_GURU' => $telp,
+                'STATUS_GURU' => $status,
+            ]);
+            return redirect('/admin/listguru');
+
         }
     }
     // ========================================= Pengumuman ============================================
@@ -166,12 +186,28 @@ class AdminController extends Controller
         $alamat = $request->input("alamat");
         $telp = $request->input("telp");
         $status = $request->input("status");
-        $siswa = DB::select("select * from siswa where email_siswa = ?", [$email]);
-        if (count($siswa) <= 0) {
-            DB::insert("insert into siswa (nama_siswa, email_siswa, password_siswa, alamat_siswa, no_telpon_siswa, status_siswa) values(?,?,?,?,?,?)", [$nama, $email, $password, $alamat, $telp, $status]);
-            return redirect('/admin/listsiswa');
-        } else {
+        // $siswa = DB::select("select * from siswa where email_siswa = ?", [$email]);
+        // if (count($siswa) <= 0) {
+        //     DB::insert("insert into siswa (nama_siswa, email_siswa, password_siswa, alamat_siswa, no_telpon_siswa, status_siswa) values(?,?,?,?,?,?)", [$nama, $email, $password, $alamat, $telp, $status]);
+        //     return redirect('/admin/listsiswa');
+        // } else {
+        //     return view('admin_pages.tambahsiswa');
+        // }
+        $siswa = Siswa::where('EMAIL_SISWA', $email)->get();
+        if (!$siswa->isEmpty()) {
             return view('admin_pages.tambahsiswa');
+        } else {
+            Siswa::create([
+                'NAMA_SISWA' => $nama,
+                'EMAIL_SISWA' => $email,
+                // nyalain
+                // 'PASSWORD_SISWA' => Hash::make($password),
+                'PASSWORD_SISWA' => $password,
+                'ALAMAT_SISWA' => $alamat,
+                'NO_TELPON_SISWA' => $telp,
+                'STATUS_SISWA' => $status,
+            ]);
+            return redirect('/admin/listsiswa');
         }
     }
 

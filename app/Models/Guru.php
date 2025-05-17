@@ -18,6 +18,7 @@ class Guru extends Model
         'ID_GURU' => 'string',
     ];
     protected $fillable = ['NAMA_GURU', 'EMAIL_GURU', 'PASSWORD_GURU', 'ALAMAT_GURU', 'NO_TELPON_GURU', 'STATUS_GURU'];
+    protected $hidden = ['PASSWORD_GURU'];
 
     /**
      * Get all of the kelas where this guru is the wali kelas.

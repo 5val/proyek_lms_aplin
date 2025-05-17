@@ -17,7 +17,8 @@ class Siswa extends Model
     protected $casts = [
         'ID_SISWA' => 'string',
     ];
-    protected $fillable = ['ID_SISWA', 'NAMA_SISWA', 'EMAIL_SISWA', 'ALAMAT_SISWA', 'NO_TELPON_SISWA', 'PASSWORD_SISWA', 'STATUS_SISWA'];
+    protected $fillable = ['ID_SISWA', 'NAMA_SISWA', 'EMAIL_SISWA', 'PASSWORD_SISWA', 'ALAMAT_SISWA', 'NO_TELPON_SISWA', 'STATUS_SISWA'];
+    protected $hidden = ['PASSWORD_SISWA'];
 
     /**
      * Get all of the attendances for the Siswa.

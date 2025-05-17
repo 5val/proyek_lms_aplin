@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Guru;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class MainController extends Controller
 {
@@ -17,23 +18,33 @@ class MainController extends Controller
         $email = $_POST["email"];
         $password = $_POST["password"];
 
-      //   Login guru
+        //   Login guru
         $guru = Guru::where([
-         ['email_guru', '=', $email],
-         ['password_guru', '=', $password]
+            ['email_guru', $email],
+            // matiin kalo mau hash
+            ['password_guru', $password]
         ])->first();
-        if($guru != null) {
-         session(['userActive' => $guru]);
-         return redirect('/guru');
+        if (
+            $guru != null
+            // nyalain kalo mau hash
+            // && Hash::check($password, $guru->PASSWORD_GURU)
+        ) {
+            session(['userActive' => $guru]);
+            return redirect('/guru');
         }
 
         // Login siswa
         $siswa = Siswa::where([
-            ['email_siswa', '=', $email],
-            ['password_siswa', '=', $password]
+            ['email_siswa', $email],
+            // matiin
+            ['password_siswa', $password]
         ])->first();
 
-        if ($siswa != null) {
+        if (
+            $siswa != null
+            // nyalain
+            // && Hash::check($password, $siswa->PASSWORD_SISWA)
+        ) {
             session(['userActive' => $siswa]);
             return redirect('/siswa');
         }
