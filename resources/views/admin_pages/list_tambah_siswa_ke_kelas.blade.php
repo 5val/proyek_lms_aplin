@@ -8,12 +8,7 @@
 @section('admin_content')
     <div class="container mt-5">
         <a href="/admin/list_kelas" class="btn btn-danger">Back</a>
-        <div class="top-bar d-flex justify-content-between align-items-center border-bottom">
-            <div>
-                <button class="btn btn-primary me-1">List</button>
-                <button class="btn">Upload Siswa</button>
-            </div>
-        </div>
+
         <h3>List Siswa di Kelas</h3>
         <div class="card mt-3">
             <div class="card-body">
@@ -44,12 +39,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($kelasList as $siswa): ?>
+                    <?php foreach ($kelasList as $kelas):
+        $siswa = $kelas->siswa ?>
                     <tr>
-                        <td><?= $siswa['id_siswa'] ?></td>
-                        <td><?= $siswa['nama_siswa'] ?></td>
-                        <td><?= $siswa['email_siswa'] ?></td>
-                        <td><?= $siswa['no_telpon_siswa'] ?></td>
+                        <td><?= $siswa['ID_SISWA'] ?></td>
+                        <td><?= $siswa['NAMA_SISWA'] ?></td>
+                        <td><?= $siswa['EMAIL_SISWA'] ?></td>
+                        <td><?= $siswa['NO_TELPON_SISWA'] ?></td>
                         <td>
                             <div class="d-grid gap-1">
                                 <button class="btn btn-danger btn-sm">Remove from Class</button>

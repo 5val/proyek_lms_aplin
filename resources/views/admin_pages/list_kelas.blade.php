@@ -44,9 +44,10 @@
     $('body').on('click', '.delete-class', function () {
       const classId = $(this).data('id');
       if (confirm('Yakin mau delete kelas?')) {
+      // const safeId = classId.replace(/\//g, '__');
       $.ajax({
-        url: '/delete_class/' + classId,  // Use the DELETE route
-        type: 'DELETE',
+        url: '/admin/delete_class/' + classId,  // Use the DELETE route
+        type: 'GET',
         data: {
         "_token": "{{ csrf_token() }}",  // Add CSRF token for security
         },
@@ -78,9 +79,9 @@
       <td>
       <div class="d-grid gap-1">
       <a href="/admin/list_mata_pelajaran/${kelas.id_kelas}" class="btn btn-primary btn-sm">Detail Kelas</a>
-      <a href="/admin/list_tambah_siswa_ke_kelas" class="btn btn-primary btn-sm">List Siswa</a>
+      <a href="/admin/list_tambah_siswa_ke_kelas/${kelas.id_kelas}" class="btn btn-primary btn-sm">List Siswa</a>
       <a href="/admin/edit_kelas/${kelas.id_kelas}" class="btn btn-primary btn-sm">Edit</a>
-      <button class="btn btn-danger btn-sm delete-class data-id='${kelas.id_kelas}'">Delete</button>
+      <button class="btn btn-danger btn-sm delete-class" data-id='${kelas.id_kelas}'>Delete</button>
       </div>
       </td>
       </tr>

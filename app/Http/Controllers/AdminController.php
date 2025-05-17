@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetailKelas;
+use App\Models\EnrollmentKelas;
 use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
@@ -399,30 +400,31 @@ class AdminController extends Controller
         return redirect()->route('list_mata_pelajaran', ['id_kelas' => $request->kelas])->with('success', 'Jadwal berhasil ditambahkan.');
     }
 
-    public function list_tambah_siswa_ke_kelas()
+    public function list_tambah_siswa_ke_kelas($id_kelas)
     {
         $asistenList = ['Ovaldo', 'Ovaldo OOO', 'Rafael'];
 
-        $kelasList = [
-            [
-                'id_siswa' => '223180587',
-                'nama_siswa' => 'VALEN',
-                'email_siswa' => 'valen@gmail.com',
-                'no_telpon_siswa' => '08580982424',
-            ],
-            [
-                'id_siswa' => '223180582',
-                'nama_siswa' => 'OVALDO',
-                'email_siswa' => 'ovaldo@gmail.com',
-                'no_telpon_siswa' => '08580982424',
-            ],
-            [
-                'id_siswa' => '223180576',
-                'nama_siswa' => 'JESSICA',
-                'email_siswa' => 'jessi@gmail.com',
-                'no_telpon_siswa' => '08580982424',
-            ],
-        ];
+        // $kelasList = [
+        //     [
+        //         'id_siswa' => '223180587',
+        //         'nama_siswa' => 'VALEN',
+        //         'email_siswa' => 'valen@gmail.com',
+        //         'no_telpon_siswa' => '08580982424',
+        //     ],
+        //     [
+        //         'id_siswa' => '223180582',
+        //         'nama_siswa' => 'OVALDO',
+        //         'email_siswa' => 'ovaldo@gmail.com',
+        //         'no_telpon_siswa' => '08580982424',
+        //     ],
+        //     [
+        //         'id_siswa' => '223180576',
+        //         'nama_siswa' => 'JESSICA',
+        //         'email_siswa' => 'jessi@gmail.com',
+        //         'no_telpon_siswa' => '08580982424',
+        //     ],
+        // ];
+        $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with(['siswa'])->get();
         return view('admin_pages.list_tambah_siswa_ke_kelas', compact('asistenList', 'kelasList'));
     }
     public function tambahguru()

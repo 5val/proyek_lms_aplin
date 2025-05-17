@@ -67,7 +67,8 @@ Route::prefix('admin')->group(function () {
    // ======================================= Kelas ===============================================
    Route::get('/list_kelas', [AdminController::class, 'list_kelas'])->name('list_kelas');
    Route::get('/get_classes/{id_periode}', [AdminController::class, 'get_list_kelas']);
-   Route::delete('/delete_class/{id}', [AdminController::class, 'delete_kelas']);
+   Route::get('/delete_class/{id}', [AdminController::class, 'delete_kelas'])
+      ->where('id', expression: '.*');
    Route::get('/tambah_kelas', [AdminController::class, 'tambah_kelas']);
    Route::get('/edit_kelas/{id}', [AdminController::class, 'edit_kelas'])->name('edit_kelas')
       ->where('id', expression: '.*');
@@ -75,12 +76,19 @@ Route::prefix('admin')->group(function () {
    Route::put('/update_kelas/{id}', [AdminController::class, 'update_kelas'])->name('update_kelas')
       ->where('id', expression: '.*');
 
+   // ======================================== Siswa ==============================================
+   Route::get('/list_tambah_siswa_ke_kelas/{id_kelas}', [AdminController::class, 'list_tambah_siswa_ke_kelas'])
+      ->where('id_kelas', expression: '.*')->name('list_tambah_siswa_ke_kelas');
+   // Route::post('/list_mata_pelajaran/{id_kelas}', [AdminController::class, 'add_mata_pelajaran'])
+   //    ->where('id_kelas', expression: '.*');
+
    // ======================================== Mata Pelajaran =====================================
    Route::get('/list_mata_pelajaran/{id_kelas}', [AdminController::class, 'list_mata_pelajaran'])
       ->where('id_kelas', expression: '.*')->name('list_mata_pelajaran');
    Route::post('/list_mata_pelajaran/{id_kelas}', [AdminController::class, 'add_mata_pelajaran'])
       ->where('id_kelas', expression: '.*');
 
+   // ======================================== Upload Excel =====================================
    Route::get('/upload_file', [AdminController::class, 'upload_file']);
    // Add more admin routes here...
 });
@@ -95,22 +103,22 @@ Route::prefix('guru')->group(function () {
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [GuruController::class, 'detail_pelajaran'])->where('id_mata_pelajaran', '.*');
    Route::get('/editmateri/{id_materi}', [GuruController::class, 'editmateri'])->where('id_materi', '.*');
    Route::put('/editmateri', [GuruController::class, 'updatemateri']);
-  Route::get('/editpengumuman/{ID}', [GuruController::class, 'editpengumuman'])
-    ->where('ID', '.*')
-    ->name('guru.editpengumuman');
+   Route::get('/editpengumuman/{ID}', [GuruController::class, 'editpengumuman'])
+      ->where('ID', '.*')
+      ->name('guru.editpengumuman');
    Route::put('/updatepengumuman/{ID}', [GuruController::class, 'updatepengumuman'])->where('ID', '.*')
-    ->name('guru.updatepengumuman');
-Route::get('/edittugas/{id_tugas}', [GuruController::class, 'edittugas'])
-    ->where('id_tugas', '.*')
-    ->name('guru.edittugas');
+      ->name('guru.updatepengumuman');
+   Route::get('/edittugas/{id_tugas}', [GuruController::class, 'edittugas'])
+      ->where('id_tugas', '.*')
+      ->name('guru.edittugas');
    Route::put('/updatetugas/{id_tugas}', [GuruController::class, 'updatetugas'])->where('id_tugas', '.*')
-    ->name('guru.updatetugas');
+      ->name('guru.updatetugas');
    Route::get('/hlm_about', [GuruController::class, 'hlm_about']);
    Route::get('/hlm_detail_pengumuman', [GuruController::class, 'hlm_detail_pengumuman']);
    Route::get('/hlm_detail_pengumpulan', [GuruController::class, 'hlm_detail_pengumpulan']);
    Route::get('/hlm_detail_tugas/{id_tugas}', [GuruController::class, 'hlm_detail_tugas'])->where('id_tugas', '.*');
    Route::get('/hlm_edit_about', [GuruController::class, 'hlm_edit_about'])->name('guru.hlm_about');
-  Route::put('/update_biodata', [GuruController::class, 'update_biodata'])->name('guru.update_biodata');
+   Route::put('/update_biodata', [GuruController::class, 'update_biodata'])->name('guru.update_biodata');
    Route::get('/hlm_jadwal', [GuruController::class, 'hlm_jadwal']);
    Route::get('/hlm_kelas', [GuruController::class, 'hlm_kelas']);
    Route::get('/hlm_laporan_tugas', [GuruController::class, 'hlm_laporan_tugas']);
@@ -138,12 +146,13 @@ Route::get('/siswa', function () {
 Route::prefix('siswa')->group(function () {
    Route::get('/', [SiswaController::class, 'index']);
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [SiswaController::class, 'detail_pelajaran'])
-    ->where('id_mata_pelajaran', expression: '.*');
+      ->where('id_mata_pelajaran', expression: '.*');
    Route::get('/hlm_about', [SiswaController::class, 'hlm_about']);
    Route::get('/hlm_detail_tugas/{id_tugas}', [SiswaController::class, 'hlm_detail_tugas'])->where('id_tugas', expression: '.*');
    Route::get('/hlm_edit_about', [SiswaController::class, 'hlm_edit_about']);
    Route::put('/siswa/update_biodata', [SiswaController::class, 'update_biodata'])->name('siswa.update_biodata');
-   Route::get('/hlm_about', [SiswaController::class, 'hlm_about'])->name('siswa.hlm_about');;
+   Route::get('/hlm_about', [SiswaController::class, 'hlm_about'])->name('siswa.hlm_about');
+   ;
    Route::get('/hlm_jadwal', [SiswaController::class, 'hlm_jadwal']);
    Route::get('/hlm_kelas', [SiswaController::class, 'hlm_kelas']);
    Route::get('/hlm_laporan_tugas', [SiswaController::class, 'hlm_laporan_tugas']);
