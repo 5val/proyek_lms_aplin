@@ -29,6 +29,16 @@ Route::prefix('admin')->group(function () {
       ->where('id_guru', '.*');
    Route::get('/tambahguru', [AdminController::class, 'tambahguru']);
    Route::post('/tambahguru', [AdminController::class, 'postguru']);
+   Route::get('/uploadGuru', [AdminController::class, 'displayUploadGuru']);
+   Route::post('/uploadGuru', [AdminController::class, 'uploadGuru'])->name('uploadGuru.excel');
+   Route::get('/downloadTempGuru', function () {
+      $filePath = storage_path('app/template_excel/template_guru.xlsx'); //  path to your file
+      if (file_exists($filePath)) {
+         return response()->download($filePath, 'template_guru.xlsx'); //  filename for the user
+      } else {
+         abort(404, 'Template file not found.'); //  handle file not found error
+      }
+   });
 
    // ===================================== Pengumuman ===============================================
    Route::put('/editpengumuman/{id_pengumuman}', [AdminController::class, 'editpengumuman'])
@@ -51,6 +61,17 @@ Route::prefix('admin')->group(function () {
       ->where('id_siswa', '.*');
    Route::get('/tambahsiswa', [AdminController::class, 'tambahsiswa']);
    Route::post('/tambahsiswa', [AdminController::class, 'postsiswa']);
+   Route::get('/uploadSiswa', [AdminController::class, 'displayUploadSiswa']);
+   Route::post('/uploadSiswa', [AdminController::class, 'uploadSiswa'])->name('uploadSiswa.excel');
+   Route::get('/downloadTempSiswa', function () {
+      $filePath = storage_path('app/template_excel/template_siswa.xlsx'); //  path to your file
+      if (file_exists($filePath)) {
+         return response()->download($filePath, 'template_siswa.xlsx'); //  filename for the user
+      } else {
+         abort(404, 'Template file not found.'); //  handle file not found error
+      }
+   });
+
    // ===================================== Pelajaran =============================================
    Route::get('/list_pelajaran', [AdminController::class, 'list_pelajaran'])->name('list_pelajaran');
    Route::get('/list_pelajaran/{id_pelajaran}', [AdminController::class, 'hapuspelajaran'])->name('hapuspelajaran');
@@ -89,7 +110,7 @@ Route::prefix('admin')->group(function () {
       ->where('id_kelas', expression: '.*');
 
    // ======================================== Upload Excel =====================================
-   Route::get('/upload_file', [AdminController::class, 'upload_file']);
+   Route::get('/upload_kelas', [AdminController::class, 'upload_kelas']);
    // Add more admin routes here...
 });
 

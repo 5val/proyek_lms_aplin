@@ -5,8 +5,8 @@
         <div>
             <a href="/admin/list_kelas"><button class="btn me-1">List</button></a>
             <a href="/admin/tambah_kelas"><button class="btn  me-1">Tambah</button></a>
-            <a href="/admin/upload_file" class="btn btn-primary me-1"> Upload Kelas</a>
-            <button class="btn">Upload Siswa</button>
+            <a href="/admin/upload_kelas" class="btn btn-primary me-1"> Upload Kelas</a>
+            <a href="/admin/upload_siswa" class="btn me-1">Upload Siswa</a>
         </div>
     </div>
 

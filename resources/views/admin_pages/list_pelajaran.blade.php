@@ -23,10 +23,10 @@
                 </thead>
                 <tbody>
                     <?php foreach ($kelasList as $pelajaran): ?>
-                    <tr class="{{ $pelajaran->status == "Active" ? "" : "inactive" }}">
+                    <tr class="{{ $pelajaran->STATUS == "Active" ? "" : "inactive" }}">
                         <td><?= $pelajaran->ID_PELAJARAN ?></td>
                         <td><?= $pelajaran->NAMA_PELAJARAN ?></td>
-                        <td>{{ $pelajaran->status == "Active" ? "Aktif" : "Inaktif" }}</td>
+                        <td>{{ $pelajaran->STATUS == "Active" ? "Aktif" : "Inaktif" }}</td>
                         <td>
                             <div class="d-grid gap-1">
                                 <a href="{{ url('/admin/list_pelajaran/' . $pelajaran->ID_PELAJARAN) }}"

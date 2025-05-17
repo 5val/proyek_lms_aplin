@@ -8,7 +8,9 @@
   <div>
     <h4>List Siswa</h4><br>
     <button class="btn btn-success"><a style="text-decoration: none; color: white;" href="tambahsiswa">Tambah
-      Siswa</a></button><br><br>
+      Siswa</a></button>
+    <a class="btn btn-success" style="text-decoration: none; color: white;" href="uploadSiswa">Upload
+    Excel</a><br><br>
     <table class="table table-bordered align-middle">
     <thead>
 

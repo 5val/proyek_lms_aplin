@@ -285,3 +285,30 @@ body {
     overflow-y: auto;   /* Enable scrolling if content overflows */
 }
 
+.file-upload-label {
+    border: 2px dashed #ced4da;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: border-color 0.3s ease;
+    margin-bottom: 0; /* Reset default margin-bottom of label */
+}
+
+.file-upload-label:hover {
+    border-color: #007bff;
+}
+
+#file-upload {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}

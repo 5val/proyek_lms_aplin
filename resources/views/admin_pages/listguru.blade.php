@@ -9,7 +9,9 @@
     <div>
     <h4>List Guru</h4><br>
     <button class="btn btn-success"><a style="text-decoration: none; color: white;" href="/admin/tambahguru">Tambah
-      Guru</a></button><br><br>
+      Guru</a></button>
+    <button class="btn btn-success"><a style="text-decoration: none; color: white;" href="/admin/uploadGuru">Upload
+      Excel</a></button><br><br>
     <table class="table table-bordered align-middle">
       <thead>
 
@@ -52,8 +54,8 @@
       <td>Aktif</td>
       <td>
       <div style="display: flex; gap: 5px; ">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
       </div>
       </td>
       </tr>
@@ -66,8 +68,8 @@
       <td>Aktif</td>
       <td>
       <div style="display: flex; gap: 5px; ">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
       </div>
       </td>
       </tr>
@@ -80,8 +82,8 @@
       <td style="color: red;">In aktif</td>
       <td>
       <div style="display: flex; gap: 5px; ">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
       </div>
       </td>
       </tr>
@@ -94,8 +96,8 @@
       <td>Aktif</td>
       <td>
       <div style="display: flex; gap: 5px; ">
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger">Hapus</button>
+      <button class="btn btn-primary">Edit</button>
+      <button class="btn btn-danger">Hapus</button>
       </div>
       </td>
       </tr> -->

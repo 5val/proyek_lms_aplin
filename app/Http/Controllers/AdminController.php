@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\InsertGuruExcel;
+use App\Imports\InsertSiswaExcel;
 use App\Models\DetailKelas;
 use App\Models\EnrollmentKelas;
 use App\Models\Guru;
@@ -15,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use Session;
 
 class AdminController extends Controller
 {
@@ -99,6 +103,31 @@ class AdminController extends Controller
             return redirect('/admin/listguru');
 
         }
+    }
+    public function displayUploadGuru()
+    {
+        return view('admin_pages.upload_guru');
+    }
+    public function uploadGuru(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        try {
+            // Correct way to call the import() method:
+            Excel::import(new InsertGuruExcel, $request->file('file')); // Using the Facade
+
+            // Or, using dependency injection (better approach):
+            // $excel = app('excel');
+            // $excel->import(new InsertSiswaExcel, $request->file('file'));
+
+            Session::flash('success', 'Data imported successfully!'); // Use session
+        } catch (\Exception $e) {
+            Session::flash('error', 'Import failed: ' . $e->getMessage());
+        }
+
+        return redirect()->back();
     }
     // ========================================= Pengumuman ============================================
     public function geteditpengumuman($id)
@@ -210,6 +239,31 @@ class AdminController extends Controller
             return redirect('/admin/listsiswa');
         }
     }
+    public function displayUploadSiswa()
+    {
+        return view('admin_pages.upload_siswa');
+    }
+    public function uploadSiswa(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        try {
+            // Correct way to call the import() method:
+            Excel::import(new InsertSiswaExcel, $request->file('file')); // Using the Facade
+
+            // Or, using dependency injection (better approach):
+            // $excel = app('excel');
+            // $excel->import(new InsertSiswaExcel, $request->file('file'));
+
+            Session::flash('success', 'Data imported successfully!'); // Use session
+        } catch (\Exception $e) {
+            Session::flash('error', 'Import failed: ' . $e->getMessage());
+        }
+
+        return redirect()->back();
+    }
 
     // ========================================= Pelajaran ============================================
     public function list_pelajaran()
@@ -236,7 +290,7 @@ class AdminController extends Controller
     public function hapuspelajaran($id)
     {
         $pelajaran = Pelajaran::find($id);
-        $pelajaran->status == "Active" ? $pelajaran->status = "Inactive" : $pelajaran->status = "Active";
+        $pelajaran->STATUS == "Active" ? $pelajaran->STATUS = "Inactive" : $pelajaran->STATUS = "Active";
         $pelajaran->save();
         return redirect()->route('list_pelajaran')->with('success', 'Berhasil update!');
 
@@ -439,27 +493,6 @@ class AdminController extends Controller
     public function list_tambah_siswa_ke_kelas($id_kelas)
     {
         $asistenList = ['Ovaldo', 'Ovaldo OOO', 'Rafael'];
-
-        // $kelasList = [
-        //     [
-        //         'id_siswa' => '223180587',
-        //         'nama_siswa' => 'VALEN',
-        //         'email_siswa' => 'valen@gmail.com',
-        //         'no_telpon_siswa' => '08580982424',
-        //     ],
-        //     [
-        //         'id_siswa' => '223180582',
-        //         'nama_siswa' => 'OVALDO',
-        //         'email_siswa' => 'ovaldo@gmail.com',
-        //         'no_telpon_siswa' => '08580982424',
-        //     ],
-        //     [
-        //         'id_siswa' => '223180576',
-        //         'nama_siswa' => 'JESSICA',
-        //         'email_siswa' => 'jessi@gmail.com',
-        //         'no_telpon_siswa' => '08580982424',
-        //     ],
-        // ];
         $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with(['siswa'])->get();
         return view('admin_pages.list_tambah_siswa_ke_kelas', compact('asistenList', 'kelasList'));
     }
@@ -475,8 +508,8 @@ class AdminController extends Controller
     {
         return view('admin_pages.tambahsiswa');
     }
-    public function upload_file()
+    public function upload_kelas()
     {
-        return view('admin_pages.upload_file');
+        return view('admin_pages.upload_kelas');
     }
 }
