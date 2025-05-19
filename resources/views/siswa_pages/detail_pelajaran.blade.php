@@ -31,7 +31,9 @@
                 <div class="card h-100 p-3 d-flex flex-column">
                     <h5 class="card-title">{{ $m->NAMA_MATERI }}</h5>
                     <p class="card-text">{{ $m->DESKRIPSI_MATERI }}</p>
-                    <a href="{{ asset('storage/'.$m->FILE_MATERI) }}" class="mt-auto align-self-start">Download Materi</a>
+                    <a href="{{ asset('storage/uploads/materi/' . $m->FILE_MATERI) }}" class="mt-auto align-self-start">
+                        Download Materi
+                    </a>
                 </div>
             </div>
             @endforeach

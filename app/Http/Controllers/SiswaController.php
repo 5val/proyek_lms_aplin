@@ -7,6 +7,9 @@ use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\EnrollmentKelas;
+use App\Models\SubmissionTugas;
+use Illuminate\Support\Facades\Storage;  
+
 use App\Models\Tugas;
 use App\Models\Pelajaran;
 use App\Models\Pengumuman;
@@ -30,6 +33,7 @@ class SiswaController extends Controller
             ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
             ->select('PELAJARAN.NAMA_PELAJARAN', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
             ->get();
+
         $tugas = DB::table('TUGAS')
             ->join('MATA_PELAJARAN', 'TUGAS.ID_MATA_PELAJARAN', '=', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
             ->join('ENROLLMENT_KELAS', 'MATA_PELAJARAN.ID_KELAS', '=', 'ENROLLMENT_KELAS.ID_KELAS')
@@ -153,15 +157,22 @@ class SiswaController extends Controller
     }
     public function hlm_detail_tugas($id_tugas)
     {
-        // Ambil data tugas berdasarkan ID
         $id_tugas = str_replace('+', ' ', $id_tugas);
         $tugas = Tugas::find($id_tugas);
 
-        // if (!$tugas) {
-        //     return redirect('/siswa')->with('error', 'Tugas tidak ditemukan');
-        // }
+        if (!$tugas) {
+            return redirect('/siswa')->with('error', 'Tugas tidak ditemukan');
+        }
 
-        // Mengambil nilai dan feedback dengan subquery
+        $deadline_passed = false;
+        if ($tugas->DEADLINE_TUGAS) {
+            $deadlineTimestamp = strtotime($tugas->DEADLINE_TUGAS);
+            $nowTimestamp = time();
+            if ($deadlineTimestamp < $nowTimestamp) {
+                $deadline_passed = true;
+            }
+        }
+
         $submission = DB::table('SUBMISSION_TUGAS')
             ->where('ID_SISWA', session('userActive')->ID_SISWA)
             ->where('ID_TUGAS', $id_tugas)
@@ -170,16 +181,59 @@ class SiswaController extends Controller
             )
             ->first();
 
-        // Ambil tugas dan materi yang terkait dengan mata pelajaran ini
         $materi = Materi::where('ID_MATA_PELAJARAN', $tugas->ID_MATA_PELAJARAN)->get();
 
         return view('siswa_pages.hlm_detail_tugas', [
             'tugas' => $tugas,
             'materi' => $materi,
             'nilai' => $submission ? $submission->NILAI_TUGAS : 'Belum Dinilai',
-            'submission' => $submission
+            'submission' => $submission,
+            'deadline_passed' => $deadline_passed,
         ]);
     }
+
+    public function posttugas(Request $request)
+    {
+        $validatedData = $request->validate([
+            'ID_TUGAS' => 'required|max:255',
+            'FILE_TUGAS' => 'required|file|', // wajib file dan max 10MB
+        ]);
+
+        if ($request->hasFile('FILE_TUGAS')) {
+            $file = $request->file('FILE_TUGAS');
+            // Ganti semua '/' di ID_SISWA menjadi '_'
+            $idSiswa = str_replace('/', '_', session('userActive')->ID_SISWA);
+            $filename = time() . '_' . $idSiswa . '_' . preg_replace('/\s+/', '_', $file->getClientOriginalName());
+            $file->storeAs('uploads/tugas', $filename, 'public');
+            $validatedData['FILE_TUGAS'] = $filename;
+        }
+
+        $submissionData = [
+            'ID_SISWA' => session('userActive')->ID_SISWA, 
+            'ID_TUGAS' => $validatedData['ID_TUGAS'],
+            'TANGGAL_SUBMISSION' => now(),
+            'NILAI_TUGAS' => null,
+            'FILE_TUGAS' => $validatedData['FILE_TUGAS'], 
+        ];
+
+        SubmissionTugas::create($submissionData);
+
+        // Redirect ke halaman detail tugas (ganti URL sesuai route kamu)
+        return redirect(url('/siswa/hlm_detail_tugas/' . urlencode($validatedData['ID_TUGAS'])));
+    }
+
+    // public function download($filename)
+    // {
+    //     $filePath = 'uploads/materi/' . $filename;
+
+    //     $exists = Storage::disk('public')->exists($filePath);
+
+    //     if (!$exists) {
+    //         dd("File not found at path: storage/app/public/" . $filePath);
+    //     }
+
+    //     return Storage::disk('public')->download($filePath);
+    // }
 
     public function hlm_edit_about()
     {

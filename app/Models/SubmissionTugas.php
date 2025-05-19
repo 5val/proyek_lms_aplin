@@ -13,7 +13,7 @@ class SubmissionTugas extends Model
     protected $table = 'SUBMISSION_TUGAS';
     protected $primaryKey = 'ID_SUBMISSION';
     public $timestamps = false;
-    protected $fillable = ['ID_SUBMISSION', 'ID_SISWA', 'ID_TUGAS', 'TANGGAL_SUBMISSION', 'NILAI_TUGAS'];
+    protected $fillable = ['ID_SUBMISSION', 'ID_SISWA', 'ID_TUGAS', 'TANGGAL_SUBMISSION', 'NILAI_TUGAS', 'FILE_TUGAS'];
 
     /**
      * Get the siswa that owns the SubmissionTugas.

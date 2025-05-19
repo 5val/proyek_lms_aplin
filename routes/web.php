@@ -172,11 +172,14 @@ Route::prefix('siswa')->group(function () {
    Route::get('/hlm_detail_tugas/{id_tugas}', [SiswaController::class, 'hlm_detail_tugas'])->where('id_tugas', expression: '.*');
    Route::get('/hlm_edit_about', [SiswaController::class, 'hlm_edit_about']);
    Route::put('/siswa/update_biodata', [SiswaController::class, 'update_biodata'])->name('siswa.update_biodata');
+   Route::post('/siswa/tugas/submit', [SiswaController::class, 'posttugas'])->name('siswa.posttugas');
    Route::get('/hlm_about', [SiswaController::class, 'hlm_about'])->name('siswa.hlm_about');
    ;
    Route::get('/hlm_jadwal', [SiswaController::class, 'hlm_jadwal']);
    Route::get('/hlm_kelas', [SiswaController::class, 'hlm_kelas']);
    Route::get('/hlm_laporan_tugas', [SiswaController::class, 'hlm_laporan_tugas']);
    Route::get('/hlm_laporan_ujian', [SiswaController::class, 'hlm_laporan_ujian']);
+
+   // Route::get('/materi/download/{filename}', [SiswaController::class, 'download'])->name('materi.download');
    // Add more admin routes here...
 });
