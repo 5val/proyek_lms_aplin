@@ -22,67 +22,79 @@ use Illuminate\Support\Facades\DB;
 class SiswaController extends Controller
 {
     public function index()
-    {   
-        
+    {
         $pengumuman = Pengumuman::all();
         $siswa = Siswa::find(session('userActive')->ID_SISWA);
-        $mataPelajaran = DB::table('ENROLLMENT_KELAS')
-            ->join('KELAS', 'ENROLLMENT_KELAS.ID_KELAS', '=', 'KELAS.ID_KELAS')
-            ->join('MATA_PELAJARAN', 'KELAS.ID_KELAS', '=', 'MATA_PELAJARAN.ID_KELAS')
+
+        // Ambil kelas terakhir yang di-enroll siswa
+        $lastEnrollment = DB::table('ENROLLMENT_KELAS')
+            ->where('ID_SISWA', $siswa->ID_SISWA)
+            ->orderByDesc('ID_KELAS') // atau pakai timestamp jika ada
+            ->first();
+
+        if (!$lastEnrollment) {
+            return response()->json(['message' => 'Kelas siswa tidak ditemukan.'], 404);
+        }
+
+        $idKelasTerakhir = $lastEnrollment->ID_KELAS;
+
+        // Ambil ID_PERIODE dari kelas terakhir tersebut
+        $kelasTerakhir = DB::table('KELAS')
+            ->where('ID_KELAS', $idKelasTerakhir)
+            ->first();
+
+        if (!$kelasTerakhir) {
+            return response()->json(['message' => 'Data kelas tidak ditemukan.'], 404);
+        }
+
+        $currentPeriodeId = $kelasTerakhir->ID_PERIODE;
+
+        // Ambil mata pelajaran di kelas terakhir dan periode tersebut
+        $mataPelajaran = DB::table('MATA_PELAJARAN')
             ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
-            ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
+            ->where('MATA_PELAJARAN.ID_KELAS', $idKelasTerakhir)
             ->select('PELAJARAN.NAMA_PELAJARAN', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
             ->get();
 
+        // Ambil tugas di kelas terakhir dan periode tersebut
         $tugas = DB::table('TUGAS')
             ->join('MATA_PELAJARAN', 'TUGAS.ID_MATA_PELAJARAN', '=', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
-            ->join('ENROLLMENT_KELAS', 'MATA_PELAJARAN.ID_KELAS', '=', 'ENROLLMENT_KELAS.ID_KELAS')
             ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
-            ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
-            ->where('TUGAS.DEADLINE_TUGAS', '>', now())  // Filter tugas yang deadline-nya lebih besar dari waktu saat ini
-            ->select('TUGAS.NAMA_TUGAS', 'TUGAS.DEADLINE_TUGAS', 'TUGAS.ID_TUGAS', 'PELAJARAN.NAMA_PELAJARAN')  // Menambahkan ID_TUGAS di query
+            ->where('MATA_PELAJARAN.ID_KELAS', $idKelasTerakhir)
+            ->where('TUGAS.DEADLINE_TUGAS', '>', now())
+            ->select('TUGAS.NAMA_TUGAS', 'TUGAS.DEADLINE_TUGAS', 'TUGAS.ID_TUGAS', 'PELAJARAN.NAMA_PELAJARAN')
             ->get();
 
-        $jadwal = DB::table('ENROLLMENT_KELAS')
-            ->join('KELAS', 'ENROLLMENT_KELAS.ID_KELAS', '=', 'KELAS.ID_KELAS')
-            ->join('MATA_PELAJARAN', 'KELAS.ID_KELAS', '=', 'MATA_PELAJARAN.ID_KELAS')
-            ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN') // Join dengan tabel PELAJARAN
-            ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
-            ->select('PELAJARAN.NAMA_PELAJARAN', 'MATA_PELAJARAN.HARI_PELAJARAN', 'MATA_PELAJARAN.JAM_PELAJARAN') // Ambil NAMA_PELAJARAN dari PELAJARAN
+        // Ambil jadwal pelajaran di kelas terakhir dan periode tersebut
+        $jadwal = DB::table('MATA_PELAJARAN')
+            ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
+            ->where('MATA_PELAJARAN.ID_KELAS', $idKelasTerakhir)
+            ->select('PELAJARAN.NAMA_PELAJARAN', 'MATA_PELAJARAN.HARI_PELAJARAN', 'MATA_PELAJARAN.JAM_PELAJARAN')
             ->get();
 
-        // Mengelompokkan jadwal berdasarkan hari dan jam
         $jadwalByDay = [];
         foreach ($jadwal as $item) {
             $jadwalByDay[$item->HARI_PELAJARAN][$item->JAM_PELAJARAN] = $item->NAMA_PELAJARAN;
         }
 
-        $idKelas = DB::table('ENROLLMENT_KELAS')
-            ->where('ID_SISWA', '=', $siswa->ID_SISWA)
-            ->value('ID_KELAS');  // Ambil ID_KELAS dari ENROLLMENT_KELAS
-
-        // Cek apakah ID_KELAS ditemukan
-        if (!$idKelas) {
-            return response()->json(['message' => 'Kelas siswa tidak ditemukan.'], 404);
-        }
-
-        // Ambil informasi kelas dan semester berdasarkan ID_KELAS
+        // Ambil info kelas terakhir beserta periode
         $kelasInfo = DB::table('DETAIL_KELAS')
             ->join('KELAS', 'DETAIL_KELAS.ID_DETAIL_KELAS', '=', 'KELAS.ID_DETAIL_KELAS')
             ->join('PERIODE', 'KELAS.ID_PERIODE', '=', 'PERIODE.ID_PERIODE')
-            ->where('KELAS.ID_KELAS', '=', $idKelas)
+            ->where('KELAS.ID_KELAS', $idKelasTerakhir)
             ->select('DETAIL_KELAS.NAMA_KELAS', 'PERIODE.PERIODE')
-            ->first();  // Ambil satu data kelas dan semester
+            ->first();
 
-        // Return data ke view
         return view('siswa_pages.home', [
             "pengumuman" => $pengumuman,
             "matapelajaran" => $mataPelajaran,
             "tugas" => $tugas,
-            "jadwal"=> $jadwalByDay,
+            "jadwal" => $jadwalByDay,
             "kelas" => $kelasInfo
         ]);
     }
+
+
     public function detail_pelajaran($id_mata_pelajaran)
     {
         $mataPelajaran = MataPelajaran::find($id_mata_pelajaran);
@@ -287,12 +299,24 @@ class SiswaController extends Controller
     public function hlm_jadwal()
     {
         $siswa = Siswa::find(session('userActive')->ID_SISWA);
-        $jadwal = DB::table('ENROLLMENT_KELAS')
-            ->join('KELAS', 'ENROLLMENT_KELAS.ID_KELAS', '=', 'KELAS.ID_KELAS')
-            ->join('MATA_PELAJARAN', 'KELAS.ID_KELAS', '=', 'MATA_PELAJARAN.ID_KELAS')
-            ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN') // Join dengan tabel PELAJARAN
-            ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
-            ->select('PELAJARAN.NAMA_PELAJARAN', 'MATA_PELAJARAN.HARI_PELAJARAN', 'MATA_PELAJARAN.JAM_PELAJARAN') // Ambil NAMA_PELAJARAN dari PELAJARAN
+
+        // Ambil kelas terakhir yang di-enroll siswa (urut berdasarkan ID_KELAS terbesar)
+        $lastEnrollment = DB::table('ENROLLMENT_KELAS')
+            ->where('ID_SISWA', $siswa->ID_SISWA)
+            ->orderByDesc('ID_KELAS') // Jika ada kolom timestamp gunakan itu
+            ->first();
+
+        if (!$lastEnrollment) {
+            return response()->json(['message' => 'Kelas siswa tidak ditemukan.'], 404);
+        }
+
+        $idKelasTerakhir = $lastEnrollment->ID_KELAS;
+
+        // Ambil jadwal mata pelajaran hanya dari kelas terakhir tersebut
+        $jadwal = DB::table('MATA_PELAJARAN')
+            ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
+            ->where('MATA_PELAJARAN.ID_KELAS', $idKelasTerakhir)
+            ->select('PELAJARAN.NAMA_PELAJARAN', 'MATA_PELAJARAN.HARI_PELAJARAN', 'MATA_PELAJARAN.JAM_PELAJARAN')
             ->get();
 
         // Mengelompokkan jadwal berdasarkan hari dan jam
@@ -300,6 +324,7 @@ class SiswaController extends Controller
         foreach ($jadwal as $item) {
             $jadwalByDay[$item->HARI_PELAJARAN][$item->JAM_PELAJARAN] = $item->NAMA_PELAJARAN;
         }
+
         return view('siswa_pages.hlm_jadwal', ["jadwal" => $jadwalByDay]);
     }
     public function hlm_kelas()
@@ -307,117 +332,147 @@ class SiswaController extends Controller
         // Ambil data siswa berdasarkan session
         $siswa = Siswa::find(session('userActive')->ID_SISWA);
 
-        $idKelas = DB::table('ENROLLMENT_KELAS')
-            ->where('ID_SISWA', '=', $siswa->ID_SISWA)
-            ->value('ID_KELAS');  // Ambil ID_KELAS dari ENROLLMENT_KELAS
+        // Ambil kelas terakhir yang di-enroll siswa, urut berdasarkan ID_KELAS terbesar (atau pakai timestamp jika ada)
+        $lastEnrollment = DB::table('ENROLLMENT_KELAS')
+            ->where('ID_SISWA', $siswa->ID_SISWA)
+            ->orderByDesc('ID_KELAS') // Ganti dengan kolom waktu enroll jika ada
+            ->first();
 
-        // Cek apakah ID_KELAS ditemukan
-        if (!$idKelas) {
+        if (!$lastEnrollment) {
             return response()->json(['message' => 'Kelas siswa tidak ditemukan.'], 404);
         }
 
-        // Ambil informasi kelas dan semester berdasarkan ID_KELAS
+        $idKelasTerakhir = $lastEnrollment->ID_KELAS;
+
+        // Ambil informasi kelas dan semester berdasarkan kelas terakhir
         $kelasInfo = DB::table('DETAIL_KELAS')
             ->join('KELAS', 'DETAIL_KELAS.ID_DETAIL_KELAS', '=', 'KELAS.ID_DETAIL_KELAS')
             ->join('PERIODE', 'KELAS.ID_PERIODE', '=', 'PERIODE.ID_PERIODE')
-            ->where('KELAS.ID_KELAS', '=', $idKelas)
+            ->where('KELAS.ID_KELAS', $idKelasTerakhir)
             ->select('DETAIL_KELAS.NAMA_KELAS', 'PERIODE.PERIODE')
-            ->first();  // Ambil satu data kelas dan semester
+            ->first();
 
-        // Ambil mata pelajaran berdasarkan kelas yang diikuti oleh siswa
-        $mataPelajaran = DB::table('ENROLLMENT_KELAS')
-            ->join('KELAS', 'ENROLLMENT_KELAS.ID_KELAS', '=', 'KELAS.ID_KELAS')
-            ->join('MATA_PELAJARAN', 'KELAS.ID_KELAS', '=', 'MATA_PELAJARAN.ID_KELAS')
+        // Ambil mata pelajaran dan guru yang terkait dengan kelas terakhir tersebut
+        $mataPelajaran = DB::table('MATA_PELAJARAN')
             ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
-            ->join('GURU', 'MATA_PELAJARAN.ID_GURU', '=', 'GURU.ID_GURU')  // Join dengan tabel GURU untuk mengambil nama guru
-            ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
-            ->select('PELAJARAN.NAMA_PELAJARAN', 'GURU.NAMA_GURU', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')  // Ambil nama pelajaran dan nama guru
+            ->join('GURU', 'MATA_PELAJARAN.ID_GURU', '=', 'GURU.ID_GURU')
+            ->where('MATA_PELAJARAN.ID_KELAS', $idKelasTerakhir)
+            ->select('PELAJARAN.NAMA_PELAJARAN', 'GURU.NAMA_GURU', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
             ->get();
 
-        // Kirim data mata pelajaran ke view
-        return view('siswa_pages.hlm_kelas', ["matapelajaran" => $mataPelajaran, "kelas" => $kelasInfo]);
+        // Kirim data ke view
+        return view('siswa_pages.hlm_kelas', [
+            'matapelajaran' => $mataPelajaran,
+            'kelas' => $kelasInfo
+        ]);
     }
-    public function hlm_laporan_tugas()
+    public function hlm_laporan_tugas(Request $request)
     {
-        // Ambil data siswa berdasarkan session
         $siswa = Siswa::find(session('userActive')->ID_SISWA);
-
         if (!$siswa) {
             return response()->json(['message' => 'Siswa tidak ditemukan.'], 404);
         }
 
-        // Ambil tugas yang sudah dikumpulkan oleh siswa
+        // Ambil daftar periode (semester) untuk dropdown, urut dari terbaru
+        $daftarPeriode = DB::table('PERIODE')->orderByDesc('ID_PERIODE')->get();
+
+        // Ambil periode dari query string, default ke periode terbaru jika kosong
+        $periodeId = $request->query('periode');
+        if (!$periodeId) {
+            $periodeId = $daftarPeriode->first()->ID_PERIODE ?? null;
+        }
+
+        // Tugas yang sudah dikumpulkan siswa di periode terpilih
         $tugasSudahDikirim = DB::table('SUBMISSION_TUGAS')
             ->join('TUGAS', 'SUBMISSION_TUGAS.ID_TUGAS', '=', 'TUGAS.ID_TUGAS')
             ->join('MATA_PELAJARAN', 'TUGAS.ID_MATA_PELAJARAN', '=', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
             ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
-            ->join('GURU', 'MATA_PELAJARAN.ID_GURU', '=', 'GURU.ID_GURU')
+            ->join('KELAS', 'MATA_PELAJARAN.ID_KELAS', '=', 'KELAS.ID_KELAS')
             ->where('SUBMISSION_TUGAS.ID_SISWA', '=', $siswa->ID_SISWA)
-            ->select('PELAJARAN.NAMA_PELAJARAN', 'TUGAS.NAMA_TUGAS', 'SUBMISSION_TUGAS.NILAI_TUGAS', 'SUBMISSION_TUGAS.TANGGAL_SUBMISSION', 'SUBMISSION_TUGAS.NILAI_TUGAS', 'GURU.NAMA_GURU')
+            ->where('KELAS.ID_PERIODE', '=', $periodeId)
+            ->select('PELAJARAN.NAMA_PELAJARAN', 'TUGAS.NAMA_TUGAS', 'SUBMISSION_TUGAS.NILAI_TUGAS', 'SUBMISSION_TUGAS.TANGGAL_SUBMISSION')
             ->get();
 
-        // Ambil tugas yang belum dikumpulkan oleh siswa
+        // Tugas yang belum dikumpulkan siswa di periode terpilih
         $tugasBelumDikirim = DB::table('TUGAS')
             ->join('MATA_PELAJARAN', 'TUGAS.ID_MATA_PELAJARAN', '=', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
             ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
-            ->join('ENROLLMENT_KELAS', 'MATA_PELAJARAN.ID_KELAS', '=', 'ENROLLMENT_KELAS.ID_KELAS') // Join dengan ENROLLMENT_KELAS untuk memastikan kelas yang diikuti siswa
-            ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)  // Pastikan hanya tugas dari kelas yang diikuti siswa
+            ->join('KELAS', 'MATA_PELAJARAN.ID_KELAS', '=', 'KELAS.ID_KELAS')
+            ->join('ENROLLMENT_KELAS', 'KELAS.ID_KELAS', '=', 'ENROLLMENT_KELAS.ID_KELAS')
+            ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
+            ->where('KELAS.ID_PERIODE', '=', $periodeId)
             ->whereNotIn('TUGAS.ID_TUGAS', function($query) use ($siswa) {
                 $query->select('ID_TUGAS')
                     ->from('SUBMISSION_TUGAS')
                     ->where('ID_SISWA', '=', $siswa->ID_SISWA);
             })
-            ->select('PELAJARAN.NAMA_PELAJARAN', 'TUGAS.NAMA_TUGAS')
+            ->select('PELAJARAN.NAMA_PELAJARAN', 'TUGAS.NAMA_TUGAS', 'TUGAS.ID_TUGAS')
             ->get();
 
-        // Menghitung rata-rata nilai per mata pelajaran
+        // Rata-rata nilai per mata pelajaran periode terpilih
         $rataNilai = DB::table('SUBMISSION_TUGAS')
             ->join('TUGAS', 'SUBMISSION_TUGAS.ID_TUGAS', '=', 'TUGAS.ID_TUGAS')
             ->join('MATA_PELAJARAN', 'TUGAS.ID_MATA_PELAJARAN', '=', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
             ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
+            ->join('KELAS', 'MATA_PELAJARAN.ID_KELAS', '=', 'KELAS.ID_KELAS')
             ->where('SUBMISSION_TUGAS.ID_SISWA', '=', $siswa->ID_SISWA)
+            ->where('KELAS.ID_PERIODE', '=', $periodeId)
             ->select('PELAJARAN.NAMA_PELAJARAN', DB::raw('AVG(SUBMISSION_TUGAS.NILAI_TUGAS) as rata_nilai'))
             ->groupBy('PELAJARAN.NAMA_PELAJARAN')
             ->get();
 
-        // Kirim data tugas dan rata-rata nilai ke view
         return view('siswa_pages.hlm_laporan_tugas', [
             'tugasSudahDikirim' => $tugasSudahDikirim,
             'tugasBelumDikirim' => $tugasBelumDikirim,
-            'rataNilai' => $rataNilai
+            'rataNilai' => $rataNilai,
+            'daftarPeriode' => $daftarPeriode,
+            'selectedPeriode' => $periodeId,
         ]);
     }
-    public function hlm_laporan_ujian()
+    public function hlm_laporan_ujian(Request $request)
     {
-        // Ambil data siswa berdasarkan session
         $siswa = Siswa::find(session('userActive')->ID_SISWA);
-
         if (!$siswa) {
             return response()->json(['message' => 'Siswa tidak ditemukan.'], 404);
         }
 
-        // Ambil data ujian yang sudah dikumpulkan oleh siswa (Nilai Ujian dan Feedback)
+        // Ambil daftar periode untuk dropdown
+        $daftarPeriode = DB::table('PERIODE')->orderByDesc('ID_PERIODE')->get();
+
+        // Ambil periode dari query string, default ke periode terbaru
+        $periodeId = $request->query('periode');
+        if (!$periodeId) {
+            $periodeId = $daftarPeriode->first()->ID_PERIODE ?? null;
+        }
+
+        // Ambil data nilai ujian siswa di periode terpilih
         $ujian = DB::table('NILAI_KELAS')
             ->join('MATA_PELAJARAN', 'NILAI_KELAS.ID_MATA_PELAJARAN', '=', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
             ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
+            ->join('KELAS', 'MATA_PELAJARAN.ID_KELAS', '=', 'KELAS.ID_KELAS')
             ->join('GURU', 'MATA_PELAJARAN.ID_GURU', '=', 'GURU.ID_GURU')
-            ->where('NILAI_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
+            ->where('NILAI_KELAS.ID_SISWA', $siswa->ID_SISWA)
+            ->where('KELAS.ID_PERIODE', $periodeId)
             ->select('PELAJARAN.NAMA_PELAJARAN', 'NILAI_KELAS.NILAI_UTS', 'NILAI_KELAS.NILAI_UAS', 'GURU.NAMA_GURU')
             ->get();
 
-        // Ambil rata-rata nilai ujian per mata pelajaran
+        // Hitung rata-rata nilai ujian per mata pelajaran
         $rataNilai = DB::table('NILAI_KELAS')
             ->join('MATA_PELAJARAN', 'NILAI_KELAS.ID_MATA_PELAJARAN', '=', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
             ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
-            ->where('NILAI_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
-            ->select('PELAJARAN.NAMA_PELAJARAN', DB::raw('AVG(NILAI_KELAS.NILAI_UAS + NILAI_KELAS.NILAI_UTS) / 2 as rata_nilai'))
+            ->join('KELAS', 'MATA_PELAJARAN.ID_KELAS', '=', 'KELAS.ID_KELAS')
+            ->where('NILAI_KELAS.ID_SISWA', $siswa->ID_SISWA)
+            ->where('KELAS.ID_PERIODE', $periodeId)
+            ->select('PELAJARAN.NAMA_PELAJARAN', DB::raw('AVG((NILAI_KELAS.NILAI_UTS + NILAI_KELAS.NILAI_UAS)/2) as rata_nilai'))
             ->groupBy('PELAJARAN.NAMA_PELAJARAN')
             ->get();
 
-        // Kirim data ujian dan rata-rata nilai ke view
         return view('siswa_pages.hlm_laporan_ujian', [
             'ujian' => $ujian,
-            'rataNilai' => $rataNilai
+            'rataNilai' => $rataNilai,
+            'daftarPeriode' => $daftarPeriode,
+            'selectedPeriode' => $periodeId,
         ]);
     }
+
 }

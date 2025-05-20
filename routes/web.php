@@ -178,8 +178,10 @@ Route::prefix('siswa')->group(function () {
    ;
    Route::get('/hlm_jadwal', [SiswaController::class, 'hlm_jadwal']);
    Route::get('/hlm_kelas', [SiswaController::class, 'hlm_kelas']);
-   Route::get('/hlm_laporan_tugas', [SiswaController::class, 'hlm_laporan_tugas']);
-   Route::get('/hlm_laporan_ujian', [SiswaController::class, 'hlm_laporan_ujian']);
+   Route::get('/hlm_laporan_tugas', [SiswaController::class, 'hlm_laporan_tugas'])->name('siswa.laporan_tugas');
+   Route::get('/hlm_laporan_ujian', [SiswaController::class, 'hlm_laporan_ujian'])->name('siswa.laporan_ujian');
+
+   // Route::get('/siswa/laporan_tugas', [SiswaController::class, 'hlm_laporan_tugas'])->name('siswa.laporan_tugas');
 
    // Route::get('/materi/download/{filename}', [SiswaController::class, 'download'])->name('materi.download');
    // Add more admin routes here...
