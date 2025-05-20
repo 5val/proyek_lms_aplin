@@ -3,7 +3,7 @@
 @section('guru_content')
 
 <h4 class="mb-3">Home Guru</h4>
-            <p><strong>Nama Guru:</strong> {{ session('userActive')->NAMA_GURU }} &nbsp; | &nbsp; <strong>NIP:</strong> {{ session('userActive')->ID_GURU }}</p>
+            <p><strong>Nama Guru:</strong> {{ session('userActive')->NAMA_GURU }} &nbsp; | &nbsp; <strong>NIP:</strong> {{ session('userActive')->ID_GURU }} &nbsp; | &nbsp; <strong>Periode:</strong> {{ $periode->PERIODE }}</p>
             
             <!-- Info Wali Kelas -->
              <?php if($wali_kelas): ?>
@@ -17,12 +17,12 @@
             <h5 class="mt-4">Pelajaran yang Diajarkan</h5>
             <div class="scroll-box mb-4 d-flex flex-row flex-nowrap overflow-auto">
                <?php foreach ($mata_pelajaran as $m) : ?>
-                  <a href="{{ url('/guru/detail_pelajaran/' . urlencode($m->ID_MATA_PELAJARAN)) }}">
+                  <a href="{{ url('/guru/detail_pelajaran/' . urlencode($m->id_mata_pelajaran)) }}">
                      <div class="card p-3 me-3 text-center">
                         <div class="card-body">
                         <i class="fas fa-calculator fa-2x mb-2"></i>
-                        <h5>{{ $m->pelajaran->NAMA_PELAJARAN }}</h5>
-                        <p>Kelas: {{ $m->kelas->detailKelas->NAMA_KELAS }}</p>
+                        <h5>{{ $m->nama_pelajaran }}</h5>
+                        <p>Kelas: {{ $m->nama_kelas }}</p>
                         </div>
                      </div>
                   </a>
@@ -77,7 +77,7 @@
                         <td>{{ $hari }}</td>
                         <?php foreach ($listJam as $jam): ?>
                            <?php if(isset($jadwal[$hari][$jam])): ?>
-                              <td>{{ $jadwal[$hari][$jam]->pelajaran->NAMA_PELAJARAN }} ({{ $jadwal[$hari][$jam]->kelas->detailKelas->NAMA_KELAS }})</td>
+                              <td>{{ $jadwal[$hari][$jam]->nama_pelajaran }} ({{ $jadwal[$hari][$jam]->nama_kelas }})</td>
                            <?php else: ?>
                               <td>-</td>
                            <?php endif; ?>

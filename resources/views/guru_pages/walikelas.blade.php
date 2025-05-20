@@ -1,6 +1,16 @@
 @extends('layouts.guru_app')
 
 @section('guru_content')
+<form method="GET" action="/guru/walikelas" class="mb-4">
+        <label for="periodeSelect" class="form-label">Pilih Periode:</label>
+        <select name="periodeSelect" id="periodeSelect" class="form-select" onchange="this.form.submit()">
+            @foreach($kelas_periode as $p)
+                <option value="{{ $p->periode->ID_PERIODE }}" {{ $periode->ID_PERIODE == $p->periode->ID_PERIODE ? 'selected' : '' }}>
+                    {{ $p->periode->PERIODE }}
+                </option>
+            @endforeach
+        </select>
+    </form>
 <?php if ($wali_kelas) : ?>
 <div class="topbar rounded mt-3">
    <h3>{{ $wali_kelas->NAMA_KELAS }}</h3>

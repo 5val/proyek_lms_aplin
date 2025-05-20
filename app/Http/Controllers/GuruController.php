@@ -25,25 +25,43 @@ class GuruController extends Controller
     {
       $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
       $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->where('ID_PERIODE', '=', $periode->ID_PERIODE)->first();
-      $allMataPelajaran = MataPelajaran::with(['kelas.detailKelas', 'pelajaran'])->where('ID_GURU', '=', session('userActive')->ID_GURU)->get();
+      $allMataPelajaran = DB::table('mata_pelajaran as mp')
+         ->join('kelas as k', 'mp.id_kelas', '=', 'k.id_kelas')
+         ->join('detail_kelas as dk', 'dk.id_detail_kelas', '=', 'k.id_detail_kelas')
+         ->join('pelajaran as p', 'mp.id_pelajaran', '=', 'p.id_pelajaran')
+         ->where('mp.id_guru', session('userActive')->ID_GURU)
+         ->where('k.id_periode', $periode->ID_PERIODE)
+         ->select('mp.id_mata_pelajaran', 'dk.nama_kelas', 'p.nama_pelajaran', 'mp.jam_pelajaran', 'mp.hari_pelajaran')
+         ->get();
       $allTugas = Tugas::with(['mataPelajaran.pelajaran'])
          ->whereHas('mataPelajaran', function ($id) {
             $id->where('id_guru', '=', session('userActive')->ID_GURU);
          })->get();
       $allPengumuman = Pengumuman::all();
+      $jadwal = [];
       foreach ($allMataPelajaran as $a) {
-         $jadwal[$a->HARI_PELAJARAN][$a->JAM_PELAJARAN] = $a;
+         $jadwal[$a->hari_pelajaran][$a->jam_pelajaran] = $a;
       }
       if($kelas != null) {
          $waliKelas = DetailKelas::find($kelas->ID_DETAIL_KELAS);
-         return view('guru_pages.home', ['wali_kelas' => $waliKelas, 'mata_pelajaran' => $allMataPelajaran, 'all_tugas' => $allTugas, 'all_pengumuman' => $allPengumuman, 'jadwal' => $jadwal]);
+         return view('guru_pages.home', ['wali_kelas' => $waliKelas, 'periode' => $periode, 'mata_pelajaran' => $allMataPelajaran, 'all_tugas' => $allTugas, 'all_pengumuman' => $allPengumuman, 'jadwal' => $jadwal]);
       } else {
-         return view('guru_pages.home', ['wali_kelas' => null, 'mata_pelajaran' => $allMataPelajaran, 'all_tugas' => $allTugas, 'all_pengumuman' => $allPengumuman, 'jadwal' => $jadwal]);
+         return view('guru_pages.home', ['wali_kelas' => null, 'periode' => $periode, 'mata_pelajaran' => $allMataPelajaran, 'all_tugas' => $allTugas, 'all_pengumuman' => $allPengumuman, 'jadwal' => $jadwal]);
       }
     }
 
-    public function hlm_detail_pengumpulan(){
-      return view('hlm_detail_pengumpulan');
+    public function hlm_detail_pengumpulan($id_submission){
+      $submission = SubmissionTugas::with(['tugas', 'siswa'])->where('ID_SUBMISSION', $id_submission)->first();
+      return view('guru_pages.hlm_detail_pengumpulan', ['submission' => $submission]);
+    }
+    public function put_nilai_tugas(Request $request){
+      $id_submission = $request->input('ID_SUBMISSION');
+      $nilai = $request->input('nilai');
+      $submission = SubmissionTugas::with(['tugas', 'siswa'])->where('ID_SUBMISSION', $id_submission)->first();
+      $submission->update([
+         "NILAI_TUGAS" => $nilai
+      ]);
+      return view('guru_pages.hlm_detail_pengumpulan', ['submission' => $submission]);
     }
     public function detail_pelajaran($id_mata_pelajaran)
     {
@@ -199,9 +217,20 @@ public function hlm_detail_tugas($id_tugas)
     ]);
 }
 
-   public function edit_nilai_tugas(){
-      return view('guru_pages.edit_nilai_tugas');
+   public function edit_nilai_tugas($id_submission){
+      $submission = SubmissionTugas::with(['tugas', 'siswa'])->where('ID_SUBMISSION', $id_submission)->first();
+      return view('guru_pages.edit_nilai_tugas', ['submission' => $submission]);
    }
+
+   public function update_nilai_tugas(Request $request){
+      $id_submission = $request->input('ID_SUBMISSION');
+      $nilai = $request->input('nilai');
+      $submission = SubmissionTugas::with(['tugas', 'siswa'])->where('ID_SUBMISSION', $id_submission)->first();
+      $submission->update([
+         "NILAI_TUGAS" => $nilai
+      ]);
+      return redirect($request->input('redirect_to'));
+    }
  
     public function hlm_edit_about()
     {
@@ -257,13 +286,26 @@ public function hlm_detail_tugas($id_tugas)
     }
     public function hlm_kelas()
     {
-      $all_kelas = MataPelajaran::with(['kelas.periode', 'pelajaran'])->where('ID_GURU', '=', session('userActive')->ID_GURU)->get();
-      return view('guru_pages.hlm_kelas', ['all_kelas' => $all_kelas]);
-    }
-    public function hlm_laporan_tugas()
-    {
       $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
-      $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->where('ID_PERIODE', '=', $periode->ID_PERIODE)->first();
+      $all_kelas = DB::table('mata_pelajaran as mp')
+         ->join('kelas as k', 'mp.id_kelas', '=', 'k.id_kelas')
+         ->join('detail_kelas as dk', 'dk.id_detail_kelas', '=', 'k.id_detail_kelas')
+         ->join('pelajaran as p', 'mp.id_pelajaran', '=', 'p.id_pelajaran')
+         ->where('mp.id_guru', session('userActive')->ID_GURU)
+         ->where('k.id_periode', $periode->ID_PERIODE)
+         ->select('mp.id_mata_pelajaran', 'dk.nama_kelas', 'p.nama_pelajaran', 'mp.jam_pelajaran', 'mp.hari_pelajaran')
+         ->get();
+      return view('guru_pages.hlm_kelas', ['periode' => $periode, 'all_kelas' => $all_kelas]);
+    }
+    public function hlm_laporan_tugas(Request $request)
+    {
+      if($request->query('periodeSelect')){
+         $periode = Periode::where('ID_PERIODE', $request->query('periodeSelect'))->first();
+      } else {
+         $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
+      }
+      $kelas = Kelas::with('detailKelas')->where('ID_GURU', '=', session('userActive')->ID_GURU)->where('ID_PERIODE', '=', $periode->ID_PERIODE)->first();
+      $kelas_periode = Kelas::with('periode')->where('ID_GURU', session('userActive')->ID_GURU)->get();
       if($kelas != null) {
          $listNilai = DB::table('submission_tugas as st')
             ->join('tugas as t', 'st.id_tugas', '=', 't.id_tugas')
@@ -280,15 +322,20 @@ public function hlm_detail_tugas($id_tugas)
             ->groupBy('t.nama_tugas')
             ->select('t.nama_tugas', DB::raw('AVG(st.nilai_tugas) as rata2'))
             ->get();
-         return view('guru_pages.hlm_laporan_tugas', ['kelas' => $kelas, 'list_nilai' => $listNilai, 'rata2' => $rata2]);
+         return view('guru_pages.hlm_laporan_tugas', ['kelas' => $kelas, 'kelas_periode' => $kelas_periode, 'periode' => $periode, 'list_nilai' => $listNilai, 'rata2' => $rata2]);
       } else {
          return view('guru_pages.hlm_laporan_tugas', ['kelas' => null]);
       }
     }
-    public function hlm_laporan_ujian()
+    public function hlm_laporan_ujian(Request $request)
     {
-      $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
+      if($request->query('periodeSelect')){
+         $periode = Periode::where('ID_PERIODE', $request->query('periodeSelect'))->first();
+      } else {
+         $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
+      }
       $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->where('ID_PERIODE', '=', $periode->ID_PERIODE)->first();
+      $kelas_periode = Kelas::with('periode')->where('ID_GURU', session('userActive')->ID_GURU)->get();
       if($kelas != null) {
          $listNilai = DB::table('nilai_kelas as nk')
             ->join('mata_pelajaran as mp', 'nk.id_mata_pelajaran', '=', 'mp.id_mata_pelajaran')
@@ -305,7 +352,7 @@ public function hlm_detail_tugas($id_tugas)
             ->groupBy('p.nama_pelajaran')
             ->select('p.nama_pelajaran', DB::raw('AVG(nk.nilai_akhir) as rata2'))
             ->get();
-         return view('guru_pages.hlm_laporan_ujian', ['kelas' => $kelas, 'list_nilai' => $listNilai, 'rata2' => $rata2]);
+         return view('guru_pages.hlm_laporan_ujian', ['kelas' => $kelas, 'kelas_periode' => $kelas_periode, 'periode' => $periode, 'list_nilai' => $listNilai, 'rata2' => $rata2]);
       } else {
          return view('guru_pages.hlm_laporan_ujian', ['kelas' => null]);
       }
@@ -505,18 +552,24 @@ public function hlm_detail_tugas($id_tugas)
       $tugas = Tugas::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
       return view('guru_pages.uploadtugas', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'tugas' => $tugas]);
     }
-    public function walikelas()
+    public function walikelas(Request $request)
     {
-      $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
+      if($request->query('periodeSelect')){
+         $periode = Periode::where('ID_PERIODE', $request->query('periodeSelect'))->first();
+      } else {
+         $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
+      }
       $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->where('ID_PERIODE', '=', $periode->ID_PERIODE)->first();
+      $kelas_periode = Kelas::with('periode')->where('ID_GURU', session('userActive')->ID_GURU)->get();
+      
       if($kelas != null) {
          $waliKelas = DetailKelas::find($kelas->ID_DETAIL_KELAS);
          $jumlah = EnrollmentKelas::where('ID_KELAS', '=', $kelas->ID_KELAS)->count();
          $semester = substr($kelas->ID_KELAS, -1) == '1'? 'Ganjil' : 'Genap';
          $daftar_siswa = EnrollmentKelas::with('siswa')->where('ID_KELAS', '=', $kelas->ID_KELAS)->get();
-         return view('guru_pages.walikelas', ['wali_kelas' => $waliKelas, 'jumlah' => $jumlah, 'semester' => $semester, 'daftar_siswa' => $daftar_siswa]);
+         return view('guru_pages.walikelas', ['kelas_periode' => $kelas_periode, 'wali_kelas' => $waliKelas, 'periode' => $periode, 'jumlah' => $jumlah, 'semester' => $semester, 'daftar_siswa' => $daftar_siswa]);
       } else {
-         return view('guru_pages.walikelas', ['wali_kelas' => null]);
+         return view('guru_pages.walikelas', ['kelas_periode' => $kelas_periode, 'wali_kelas' => null, 'periode' => $periode]);
       }
     }
 

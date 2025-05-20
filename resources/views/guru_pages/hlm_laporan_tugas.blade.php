@@ -1,10 +1,20 @@
 @extends('layouts.guru_app')
 
 @section('guru_content')
+<form method="GET" action="/guru/hlm_laporan_tugas" class="mb-4">
+        <label for="periodeSelect" class="form-label">Pilih Periode:</label>
+        <select name="periodeSelect" id="periodeSelect" class="form-select" onchange="this.form.submit()">
+            @foreach($kelas_periode as $p)
+                <option value="{{ $p->periode->ID_PERIODE }}" {{ $periode->ID_PERIODE == $p->periode->ID_PERIODE ? 'selected' : '' }}>
+                    {{ $p->periode->PERIODE }}
+                </option>
+            @endforeach
+        </select>
+    </form>
 <?php if($kelas): ?>
    <div class="p-3">
             <h4 class="mb-3">Halaman Laporan Nilai</h4>
-            <p><strong>Nama Guru:</strong> {{ session('userActive')->NAMA_GURU }} &nbsp; | &nbsp; <strong>NIP:</strong> {{ session('userActive')->ID_GURU }}</p>
+            <p><strong>Nama Guru:</strong> {{ session('userActive')->NAMA_GURU }} &nbsp; | &nbsp; <strong>NIP:</strong> {{ session('userActive')->ID_GURU }} &nbsp; | &nbsp; <strong>Wali Kelas:</strong> {{ $kelas->detailKelas->NAMA_KELAS }}</p>
 
             <!-- Laporan Nilai Tugas Siswa -->
             <h5 class="mt-4">Laporan Nilai Tugas Siswa</h5>
@@ -17,7 +27,6 @@
                     <th>Tugas</th>
                     <th>Nilai</th>
                     <th>Status</th>
-                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -35,7 +44,6 @@
                          <?php else: ?>
                            <td><span class="badge bg-danger">Gagal</span></td>
                          <?php endif; ?>
-                         <td><a href="{{ url('/guru/edit_nilai_tugas/') }}" class="btn btn-warning btn-sm">Edit</a></td>
                      </tr>
                   <?php endforeach; ?>
                 </tbody>

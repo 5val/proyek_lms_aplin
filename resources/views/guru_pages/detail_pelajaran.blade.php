@@ -73,6 +73,7 @@
         </button>
         <div class="row">
             @foreach ($tugas as $t)
+               <a style="text-decoration: none; color: black;" href="{{ url('/guru/hlm_detail_tugas/' . urlencode($t->ID_TUGAS)) }}">
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 d-flex flex-column">
                         <div class="card-body d-flex flex-column">
@@ -91,6 +92,7 @@
                         </div>
                     </div>
                 </div>
+                </a>
             @endforeach
         </div>
     </div>
@@ -221,7 +223,7 @@
                            <?php else: ?>
                               <td><span class="badge bg-danger">Gagal</span></td>
                            <?php endif; ?>
-                           <td><a href="/guru/editnilai" class="btn btn-warning btn-sm">Edit</a></td>
+                           <td><a href="{{ url('/guru/edit_nilai_tugas/' . urlencode($nilai->id_submission)) }}" class="btn btn-warning btn-sm">Edit</a></td>
                         </tr>
                      <?php endforeach; ?>
                   </tbody>

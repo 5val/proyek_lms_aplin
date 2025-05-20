@@ -136,8 +136,12 @@ Route::prefix('guru')->group(function () {
       ->name('guru.updatetugas');
    Route::get('/hlm_about', [GuruController::class, 'hlm_about']);
    Route::get('/hlm_detail_pengumuman', [GuruController::class, 'hlm_detail_pengumuman']);
-   Route::get('/edit_nilai_tugas', [GuruController::class, 'edit_nilai_tugas']);
-   Route::get('/hlm_detail_pengumpulan', [GuruController::class, 'hlm_detail_pengumpulan']);
+   Route::get('/edit_nilai_tugas/{id_submission}', [GuruController::class, 'edit_nilai_tugas'])
+      ->where('id_submission', '.*');
+   Route::put('/hlm_detail_pengumpulan', [GuruController::class, 'put_nilai_tugas']);
+   Route::put('/edit_nilai_tugas', [GuruController::class, 'update_nilai_tugas']);
+   Route::get('/hlm_detail_pengumpulan/{id_submission}', [GuruController::class, 'hlm_detail_pengumpulan'])
+      ->where('id_submission', '.*');
    Route::get('/hlm_detail_tugas/{id_tugas}', [GuruController::class, 'hlm_detail_tugas'])->where('id_tugas', '.*');
    Route::get('/hlm_edit_about', [GuruController::class, 'hlm_edit_about'])->name('guru.hlm_about');
    Route::put('/update_biodata', [GuruController::class, 'update_biodata'])->name('guru.update_biodata');
