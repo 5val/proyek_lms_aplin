@@ -19,7 +19,6 @@
                     <th>Nilai Tugas</th>
                     <th>Nilai Akhir</th>
                     <th>Status</th>
-                    <!-- <th>Action</th> -->
                 </tr>
                 </thead>
                 <tbody>
@@ -39,7 +38,6 @@
                          <?php else: ?>
                            <td><span class="badge bg-danger">Gagal</span></td>
                          <?php endif; ?>
-                         <!-- <td><a href="/guru/editnilai" class="btn btn-warning btn-sm">Edit</a></td> -->
                      </tr>
                   <?php endforeach; ?>
                 </tbody>

@@ -199,7 +199,10 @@ public function hlm_detail_tugas($id_tugas)
     ]);
 }
 
-
+   public function edit_nilai_tugas(){
+      return view('guru_pages.edit_nilai_tugas');
+   }
+ 
     public function hlm_edit_about()
     {
        $guru = Guru::find(session('userActive')->ID_GURU);

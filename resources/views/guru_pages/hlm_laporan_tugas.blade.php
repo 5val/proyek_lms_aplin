@@ -35,7 +35,7 @@
                          <?php else: ?>
                            <td><span class="badge bg-danger">Gagal</span></td>
                          <?php endif; ?>
-                         <td><a href="/guru/editnilai" class="btn btn-warning btn-sm">Edit</a></td>
+                         <td><a href="{{ url('/guru/edit_nilai_tugas/') }}" class="btn btn-warning btn-sm">Edit</a></td>
                      </tr>
                   <?php endforeach; ?>
                 </tbody>
