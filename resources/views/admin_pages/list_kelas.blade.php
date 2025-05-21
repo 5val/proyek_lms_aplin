@@ -79,11 +79,19 @@
       <td>${kelas.ruangan_kelas}</td>
       <td>${kelas.nama_kelas}</td>
       <td>
-      <div class="d-grid gap-1">
-      <a href="/admin/list_mata_pelajaran/${kelas.id_kelas}" class="btn btn-primary btn-sm">Detail Kelas</a>
-      <a href="/admin/list_tambah_siswa_ke_kelas/${kelas.id_kelas}" class="btn btn-primary btn-sm">List Siswa</a>
-      <a href="/admin/edit_kelas/${kelas.id_kelas}" class="btn btn-primary btn-sm">Edit</a>
-      <button class="btn btn-danger btn-sm delete-class" data-id='${kelas.id_kelas}'>Delete</button>
+      <div class="btn-group" role="group">
+      <a href="/admin/list_mata_pelajaran/${kelas.id_kelas}" class="btn btn-outline-primary btn-sm" title="Detail">
+        <i class="bi bi-eye"></i>
+      </a>
+      <a href="/admin/list_tambah_siswa_ke_kelas/${kelas.id_kelas}" class="btn btn-outline-secondary btn-sm" title="List Siswa">
+         <i class="bi bi-people"></i>
+      </a>
+      <a href="/admin/edit_kelas/${kelas.id_kelas}" class="btn btn-outline-warning btn-sm" title="Edit">
+        <i class="bi bi-pencil-square"></i>
+      </a>
+      <button class="btn btn-outline-danger btn-sm delete-class" data-id='${kelas.id_kelas}' title="Hapus">
+        <i class="bi bi-trash"></i>
+      </button>
       </div>
       </td>
       </tr>
@@ -96,6 +104,14 @@
       }
       });
     }
+
+    // ini yang pake button biasa :
+      // <div class="d-grid gap-1">
+      // <a href="/admin/list_mata_pelajaran/${kelas.id_kelas}" class="btn btn-primary btn-sm">Detail Kelas</a>
+      // <a href="/admin/list_tambah_siswa_ke_kelas/${kelas.id_kelas}" class="btn btn-primary btn-sm">List Siswa</a>
+      // <a href="/admin/edit_kelas/${kelas.id_kelas}" class="btn btn-primary btn-sm">Edit</a>
+      // <button class="btn btn-danger btn-sm delete-class" data-id='${kelas.id_kelas}'>Delete</button>
+      // </div>
 
     // Initial load (on page open)
     const selectedPeriode = $('#semesterSelect').val();
