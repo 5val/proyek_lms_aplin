@@ -2,36 +2,40 @@
 
 @section('guru_content')
 <div class="p-3">
-          <h4 class="mb-3">Jadwal Mengajar</h4>
-           <?php $listHari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-            $listJam = ['07:00', '08:30', '10:30', '12:30'];
-            ?>
-          <div class="timetable table-responsive">
-            <table class="table table-bordered">
-              <thead>
+    <h4 class="mb-3">Jadwal Mengajar</h4>
+
+    @php
+        $listHari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+        $listJam = ['07:00-08:30', '08:30-10:00', '10:00-11:30', '12:00-13:30', '13:30-15:00'];
+    @endphp
+
+    <div class="table-responsive">
+        <table class="table table-bordered timetable-table bg-white">
+            <thead class="table-primary">
                 <tr>
-                  <th>Hari</th>
-                  <th>07.00 - 08.30</th>
-                  <th>08.30 - 10.00</th>
-                  <th>10.30 - 12.00</th>
-                  <th>13.00 - 14.30</th>
+                    <th>Hari</th>
+                    <th>Jam ke-1 (07:00 - 08:30)</th>
+                    <th>Jam ke-2 (08:30 - 10:00)</th>
+                    <th>Jam ke-3 (10:00 - 11:30)</th>
+                    <th>Jam ke-4 (12:00 - 13:30)</th>
+                    <th>Jam ke-5 (13:30 - 15:00)</th>
                 </tr>
-              </thead>
-              <tbody>
-               <?php foreach ($listHari as $hari): ?>
-                     <tr>
+            </thead>
+            <tbody>
+                @foreach ($listHari as $hari)
+                    <tr>
                         <td>{{ $hari }}</td>
-                        <?php foreach ($listJam as $jam): ?>
-                           <?php if(isset($jadwal[$hari][$jam])): ?>
-                              <td>{{ $jadwal[$hari][$jam]->pelajaran->NAMA_PELAJARAN }} ({{ $jadwal[$hari][$jam]->kelas->detailKelas->NAMA_KELAS }})</td>
-                           <?php else: ?>
-                              <td>-</td>
-                           <?php endif; ?>
-                        <?php endforeach; ?>
-                     </tr>
-                  <?php endforeach; ?>
-              </tbody>
-            </table>
-          </div>
-        </div>
+                        @foreach ($listJam as $jam)
+                            @if (isset($jadwal[$hari][$jam]))
+                                <td>{{ $jadwal[$hari][$jam]->nama_pelajaran }} ({{ $jadwal[$hari][$jam]->nama_kelas}})</td>
+                            @else
+                                <td>-</td>
+                            @endif
+                        @endforeach
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 @endsection

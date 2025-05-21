@@ -277,13 +277,29 @@ public function hlm_detail_tugas($id_tugas)
         return redirect('/guru/hlm_about')->with('success', 'Biodata berhasil diperbarui');
     }
     public function hlm_jadwal()
-    {   
-      $allMataPelajaran = MataPelajaran::with(['kelas.detailKelas', 'pelajaran'])->where('ID_GURU', '=', session('userActive')->ID_GURU)->get();
-      foreach ($allMataPelajaran as $a) {
-        $jadwal[$a->HARI_PELAJARAN][$a->JAM_PELAJARAN] = $a;
-      }
-        return view('guru_pages.hlm_jadwal', ['jadwal' => $jadwal]);
+{ 
+    $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
+
+    $allMataPelajaran = DB::table('mata_pelajaran as mp')
+        ->join('kelas as k', 'mp.id_kelas', '=', 'k.id_kelas')
+        ->join('detail_kelas as dk', 'dk.id_detail_kelas', '=', 'k.id_detail_kelas')
+        ->join('pelajaran as p', 'mp.id_pelajaran', '=', 'p.id_pelajaran')
+        ->where('mp.id_guru', session('userActive')->ID_GURU)
+        ->where('k.id_periode', $periode->ID_PERIODE)
+        ->select('mp.id_mata_pelajaran', 'dk.nama_kelas', 'p.nama_pelajaran', 'mp.jam_pelajaran', 'mp.hari_pelajaran')
+        ->get();
+
+    $jadwal = [];
+    foreach ($allMataPelajaran as $a) {
+        $jadwal[$a->hari_pelajaran][$a->jam_pelajaran] = $a;
     }
+    return view('guru_pages.hlm_jadwal', [
+        'jadwal' => $jadwal,
+        'periode' => $periode,
+        'mata_pelajaran' => $allMataPelajaran
+    ]);
+}
+
     public function hlm_kelas()
     {
       $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
