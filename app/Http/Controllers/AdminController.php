@@ -492,9 +492,9 @@ class AdminController extends Controller
 
     public function list_tambah_siswa_ke_kelas($id_kelas)
     {
-        $asistenList = ['Ovaldo', 'Ovaldo OOO', 'Rafael'];
+        $siswaList = EnrollmentKelas::whereNotIn('ID_KELAS', [$id_kelas])->with(['siswa'])->get();
         $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with(['siswa'])->get();
-        return view('admin_pages.list_tambah_siswa_ke_kelas', compact('asistenList', 'kelasList'));
+        return view('admin_pages.list_tambah_siswa_ke_kelas', compact('siswaList', 'kelasList'));
     }
     public function tambahguru()
     {

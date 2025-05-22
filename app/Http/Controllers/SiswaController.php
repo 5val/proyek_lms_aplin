@@ -8,7 +8,7 @@ use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\EnrollmentKelas;
 use App\Models\SubmissionTugas;
-use Illuminate\Support\Facades\Storage;  
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Tugas;
 use App\Models\Pelajaran;
@@ -116,10 +116,10 @@ class SiswaController extends Controller
         $tugas = DB::table('TUGAS')
             ->where('ID_MATA_PELAJARAN', $id_mata_pelajaran)
             ->select(
-                'ID_TUGAS', 
-                'NAMA_TUGAS', 
-                'DESKRIPSI_TUGAS', 
-                'DEADLINE_TUGAS', 
+                'ID_TUGAS',
+                'NAMA_TUGAS',
+                'DESKRIPSI_TUGAS',
+                'DEADLINE_TUGAS',
                 DB::raw('(SELECT COUNT(*) FROM SUBMISSION_TUGAS WHERE ID_TUGAS = TUGAS.ID_TUGAS) as jumlah_submisi')
             )
             ->get();
@@ -128,10 +128,10 @@ class SiswaController extends Controller
         $materi = Materi::where('ID_MATA_PELAJARAN', $id_mata_pelajaran)->get();
 
         $namaPelajaran = DB::table('MATA_PELAJARAN')
-        ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
-        ->where('MATA_PELAJARAN.ID_MATA_PELAJARAN', $id_mata_pelajaran)
-        ->select('PELAJARAN.NAMA_PELAJARAN')
-        ->first();
+            ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
+            ->where('MATA_PELAJARAN.ID_MATA_PELAJARAN', $id_mata_pelajaran)
+            ->select('PELAJARAN.NAMA_PELAJARAN')
+            ->first();
 
         return view('siswa_pages.detail_pelajaran', [
             'mataPelajaran' => $mataPelajaran,
@@ -221,11 +221,11 @@ class SiswaController extends Controller
         }
 
         $submissionData = [
-            'ID_SISWA' => session('userActive')->ID_SISWA, 
+            'ID_SISWA' => session('userActive')->ID_SISWA,
             'ID_TUGAS' => $validatedData['ID_TUGAS'],
             'TANGGAL_SUBMISSION' => now(),
             'NILAI_TUGAS' => null,
-            'FILE_TUGAS' => $validatedData['FILE_TUGAS'], 
+            'FILE_TUGAS' => $validatedData['FILE_TUGAS'],
         ];
 
         SubmissionTugas::create($submissionData);
@@ -401,7 +401,7 @@ class SiswaController extends Controller
             ->join('ENROLLMENT_KELAS', 'KELAS.ID_KELAS', '=', 'ENROLLMENT_KELAS.ID_KELAS')
             ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
             ->where('KELAS.ID_PERIODE', '=', $periodeId)
-            ->whereNotIn('TUGAS.ID_TUGAS', function($query) use ($siswa) {
+            ->whereNotIn('TUGAS.ID_TUGAS', function ($query) use ($siswa) {
                 $query->select('ID_TUGAS')
                     ->from('SUBMISSION_TUGAS')
                     ->where('ID_SISWA', '=', $siswa->ID_SISWA);
