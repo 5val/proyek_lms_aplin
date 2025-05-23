@@ -114,6 +114,8 @@ Route::prefix('admin')->group(function () {
       ->where('id_kelas', expression: '.*')->name('list_mata_pelajaran');
    Route::post('/list_mata_pelajaran/{id_kelas}', [AdminController::class, 'add_mata_pelajaran'])
       ->where('id_kelas', expression: '.*');
+   Route::post('/update_mata_pelajaran/{id_mata_pelajaran}', [AdminController::class, 'update_mata_pelajaran'])
+      ->where('id_mata_pelajaran', expression: '.*');
 
    // ======================================== Upload Excel =====================================
    Route::get('/upload_kelas', [AdminController::class, 'upload_kelas']);

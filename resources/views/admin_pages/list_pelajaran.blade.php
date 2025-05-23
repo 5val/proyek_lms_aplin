@@ -30,7 +30,9 @@
                         <td>
                             <div class="d-grid gap-1">
                                 <a href="{{ url('/admin/list_pelajaran/' . $pelajaran->ID_PELAJARAN) }}"
-                                    class="btn btn-danger btn-sm">{{ $pelajaran->status == "Active" ? "Hapus" : "Buat Aktif" }}</a>
+                                    class="btn btn-{{ $pelajaran->STATUS == "Active" ? "danger" : "primary" }} btn-sm">
+                                    {{ $pelajaran->STATUS == "Active" ? "Hapus" : "Buat Aktif" }}
+                                </a>
                             </div>
                         </td>
                     </tr>

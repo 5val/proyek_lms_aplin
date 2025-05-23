@@ -34,16 +34,16 @@
         </div>
 
         <!-- <form action="{{ route('uploadSiswa.excel') }}" method="POST" enctype="multipart/form-data">
-                                                    @csrf
-                                                    <div class="mb-3">
-                                                        <label for="file" class="form-label">Choose Excel File</label>
-                                                        <input class="form-control" type="file" id="file" name="file">
-                                                        @error('file')
-                                                            <div class="text-danger">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary">Import Data</button>
-                                                </form> -->
+                                                            @csrf
+                                                            <div class="mb-3">
+                                                                <label for="file" class="form-label">Choose Excel File</label>
+                                                                <input class="form-control" type="file" id="file" name="file">
+                                                                @error('file')
+                                                                    <div class="text-danger">{{ $message }}</div>
+                                                                @enderror
+                                                            </div>
+                                                            <button type="submit" class="btn btn-primary">Import Data</button>
+                                                        </form> -->
     </div>
     <script>
         document.getElementById('file-upload').addEventListener('change', function () {
@@ -53,15 +53,15 @@
             if (this.files.length > 0) {
 
                 fileUploadField.innerHTML = `
-                                                                            <i class="fas fa-file fa-3x"></i> <br>
-                                                                            <span id="file-upload-text">${this.files[0].name}</span>
-                                                                            `;
+                    <i class="fas fa-file fa-3x"></i> <br>
+                    <span id="file-upload-text">${this.files[0].name}</span>
+                    `;
             } else {
 
                 fileUploadField.innerHTML = `
-                                                                            <i class="fas fa-plus fa-3x"></i> <br>
-                                                                            <span id="file-upload-text">Drag File Here</span>
-                                                                            `;
+                    <i class="fas fa-plus fa-3x"></i> <br>
+                    <span id="file-upload-text">Drag File Here</span>
+                    `;
             }
         });
 

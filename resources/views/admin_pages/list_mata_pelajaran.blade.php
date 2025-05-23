@@ -23,16 +23,16 @@
                 <tbody>
                     <?php foreach ($kelasList as $pelajaran): ?>
                     <tr>
-                        <td><?= $pelajaran->ID_MATA_PELAJARAN?></td>
-                        <td><?= $pelajaran->pelajaran->NAMA_PELAJARAN ?></td>
-                        <td><?= $pelajaran->guru->NAMA_GURU ?></td>
-                        <td><?= $pelajaran->HARI_PELAJARAN ?></td>
-                        <td><?= $pelajaran->JAM_PELAJARAN?></td>
+                        <td class="id_mapel"><?= $pelajaran->ID_MATA_PELAJARAN?></td>
+                        <td class="nama_mapel"><?= $pelajaran->pelajaran->NAMA_PELAJARAN ?></td>
+                        <td class="nama_guru"><?= $pelajaran->guru->NAMA_GURU ?></td>
+                        <td class="hari_pelajaran"><?= $pelajaran->HARI_PELAJARAN ?></td>
+                        <td class="jam_pelajaran"><?= $pelajaran->JAM_PELAJARAN?></td>
                         <td>
                             <div class="d-grid gap-1">
                                 <button class="btn btn-primary btn-sm">List Pertemuan</button>
-                                <button class="btn btn-primary btn-sm">Edit</button>
-                                <button class="btn btn-danger btn-sm">Delete</button>
+                                <button class="btn btn-primary btn-sm edit-mapel">Edit</button>
+                                <button class="btn btn-danger btn-sm delete-mapel">Delete</button>
                             </div>
                         </td>
                     </tr>
@@ -41,4 +41,54 @@
             </table>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const idKelas = $('#idKelas').val();
+            $('body').on('click', '.edit-mapel', function () {
+                var $currentRow = $(this).closest('tr');
+                var guruNameToEdit = $currentRow.find('.nama_guru').text().trim();
+                var idMapelToEdit = $currentRow.find('.id_mapel').text().trim();
+                var mapelNameToEdit = $currentRow.find('.nama_mapel').text().trim();
+                var hariPelajaranToEdit = $currentRow.find('.hari_pelajaran').text().trim();
+                var jamPelajaranToEdit = $currentRow.find('.jam_pelajaran').text().trim();
+                $('#formMapel').attr('action', '/admin/update_mata_pelajaran/' + idMapelToEdit);
+
+                if (guruNameToEdit) {
+                    $('#pengajar option').filter(function () {
+                        return $(this).text().trim() === guruNameToEdit;
+                    }).prop('selected', true);
+                    $('#pengajar').trigger('change');
+                }
+                if (idMapelToEdit) {
+                    $('#idMapel').val(idMapelToEdit);
+                    $('#pengajar').trigger('change');
+                }
+                if (mapelNameToEdit) {
+                    $('#pelajaran option').filter(function () {
+                        return $(this).text().trim() === mapelNameToEdit;
+                    }).prop('selected', true);
+                    $('#pelajaran').trigger('change');
+                }
+                if (hariPelajaranToEdit) {
+                    $('#hari option').filter(function () {
+                        return $(this).text().trim() === hariPelajaranToEdit
+                    }).prop('selected', true);
+                    $('#hari').trigger('change');
+                }
+                if (jamPelajaranToEdit) {
+                    $('#waktu option').filter(function () {
+                        return $(this).text().trim() === jamPelajaranToEdit;
+                    }).prop('selected', true);
+                    $('#waktu').trigger('change');
+                }
+                $('#submitBTN').text('Edit')
+            })
+            $('#formMapel').on('submit', function () {
+                $('#formMapel').attr('action', '/admin/list_mata_pelajaran/' + idKelas);
+                $('#submitBTN').text('Submit')
+            })
+
+        })
+    </script>
 @endsection

@@ -139,18 +139,18 @@
                         data.forEach(function (kelas) {
                             siswa = kelas.siswa
                             rows += `
-                                            <tr>
-                                                <td>${siswa.ID_SISWA}</td>
-                                                <td>${siswa.NAMA_SISWA}</td>
-                                                <td>${siswa.EMAIL_SISWA}</td>
-                                                <td>${siswa.NO_TELPON_SISWA}</td>
-                                                <td>
-                                                    <div class="d-grid gap-1">
-                                                        <a class="btn btn-danger btn-sm delete_siswa" data-id="${siswa.ID_SISWA}">Remove from Class</a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            `;
+                                                <tr>
+                                                    <td>${siswa.ID_SISWA}</td>
+                                                    <td>${siswa.NAMA_SISWA}</td>
+                                                    <td>${siswa.EMAIL_SISWA}</td>
+                                                    <td>${siswa.NO_TELPON_SISWA}</td>
+                                                    <td>
+                                                        <div class="d-grid gap-1">
+                                                            <a class="btn btn-danger btn-sm delete_siswa" data-id="${siswa.ID_SISWA}">Remove from Class</a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                `;
                         });
                         $('#enrolledSiswa').html(rows);
 
@@ -169,18 +169,18 @@
                         let rows = '';
                         data.forEach(function (siswa) {
                             rows += `
-                            <tr>
-                                <td>${siswa.ID_SISWA}</td>
-                                <td>${siswa.NAMA_SISWA}</td>
-                                <td>${siswa.EMAIL_SISWA}</td>
-                                <td>${siswa.NO_TELPON_SISWA}</td>
-                                <td>
-                                    <div class="d-grid gap-1">
-                                        <a class="btn btn-primary btn-sm tambah_siswa" data-id="${siswa.ID_SISWA}">Add to Class</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            `;
+                                <tr>
+                                    <td>${siswa.ID_SISWA}</td>
+                                    <td>${siswa.NAMA_SISWA}</td>
+                                    <td>${siswa.EMAIL_SISWA}</td>
+                                    <td>${siswa.NO_TELPON_SISWA}</td>
+                                    <td>
+                                        <div class="d-grid gap-1">
+                                            <a class="btn btn-primary btn-sm tambah_siswa" data-id="${siswa.ID_SISWA}">Add to Class</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                `;
                         });
                         $('#unenrolledSiswa').html(rows);
                     },

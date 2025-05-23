@@ -7,9 +7,11 @@ $waktuList = ['07:00-08:30', '08:30-10:00', '10:00-11:30', '12:00-13:30', '13:30
     <h3>Tambah Mata Pelajaran</h3>
     <div class="card mt-3">
         <div class="card-body">
-            <form action="/admin/list_mata_pelajaran/<?=$id_kelas?>" method="post">
+            <form action="/admin/list_mata_pelajaran/<?=$id_kelas?>" id="formMapel" method="post">
                 @csrf
-                <input type="text" hidden name="kelas" value="<?=$id_kelas?>">
+                <input type="text" hidden name="kelas" id="idKelas" value="<?=$id_kelas?>">
+                <label for="id_mapel" class="form-label">Kode Mata Pelajaran</label>
+                <input type="text" name="idMapel" style="width: 100%" id="idMapel" value="" disabled>
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label for="pelajaran" class="form-label">Mata Pelajaran</label>
@@ -43,7 +45,6 @@ $waktuList = ['07:00-08:30', '08:30-10:00', '10:00-11:30', '12:00-13:30', '13:30
                         @enderror
                     </div>
                 </div>
-
                 <div class="mb-3">
                     <label for="pengajar" class="form-label fw-bold">Guru Pengajar</label>
                     <select class="form-select" id="pengajar" name="pengajar">
@@ -57,7 +58,7 @@ $waktuList = ['07:00-08:30', '08:30-10:00', '10:00-11:30', '12:00-13:30', '13:30
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-success">Submit</button>
+                <button type="submit" class="btn btn-success" id="submitBTN">Submit</button>
             </form>
         </div>
     </div>

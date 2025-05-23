@@ -490,6 +490,79 @@ class AdminController extends Controller
         ]);
         return redirect()->route('list_mata_pelajaran', ['id_kelas' => $request->kelas])->with('success', 'Jadwal berhasil ditambahkan.');
     }
+    public function update_mata_pelajaran(Request $request, $id_mata_pelajaran)
+    {
+        // Temukan record MataPelajaran yang sudah ada berdasarkan ID
+        // Jika tidak ditemukan, akan otomatis melempar 404
+        $mataPelajaran = MataPelajaran::findOrFail($id_mata_pelajaran);
+        dd($mataPelajaran);
+
+        // Validasi data yang masuk dari request
+        $validator = Validator::make($request->all(), [
+            'pengajar' => 'required|exists:guru,ID_GURU',
+            'kelas' => 'required|exists:kelas,ID_KELAS',
+            'pelajaran' => 'required|exists:pelajaran,ID_PELAJARAN', // Tambahkan validasi untuk ID Pelajaran
+            'hari' => 'required',
+            'waktu' => 'required',
+        ]);
+
+        // Validasi kustom untuk konflik jadwal
+        $validator->after(function ($validator) use ($request, $mataPelajaran) {
+            $time = $request->waktu;
+            $day = $request->hari;
+            $class = Kelas::find($request->kelas);
+
+            // Jika kelas tidak ditemukan, segera kembali untuk menghindari error lebih lanjut
+            if (!$class) {
+                return;
+            }
+
+            $semester = $class->ID_PERIODE; // Ambil ID_PERIODE (semester) dari kelas
+
+            // Cek konflik jadwal guru, kecualikan record mata pelajaran yang sedang diperbarui
+            $teacherBusy = MataPelajaran::whereHas('kelas', function ($query) use ($semester) {
+                $query->where('ID_PERIODE', $semester);
+            })
+                ->where('ID_GURU', $request->pengajar)
+                ->where('HARI_PELAJARAN', $day)
+                ->where('ID_MATA_PELAJARAN', '!=', $mataPelajaran->ID_MATA_PELAJARAN) // Kecualikan record saat ini
+                ->where('JAM_PELAJARAN', $time) // Asumsikan JAM_PELAJARAN menyimpan nilai waktu tunggal
+                ->exists();
+
+            if ($teacherBusy) {
+                $validator->errors()->add('pengajar', 'Guru sudah memiliki jadwal pada waktu tersebut.');
+            }
+
+            // Cek konflik jadwal kelas, kecualikan record mata pelajaran yang sedang diperbarui
+            $classBusy = MataPelajaran::whereHas('kelas', function ($query) use ($semester) {
+                $query->where('ID_PERIODE', $semester);
+            })
+                ->where('ID_KELAS', $request->kelas)
+                ->where('HARI_PELAJARAN', $day)
+                ->where('ID_MATA_PELAJARAN', '!=', $mataPelajaran->ID_MATA_PELAJARAN) // Kecualikan record saat ini
+                ->where('JAM_PELAJARAN', $time) // Asumsikan JAM_PELAJARAN menyimpan nilai waktu tunggal
+                ->exists();
+
+            if ($classBusy) {
+                $validator->errors()->add('waktu', 'Kelas sudah memiliki pelajaran pada waktu tersebut.');
+            }
+        });
+
+        // Jalankan validasi
+        $validator->validate();
+
+        // Perbarui record MataPelajaran
+        $mataPelajaran->update([
+            'ID_GURU' => $request->pengajar,
+            'ID_KELAS' => $request->kelas,
+            'ID_PELAJARAN' => $request->pelajaran,
+            'HARI_PELAJARAN' => $request->hari,
+            'JAM_PELAJARAN' => $request->waktu
+        ]);
+
+        // Redirect kembali ke daftar mata pelajaran untuk kelas yang diperbarui
+        return redirect()->route('list_mata_pelajaran', ['id_kelas' => $request->kelas])->with('success', 'Jadwal berhasil diperbarui.');
+    }
 
 
     // ================================== Tambah Siswa =================================================
