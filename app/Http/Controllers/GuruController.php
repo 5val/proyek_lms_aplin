@@ -7,6 +7,7 @@ use App\Models\DetailKelas;
 use App\Models\EnrollmentKelas;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
+use App\Models\NilaiKelas;
 use App\Models\Periode;
 use App\Models\SubmissionTugas;
 use App\Models\Materi;
@@ -95,7 +96,7 @@ class GuruController extends Controller
             ->join('pelajaran as p', 'mp.id_pelajaran', '=', 'p.id_pelajaran')
             ->join('siswa as s', 's.id_siswa', '=', 'nk.id_siswa')
             ->where('mp.id_mata_pelajaran', '=', $id_mata_pelajaran)
-            ->select('nk.id_nilai', 's.nama_siswa', 'p.nama_pelajaran', 'nk.nilai_uts', 'nk.nilai_tugas', 'nk.nilai_akhir')
+            ->select('nk.id_nilai', 's.nama_siswa', 'p.nama_pelajaran', 'nk.nilai_uts', 'nk.nilai_uas', 'nk.nilai_tugas', 'nk.nilai_akhir')
             ->get();
       $rata2 = DB::table('nilai_kelas as nk')
          ->join('mata_pelajaran as mp', 'nk.id_mata_pelajaran', '=', 'mp.id_mata_pelajaran')
@@ -228,6 +229,24 @@ public function hlm_detail_tugas($id_tugas)
       $submission = SubmissionTugas::with(['tugas', 'siswa'])->where('ID_SUBMISSION', $id_submission)->first();
       $submission->update([
          "NILAI_TUGAS" => $nilai
+      ]);
+      return redirect($request->input('redirect_to'));
+    }
+
+    public function edit_nilai_ujian($id_nilai){
+      $nilai = NilaiKelas::with('siswa')->where('ID_NILAI', $id_nilai)->first();
+      $mata_pelajaran = MataPelajaran::with('pelajaran')->where('ID_MATA_PELAJARAN', $nilai->ID_MATA_PELAJARAN)->first();
+      return view('guru_pages.edit_nilai_ujian', ['nilai' => $nilai, 'mata_pelajaran' => $mata_pelajaran]);
+   }
+   public function update_nilai_ujian(Request $request){
+      $id_nilai = $request->input('ID_NILAI');
+      $nilai_uts = $request->input('nilai_uts');
+      $nilai_uas = $request->input('nilai_uas');
+      $nilai = NilaiKelas::where('ID_NILAI', $id_nilai)->first();
+      $nilai->update([
+         "NILAI_UTS" => $nilai_uts,
+         "NILAI_UAS" => $nilai_uas,
+         "NILAI_AKHIR" => 0.4*$nilai_uts + 0.4*$nilai_uas + 0.2*$nilai->NILAI_TUGAS
       ]);
       return redirect($request->input('redirect_to'));
     }
@@ -590,18 +609,20 @@ public function hlm_detail_tugas($id_tugas)
     }
 
     public function editattendance(Request $request) {
-      $id_siswa = $request->query('id_siswa');
-      $id_pertemuan = $request->query('id_pertemuan');
-      $absen = Attendance::where([['id_siswa', '=', $id_siswa], ['id_pertemuan', '=', $id_pertemuan]])->first();
-      if($absen) {
-         $absen->delete();
-      } else {
+      $id_siswa = $request->input('id_siswa');
+      $id_pertemuan = $request->input('id_pertemuan');
+      $status = $request->input('status');
+      if ($status == "true") {
          Attendance::create([
             'ID_SISWA' => $id_siswa,
             'ID_PERTEMUAN' => $id_pertemuan
          ]);
+         $message = 'Absensi ditambah';
+      } else {
+         Attendance::where([['ID_SISWA', $id_siswa], ['ID_PERTEMUAN', $id_pertemuan]])->delete();
+         $message = 'Absensi dihapus.';
       }
-      return redirect()->back();
-    }
+      return response()->json(['message' => $message]);
+   }
 
 }

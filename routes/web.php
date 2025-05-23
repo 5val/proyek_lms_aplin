@@ -144,8 +144,11 @@ Route::prefix('guru')->group(function () {
    Route::get('/hlm_detail_pengumuman', [GuruController::class, 'hlm_detail_pengumuman']);
    Route::get('/edit_nilai_tugas/{id_submission}', [GuruController::class, 'edit_nilai_tugas'])
       ->where('id_submission', '.*');
+   Route::get('/edit_nilai_ujian/{id_nilai}', [GuruController::class, 'edit_nilai_ujian'])
+      ->where('id_nilai', '.*');
    Route::put('/hlm_detail_pengumpulan', [GuruController::class, 'put_nilai_tugas']);
    Route::put('/edit_nilai_tugas', [GuruController::class, 'update_nilai_tugas']);
+   Route::put('/edit_nilai_ujian', [GuruController::class, 'update_nilai_ujian']);
    Route::get('/hlm_detail_pengumpulan/{id_submission}', [GuruController::class, 'hlm_detail_pengumpulan'])
       ->where('id_submission', '.*');
    Route::get('/hlm_detail_tugas/{id_tugas}', [GuruController::class, 'hlm_detail_tugas'])->where('id_tugas', '.*');
@@ -167,7 +170,7 @@ Route::prefix('guru')->group(function () {
    Route::get('/uploadtugas/{id_mata_pelajaran}', [GuruController::class, 'uploadtugas'])->where('id_mata_pelajaran', '.*');
    Route::post('/uploadtugas', [GuruController::class, 'posttugas']);
    Route::get('/walikelas', [GuruController::class, 'walikelas']);
-   Route::get('/absensi', [GuruController::class, 'editattendance']);
+   Route::post('/absensi', [GuruController::class, 'editattendance']);
    // Add more admin routes here...
 });
 

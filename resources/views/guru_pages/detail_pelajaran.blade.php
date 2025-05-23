@@ -167,12 +167,7 @@
                         <?php foreach ($pertemuan as $p): ?>
                            <?php $a = $absen[$s->siswa->ID_SISWA][$p->ID_PERTEMUAN] ?? null; ?>
                            <td class="text-center">
-                              <form method="GET" action="/guru/absensi">
-                              <form method="GET" action="{{ url('/guru/absensi') }}">
-                                 <input type="checkbox" {{ $a ? 'checked' : '' }} onchange="this.form.submit()">
-                                 <input type="hidden" name="id_siswa" value="{{ $s->siswa->ID_SISWA }}">
-                                 <input type="hidden" name="id_pertemuan" value="{{ $p->ID_PERTEMUAN }}">
-                              </form>
+                              <input type="checkbox" class="absensi-checkbox" data-siswa="{{ $s->siswa->ID_SISWA }}" data-pertemuan="{{ $p->ID_PERTEMUAN }}" {{ $a ? 'checked' : '' }}>
                            </td>
                         <?php endforeach; ?>
                   </tr>
@@ -246,10 +241,11 @@
                     <th>No.</th>
                     <th>Nama Siswa</th>
                     <th>Nilai UTS</th>
+                    <th>Nilai UAS</th>
                     <th>Nilai Tugas</th>
                     <th>Nilai Akhir</th>
                     <th>Status</th>
-                    <!-- <th>Action</th> -->
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -259,6 +255,7 @@
                          <td>{{ $counter++ }}</td>
                          <td>{{ $nilai->nama_siswa }}</td>
                          <td>{{ $nilai->nilai_uts }}</td>
+                         <td>{{ $nilai->nilai_uas }}</td>
                          <td>{{ $nilai->nilai_tugas }}</td>
                          <td>{{ $nilai->nilai_akhir }}</td>
                          <?php if($nilai->nilai_akhir >= 80): ?>
@@ -268,7 +265,7 @@
                          <?php else: ?>
                            <td><span class="badge bg-danger">Gagal</span></td>
                          <?php endif; ?>
-                         <!-- <td><a href="/guru/editnilai" class="btn btn-warning btn-sm">Edit</a></td> -->
+                         <td><a href="{{ url('/guru/edit_nilai_ujian/' . urlencode($nilai->id_nilai)) }}" class="btn btn-warning btn-sm">Edit</a></td>
                      </tr>
                   <?php endforeach; ?>
                 </tbody>
@@ -310,4 +307,32 @@
         </div>
     </div>
 </div>
+
+<script>
+   $(document).ready(function () {
+      $('.absensi-checkbox').on('change', function() {
+         const checkbox = $(this);
+         const id_siswa = checkbox.data('siswa');
+         const id_pertemuan = checkbox.data('pertemuan');
+         const status = checkbox.is(':checked');
+
+         $.ajax({
+            url: '/guru/absensi',
+            method: 'POST',
+            data: {
+               _token: '{{ csrf_token() }}',
+               id_siswa: id_siswa,
+               id_pertemuan: id_pertemuan,
+               status: status
+            },
+            success: function (response) {
+               console.log(response.message);
+            },
+            error: function (response) {
+               alert("Ajax tidak jalan");
+            }
+         });
+      });
+   });
+</script>
 @endsection

@@ -2,8 +2,8 @@
     <div class="mb-4">
         <a href="/guru/hlm_about">
             <img src="{{ asset('images/default_img.png') }}" class="rounded-circle mb-2" alt="User" width="60px">
-            <div><strong>Darren Susanto</strong></div>
-            <p>G/001</p>
+            <div><strong>{{ session('userActive')->NAMA_GURU }}</strong></div>
+            <p>{{ session('userActive')->ID_GURU }}</p>
         </a>
     </div>
     <ul class="nav flex-column">
