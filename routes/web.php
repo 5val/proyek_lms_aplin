@@ -100,6 +100,12 @@ Route::prefix('admin')->group(function () {
    // ======================================== Siswa ==============================================
    Route::get('/list_tambah_siswa_ke_kelas/{id_kelas}', [AdminController::class, 'list_tambah_siswa_ke_kelas'])
       ->where('id_kelas', expression: '.*')->name('list_tambah_siswa_ke_kelas');
+   Route::get('/get_list_siswa_di_kelas/{id_kelas}', [AdminController::class, 'get_list_siswa_di_kelas'])
+      ->where('id_kelas', expression: '.*');
+   Route::get('/get_list_siswa_available/{id_kelas}', [AdminController::class, 'get_list_siswa_available'])
+      ->where('id_kelas', expression: '.*');
+   Route::post('/tambah_siswa_ke_kelas', [AdminController::class, 'tambah_siswa_ke_kelas']);
+   Route::post('/remove_siswa_dari_kelas', [AdminController::class, 'remove_siswa_dari_kelas']);
    // Route::post('/list_mata_pelajaran/{id_kelas}', [AdminController::class, 'add_mata_pelajaran'])
    //    ->where('id_kelas', expression: '.*');
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\InsertGuruExcel;
 use App\Imports\InsertSiswaExcel;
+use App\Models\Attendance;
 use App\Models\DetailKelas;
 use App\Models\EnrollmentKelas;
 use App\Models\Guru;
@@ -490,12 +491,82 @@ class AdminController extends Controller
         return redirect()->route('list_mata_pelajaran', ['id_kelas' => $request->kelas])->with('success', 'Jadwal berhasil ditambahkan.');
     }
 
+
+    // ================================== Tambah Siswa =================================================
     public function list_tambah_siswa_ke_kelas($id_kelas)
     {
-        $siswaList = EnrollmentKelas::whereNotIn('ID_KELAS', [$id_kelas])->with(['siswa'])->get();
+        $currPeriode = Kelas::find($id_kelas)->ID_PERIODE;
         $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with(['siswa'])->get();
-        return view('admin_pages.list_tambah_siswa_ke_kelas', compact('siswaList', 'kelasList'));
+        $siswaList = Siswa::whereDoesntHave('kelass', function ($query) use ($currPeriode) {
+            $query->where('ID_PERIODE', $currPeriode);
+        })->get();
+        // $siswaList = EnrollmentKelas::whereNotIn('ID_KELAS', [$id_kelas])->with(['siswa'])->get();
+        return view('admin_pages.list_tambah_siswa_ke_kelas', compact('siswaList', 'kelasList', 'id_kelas'));
     }
+    public function get_list_siswa_di_kelas($id_kelas)
+    {
+        $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with(['siswa'])->get();
+        return response()->json($kelasList);
+    }
+    public function get_list_siswa_available($id_kelas)
+    {
+        $currPeriode = Kelas::find($id_kelas)->ID_PERIODE;
+        $siswaList = Siswa::whereDoesntHave('kelass', function ($query) use ($currPeriode) {
+            $query->where('ID_PERIODE', $currPeriode);
+        })->get();
+        return response()->json($siswaList);
+    }
+    public function tambah_siswa_ke_kelas(Request $request)
+    {
+        $siswaId = $request->input('idSiswa');
+        $kelasId = $request->input('idKelas');
+        EnrollmentKelas::create([
+            'ID_KELAS' => $kelasId,
+            'ID_SISWA' => $siswaId,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Siswa berhasil ditambahkan ke kelas'
+        ]);
+    }
+    public function remove_siswa_dari_kelas(Request $request)
+    {
+        $siswaId = $request->input('idSiswa');
+        $kelasId = $request->input('idKelas');
+        $hasAttendance = Siswa::where('ID_SISWA', $siswaId)
+            ->whereHas('attendances.pertemuan.mataPelajaran.kelas', function ($query) use ($kelasId) {
+                $query->where('ID_KELAS', $kelasId);
+            })
+            ->get();
+        $hasSubmission = Siswa::where('ID_SISWA', $siswaId)
+            ->whereHas('submissionTugas.tugas.mataPelajaran.kelas', function ($query) use ($kelasId) {
+                $query->where('ID_KELAS', $kelasId);
+            })
+            ->get();
+        if (!$hasAttendance->isEmpty() || !$hasSubmission->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Siswa sudah memiliki absen/submitTugas'
+            ]);
+        } else {
+            $enroll = DB::delete('DELETE FROM ENROLLMENT_KELAS WHERE ID_SISWA = ? AND ID_KELAS = ?', [$siswaId, $kelasId]);
+            if ($enroll > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Berhasil remove Siswa dari Kelas'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => $siswaId . " - " . $kelasId
+                ], 404);
+            }
+        }
+    }
+
+
+
     public function tambahguru()
     {
         return view('admin_pages.tambahguru');
