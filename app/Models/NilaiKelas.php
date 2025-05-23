@@ -12,6 +12,8 @@ class NilaiKelas extends Model
 
     protected $table = 'NILAI_KELAS';
     protected $primaryKey = 'ID_NILAI';
+    protected $keyType = 'string';
+    public $incrementing = false;
     public $timestamps = false;
     protected $fillable = ['ID_NILAI', 'ID_SISWA', 'ID_MATA_PELAJARAN', 'NILAI_UTS', 'NILAI_UAS', 'NILAI_TUGAS', 'NILAI_AKHIR'];
 
