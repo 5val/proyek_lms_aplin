@@ -475,4 +475,131 @@ class SiswaController extends Controller
         ]);
     }
 
+
+
+public function hlm_laporan_nilai(Request $request)
+{
+    $siswa = Siswa::find(session('userActive')->ID_SISWA);
+    if (!$siswa) {
+        return response()->json(['message' => 'Siswa tidak ditemukan.'], 404);
+    }
+
+    // Ambil daftar periode (semester) untuk dropdown, urut dari terbaru
+    $daftarPeriode = DB::table('PERIODE')->orderByDesc('ID_PERIODE')->get();
+
+    // Ambil periode dari query string, default ke periode terbaru jika kosong
+    $periodeId = $request->query('periode');
+    if (!$periodeId) {
+        $periodeId = $daftarPeriode->first()->ID_PERIODE ?? null;
+    }
+
+    // Validasi periode yang dipilih ada dalam daftar periode
+    $validPeriode = $daftarPeriode->where('ID_PERIODE', $periodeId)->first();
+    if (!$validPeriode && $daftarPeriode->count() > 0) {
+        $periodeId = $daftarPeriode->first()->ID_PERIODE;
+        $validPeriode = $daftarPeriode->first();
+    }
+
+    // Ambil data mata pelajaran dan nilai siswa untuk periode terpilih
+    $nilaiSiswa = DB::table('MATA_PELAJARAN')
+        ->join('KELAS', 'MATA_PELAJARAN.ID_KELAS', '=', 'KELAS.ID_KELAS')
+        ->join('ENROLLMENT_KELAS', 'KELAS.ID_KELAS', '=', 'ENROLLMENT_KELAS.ID_KELAS')
+        ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
+        ->join('GURU', 'MATA_PELAJARAN.ID_GURU', '=', 'GURU.ID_GURU')
+        ->join('DETAIL_KELAS', 'KELAS.ID_DETAIL_KELAS', '=', 'DETAIL_KELAS.ID_DETAIL_KELAS')
+        ->join('PERIODE', 'KELAS.ID_PERIODE', '=', 'PERIODE.ID_PERIODE')
+        ->leftJoin('NILAI_KELAS', function($join) use ($siswa) {
+            $join->on('MATA_PELAJARAN.ID_MATA_PELAJARAN', '=', 'NILAI_KELAS.ID_MATA_PELAJARAN')
+                 ->where('NILAI_KELAS.ID_SISWA', '=', $siswa->ID_SISWA);
+        })
+        ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
+        ->where('KELAS.ID_PERIODE', '=', $periodeId)
+        ->select(
+            'MATA_PELAJARAN.ID_MATA_PELAJARAN',
+            'MATA_PELAJARAN.JAM_PELAJARAN',
+            'MATA_PELAJARAN.HARI_PELAJARAN',
+            'PELAJARAN.NAMA_PELAJARAN',
+            'GURU.NAMA_GURU',
+            'GURU.ID_GURU',
+            'DETAIL_KELAS.NAMA_KELAS',
+            'PERIODE.PERIODE',
+            'NILAI_KELAS.ID_NILAI',
+            'NILAI_KELAS.NILAI_UTS',
+            'NILAI_KELAS.NILAI_UAS',
+            'NILAI_KELAS.NILAI_TUGAS',
+            'NILAI_KELAS.NILAI_AKHIR'
+        )
+        ->get();
+
+    // Ambil data wali kelas dari kelas yang diikuti siswa pada periode terpilih
+    $waliKelas = DB::table('ENROLLMENT_KELAS')
+        ->join('KELAS', 'ENROLLMENT_KELAS.ID_KELAS', '=', 'KELAS.ID_KELAS')
+        ->join('GURU as WALI_GURU', 'KELAS.ID_GURU', '=', 'WALI_GURU.ID_GURU')
+        ->join('DETAIL_KELAS', 'KELAS.ID_DETAIL_KELAS', '=', 'DETAIL_KELAS.ID_DETAIL_KELAS')
+        ->join('PERIODE', 'KELAS.ID_PERIODE', '=', 'PERIODE.ID_PERIODE')
+        ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
+        ->where('KELAS.ID_PERIODE', '=', $periodeId)
+        ->select(
+            'WALI_GURU.ID_GURU as ID_WALI_KELAS',
+            'WALI_GURU.NAMA_GURU as NAMA_WALI_KELAS',
+            'WALI_GURU.EMAIL_GURU as EMAIL_WALI_KELAS',
+            'DETAIL_KELAS.NAMA_KELAS',
+            'DETAIL_KELAS.RUANGAN_KELAS',
+            'PERIODE.PERIODE'
+        )
+        ->first(); // Ambil satu record saja karena biasanya siswa hanya di satu kelas per periode
+
+    // Hitung rata-rata nilai per periode (hanya untuk mata pelajaran yang sudah ada nilai)
+    $nilaiYangAda = $nilaiSiswa->whereNotNull('NILAI_AKHIR');
+    $rataRataNilai = $nilaiYangAda->count() > 0 ? $nilaiYangAda->avg('NILAI_AKHIR') : 0;
+
+    // Hitung total mata pelajaran yang diambil
+    $totalMataPelajaran = $nilaiSiswa->count();
+
+    // Hitung mata pelajaran yang sudah ada nilai
+    $mataPelajaranDenganNilai = $nilaiYangAda->count();
+
+    // Status kelulusan berdasarkan nilai rata-rata
+    $statusKelulusan = $rataRataNilai >= 70 ? 'LULUS' : 'TIDAK LULUS';
+    if ($mataPelajaranDenganNilai - $totalMataPelajaran != 0 || $mataPelajaranDenganNilai == 0) {
+        $statusKelulusan = "-";
+    }
+
+    // Rangking siswa dalam kelas (opsional)
+    $rangkingSiswa = DB::table('NILAI_KELAS')
+        ->join('MATA_PELAJARAN', 'NILAI_KELAS.ID_MATA_PELAJARAN', '=', 'MATA_PELAJARAN.ID_MATA_PELAJARAN')
+        ->join('KELAS', 'MATA_PELAJARAN.ID_KELAS', '=', 'KELAS.ID_KELAS')
+        ->join('ENROLLMENT_KELAS', 'KELAS.ID_KELAS', '=', 'ENROLLMENT_KELAS.ID_KELAS')
+        ->join('SISWA', 'NILAI_KELAS.ID_SISWA', '=', 'SISWA.ID_SISWA')
+        ->where('KELAS.ID_PERIODE', '=', $periodeId)
+        ->whereIn('KELAS.ID_KELAS', function($query) use ($siswa, $periodeId) {
+            $query->select('KELAS.ID_KELAS')
+                ->from('ENROLLMENT_KELAS')
+                ->join('KELAS', 'ENROLLMENT_KELAS.ID_KELAS', '=', 'KELAS.ID_KELAS')
+                ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
+                ->where('KELAS.ID_PERIODE', '=', $periodeId);
+        })
+        ->select('SISWA.NAMA_SISWA', DB::raw('AVG(NILAI_KELAS.NILAI_AKHIR) as rata_nilai'))
+        ->groupBy('SISWA.ID_SISWA', 'SISWA.NAMA_SISWA')
+        ->orderByDesc('rata_nilai')
+        ->get();
+
+    // Data tambahan untuk informasi periode yang dipilih
+    $selectedPeriodeInfo = $validPeriode;
+
+    return view('siswa_pages.hlm_report_siswa', [
+        'nilaiSiswa' => $nilaiSiswa,
+        'rataRataNilai' => $rataRataNilai,
+        'totalMataPelajaran' => $totalMataPelajaran,
+        'mataPelajaranDenganNilai' => $mataPelajaranDenganNilai,
+        'statusKelulusan' => $statusKelulusan,
+        'rangkingSiswa' => $rangkingSiswa,
+        'daftarPeriode' => $daftarPeriode,
+        'selectedPeriode' => $periodeId,
+        'selectedPeriodeInfo' => $selectedPeriodeInfo,
+        'waliKelas' => $waliKelas, // Data wali kelas ditambahkan
+        'siswa' => $siswa
+    ]);
+}
+
 }

@@ -178,6 +178,9 @@ Route::prefix('guru')->group(function () {
    // Add more admin routes here...
 });
 
+Route::get('/siswa/hlm_report_siswa', [SiswaController::class, 'hlm_laporan_nilai'])
+    ->name('siswa.report.siswa');
+
 Route::get('/siswa', function () {
    return view('siswa_pages/home');
 });

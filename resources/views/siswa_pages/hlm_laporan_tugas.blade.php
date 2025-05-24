@@ -3,6 +3,8 @@
 @section('siswa_content')
 <div class="p-3">
     <h4 class="mb-3">Laporan Nilai Tugas</h4>
+    <!-- Report Button yang mengirim periode -->
+    <a href="{{ route('siswa.report.siswa', ['periode' => $selectedPeriode]) }}" class="btn btn-primary mb-3">Report</a>
 
     <!-- Dropdown Pilih Periode -->
     <form method="GET" action="{{ route('siswa.laporan_tugas') }}" class="mb-4">
