@@ -13,7 +13,9 @@ use App\Models\MataPelajaran;
 use App\Models\Pelajaran;
 use App\Models\Pengumuman;
 use App\Models\Periode;
+use App\Models\Pertemuan;
 use App\Models\Siswa;
+use App\Models\Tugas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -495,7 +497,6 @@ class AdminController extends Controller
         // Temukan record MataPelajaran yang sudah ada berdasarkan ID
         // Jika tidak ditemukan, akan otomatis melempar 404
         $mataPelajaran = MataPelajaran::findOrFail($id_mata_pelajaran);
-        dd($mataPelajaran);
 
         // Validasi data yang masuk dari request
         $validator = Validator::make($request->all(), [
@@ -546,13 +547,20 @@ class AdminController extends Controller
             if ($classBusy) {
                 $validator->errors()->add('waktu', 'Kelas sudah memiliki pelajaran pada waktu tersebut.');
             }
+            $runningClass = Pertemuan::where('ID_MATA_PELAJARAN', $mataPelajaran->ID_MATA_PELAJARAN)->exists();
+            $runningTugas = Tugas::where('ID_MATA_PELAJARAN', $mataPelajaran->ID_MATA_PELAJARAN)->exists();
+            if ($runningClass || $runningTugas) {
+                $validator->errors()->add('pelajaran', 'Mata Pelajaran sedang berjalan.');
+            }
+
         });
 
         // Jalankan validasi
         $validator->validate();
 
         // Perbarui record MataPelajaran
-        $mataPelajaran->update([
+        $mataPelajaran->delete();
+        MataPelajaran::create([
             'ID_GURU' => $request->pengajar,
             'ID_KELAS' => $request->kelas,
             'ID_PELAJARAN' => $request->pelajaran,
@@ -564,15 +572,33 @@ class AdminController extends Controller
         return redirect()->route('list_mata_pelajaran', ['id_kelas' => $request->kelas])->with('success', 'Jadwal berhasil diperbarui.');
     }
 
+    public function delete_mata_pelajaran(Request $request, $id_mata_pelajaran)
+    {
+        $mataPelajaran = MataPelajaran::findOrFail($id_mata_pelajaran);
+        $runningClass = Pertemuan::where('ID_MATA_PELAJARAN', $mataPelajaran->ID_MATA_PELAJARAN)->exists();
+        $runningTugas = Tugas::where('ID_MATA_PELAJARAN', $mataPelajaran->ID_MATA_PELAJARAN)->exists();
+        if ($runningClass || $runningTugas) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal Delete'
+            ]);
+        }
+        $mataPelajaran->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Mata Pelajaran berhasil delete'
+        ]);
+    }
+
 
     // ================================== Tambah Siswa =================================================
     public function list_tambah_siswa_ke_kelas($id_kelas)
     {
         $currPeriode = Kelas::find($id_kelas)->ID_PERIODE;
-        $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with(['siswa'])->get();
+        $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with('siswa')->get();
         $siswaList = Siswa::whereDoesntHave('kelass', function ($query) use ($currPeriode) {
             $query->where('ID_PERIODE', $currPeriode);
-        })->get();
+        })->where('STATUS_SISWA', 'Active')->get();
         // $siswaList = EnrollmentKelas::whereNotIn('ID_KELAS', [$id_kelas])->with(['siswa'])->get();
         return view('admin_pages.list_tambah_siswa_ke_kelas', compact('siswaList', 'kelasList', 'id_kelas'));
     }
@@ -586,7 +612,7 @@ class AdminController extends Controller
         $currPeriode = Kelas::find($id_kelas)->ID_PERIODE;
         $siswaList = Siswa::whereDoesntHave('kelass', function ($query) use ($currPeriode) {
             $query->where('ID_PERIODE', $currPeriode);
-        })->get();
+        })->where('STATUS_SISWA', 'Active')->get();
         return response()->json($siswaList);
     }
     public function tambah_siswa_ke_kelas(Request $request)

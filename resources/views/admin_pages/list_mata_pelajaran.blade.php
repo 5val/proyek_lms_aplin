@@ -45,6 +45,8 @@
     <script>
         $(document).ready(function () {
             const idKelas = $('#idKelas').val();
+            $('#formMapel').attr('action', '/admin/list_mata_pelajaran/' + idKelas);
+
             $('body').on('click', '.edit-mapel', function () {
                 var $currentRow = $(this).closest('tr');
                 var guruNameToEdit = $currentRow.find('.nama_guru').text().trim();
@@ -85,10 +87,31 @@
                 $('#submitBTN').text('Edit')
             })
             $('#formMapel').on('submit', function () {
-                $('#formMapel').attr('action', '/admin/list_mata_pelajaran/' + idKelas);
                 $('#submitBTN').text('Submit')
             })
+            $('body').on('click', '.delete-mapel', function () {
+                var currentRow = $(this).closest('tr');
+                var idMapelToEdit = currentRow.find('.id_mapel').text().trim();
+                delete_mapel(idMapelToEdit)
 
+            })
+            function delete_mapel(id_mapel) {
+                $.ajax({
+                    url: '/admin/delete_mata_pelajaran/' + id_mapel,
+                    type: 'POST',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        kelas: idKelas
+                    },
+                    success: function (response) {
+                        alert(response.message)
+                        window.location.href = '/admin/list_mata_pelajaran/' + idKelas
+                    },
+                    error: function (response) {
+                        alert(response.message)
+                    }
+                })
+            }
         })
     </script>
 @endsection

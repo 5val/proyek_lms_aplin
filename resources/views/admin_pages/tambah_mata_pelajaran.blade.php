@@ -21,6 +21,9 @@ $waktuList = ['07:00-08:30', '08:30-10:00', '10:00-11:30', '12:00-13:30', '13:30
                             <option value="<?= $pelajaran->ID_PELAJARAN ?>"><?= $pelajaran->NAMA_PELAJARAN ?></option>
                             <?php endforeach; ?>
                         </select>
+                        @error('pelajaran')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="hari" class="form-label">Hari</label>
