@@ -22,12 +22,27 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Session;
+use Str;
 
 class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin_pages.home');
+        $latestPeriode = Periode::orderByDesc('ID_PERIODE')->first();
+        $jumlahSiswa = Siswa::where('STATUS_SISWA', 'Active')->count();
+        $jumlahGuru = Guru::where('STATUS_GURU', 'Active')->count();
+        $jumlahKelas = Kelas::where('ID_PERIODE', $latestPeriode->ID_PERIODE)->count();
+        $jumlahPelajaran = Pelajaran::count();
+        $jumlahMataPelajaran = MataPelajaran::whereIn(
+            'ID_KELAS',
+            function ($query) use ($latestPeriode) {
+                $query->select('ID_KELAS')
+                    ->from('kelas')
+                    ->where('ID_PERIODE', $latestPeriode->ID_PERIODE);
+            }
+        )->count();
+        $listPengumuman = Pengumuman::orderByDesc('ID')->limit(10)->get();
+        return view('admin_pages.home', compact('latestPeriode', 'jumlahSiswa', 'jumlahGuru', 'jumlahKelas', 'jumlahPelajaran', 'jumlahMataPelajaran', 'listPengumuman'));
     }
     // ========================================= Guru ===================================================
     public function geteditguru($id_guru)
@@ -297,6 +312,39 @@ class AdminController extends Controller
         $pelajaran->save();
         return redirect()->route('list_pelajaran')->with('success', 'Berhasil update!');
 
+    }
+    // ========================================= Periode ===========================================
+    public function list_periode()
+    {
+        $periodeList = Periode::all();
+        return view('admin_pages.list_periode', compact('periodeList'));
+    }
+    public function add_periode()
+    {
+        $latestPeriode = Periode::orderBy('ID_PERIODE', 'desc')->first()->PERIODE;
+        $detail = "Tahun ";
+        $detailTahun = trim(explode(" ", explode("/", $latestPeriode)[0])[1]);
+        $tahun = Str::contains($latestPeriode, 'GANJIL') ? (int) $detailTahun : (int) date('Y');
+        $tahun2 = $tahun + 1;
+        $detailSemester = Str::contains($latestPeriode, 'GANJIL') ? 'GENAP' : 'GANJIL';
+        $detail = $detail . $tahun . "/" . $tahun2 . " " . $detailSemester;
+        $adaPeriode = Periode::where('PERIODE', $detail)->get();
+        if (!$adaPeriode->isEmpty()) {
+            return redirect()->route('list_periode')->with('error', 'Periode sudah terbaru');
+        }
+        Periode::create([
+            'PERIODE' => $detail
+        ]);
+        return redirect()->route('list_periode')->with('success', 'Berhasil tambah periode');
+    }
+    public function delete_periode($id_periode)
+    {
+        $adaKelas = Kelas::where('ID_PERIODE', $id_periode)->get();
+        if ($adaKelas->isEmpty()) {
+            Periode::find($id_periode)->delete();
+            return redirect()->route('list_periode')->with('success', 'Berhasil delete periode');
+        }
+        return redirect()->route('list_periode')->with('error', value: 'Sudah ada kelas dalam periode');
     }
 
     // ========================================= Laporan ============================================
