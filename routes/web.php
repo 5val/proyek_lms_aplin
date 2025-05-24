@@ -78,6 +78,11 @@ Route::prefix('admin')->group(function () {
    Route::get('/tambah_pelajaran', [AdminController::class, 'tambah_pelajaran']);
    Route::post('/tambah_pelajaran', [AdminController::class, 'postpelajaran']);
 
+   // ===================================== Periode ===============================================
+   Route::get('/list_periode', [AdminController::class, 'list_periode'])->name('list_periode');
+   Route::get('/add_periode', [AdminController::class, 'add_periode']);
+   Route::get('/delete_periode/{id_periode}', [AdminController::class, 'delete_periode']);
+
    // ===================================== Laporan ===============================================
    Route::get('/laporanguru', [AdminController::class, 'laporanguru']);
    Route::get('/laporankelas', [AdminController::class, 'laporankelas']);

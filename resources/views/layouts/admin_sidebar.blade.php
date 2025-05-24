@@ -16,6 +16,8 @@
         href="/admin/list_kelas">Kelas</a></li>
     <li class="nav-item"><a class="nav-link {{ Request::is('admin/listpengumuman') ? 'active' : '' }}"
         href="/admin/listpengumuman">Pengumuman</a></li>
+    <li class="nav-item"><a class="nav-link {{ Request::is('admin/list_periode') ? 'active' : '' }}"
+        href="/admin/list_periode">Periode</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="collapse" href="#submenuLaporan" role="button"
         aria-expanded="false" aria-controls="submenuLaporan">
         Laporan
