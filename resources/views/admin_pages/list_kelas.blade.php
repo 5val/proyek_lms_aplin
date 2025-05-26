@@ -7,7 +7,7 @@
       <button class="btn btn-primary me-1">List</button>
       <a href="/admin/tambah_kelas" class="btn me-1">Tambah</a>
       <a href="/admin/upload_kelas" class="btn me-1"> Upload Kelas</a>
-      <a href="/admin/upload_siswa" class="btn me-1">Upload Siswa</a>
+      <a href="/admin/upload_siswa_ke_kelas" class="btn me-1">Upload Siswa</a>
 
     </div>
     <div>

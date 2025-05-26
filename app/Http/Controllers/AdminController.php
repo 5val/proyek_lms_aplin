@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Imports\InsertGuruExcel;
+use App\Imports\InsertKelasExcel;
 use App\Imports\InsertSiswaExcel;
+use App\Imports\InsertSiswaKeKelasExcel;
 use App\Models\Attendance;
 use App\Models\DetailKelas;
 use App\Models\EnrollmentKelas;
@@ -475,6 +477,32 @@ class AdminController extends Controller
         return redirect()->route('list_kelas')->with('success', 'Class added successfully.');
     }
 
+    public function displayUploadKelas()
+    {
+        return view('admin_pages.upload_kelas');
+    }
+    public function uploadKelas(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        try {
+            // Correct way to call the import() method:
+            Excel::import(new InsertKelasExcel, $request->file('file')); // Using the Facade
+
+            // Or, using dependency injection (better approach):
+            // $excel = app('excel');
+            // $excel->import(new InsertSiswaExcel, $request->file('file'));
+
+            Session::flash('success', 'Data imported successfully!'); // Use session
+        } catch (\Exception $e) {
+            Session::flash('error', 'Import failed: ' . $e->getMessage());
+        }
+
+        return redirect()->back();
+    }
+
 
     // ================================== Mata Pelajaran =================================================
     public function list_mata_pelajaran($id)
@@ -710,6 +738,31 @@ class AdminController extends Controller
                 ], 404);
             }
         }
+    }
+    public function displayUploadSiswaKeKelas()
+    {
+        return view('admin_pages.upload_siswa_ke_kelas');
+    }
+    public function uploadSiswaKeKelas(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        try {
+            // Correct way to call the import() method:
+            Excel::import(new InsertSiswaKeKelasExcel, $request->file('file')); // Using the Facade
+
+            // Or, using dependency injection (better approach):
+            // $excel = app('excel');
+            // $excel->import(new InsertSiswaExcel, $request->file('file'));
+
+            Session::flash('success', 'Data imported successfully!'); // Use session
+        } catch (\Exception $e) {
+            Session::flash('error', 'Import failed: ' . $e->getMessage());
+        }
+
+        return redirect()->back();
     }
 
 

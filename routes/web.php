@@ -101,6 +101,16 @@ Route::prefix('admin')->group(function () {
    Route::post('/add_kelas', [AdminController::class, 'add_kelas'])->name('add_kelas');
    Route::put('/update_kelas/{id}', [AdminController::class, 'update_kelas'])->name('update_kelas')
       ->where('id', expression: '.*');
+   Route::get('/upload_kelas', [AdminController::class, 'displayUploadKelas']);
+   Route::post('/upload_kelas', [AdminController::class, 'uploadKelas'])->name('uploadKelas.excel');
+   Route::get('/downloadTempKelas', function () {
+      $filePath = storage_path('app/template_excel/template_kelas.xlsx'); //  path to your file
+      if (file_exists($filePath)) {
+         return response()->download($filePath, 'template_kelas.xlsx'); //  filename for the user
+      } else {
+         abort(404, 'Template file not found.'); //  handle file not found error
+      }
+   });
 
    // ======================================== Siswa ==============================================
    Route::get('/list_tambah_siswa_ke_kelas/{id_kelas}', [AdminController::class, 'list_tambah_siswa_ke_kelas'])
@@ -113,6 +123,16 @@ Route::prefix('admin')->group(function () {
    Route::post('/remove_siswa_dari_kelas', [AdminController::class, 'remove_siswa_dari_kelas']);
    // Route::post('/list_mata_pelajaran/{id_kelas}', [AdminController::class, 'add_mata_pelajaran'])
    //    ->where('id_kelas', expression: '.*');
+   Route::get('/upload_siswa_ke_kelas', [AdminController::class, 'displayUploadSiswaKeKelas']);
+   Route::post('/upload_siswa_ke_kelas', [AdminController::class, 'uploadSiswaKeKelas'])->name('uploadSiswaKeKelas.excel');
+   Route::get('/downloadTempSiswaKeKelas', function () {
+      $filePath = storage_path('app/template_excel/template_siswa_ke_kelas.xlsx'); //  path to your file
+      if (file_exists($filePath)) {
+         return response()->download($filePath, 'template_siswa_ke_kelas.xlsx'); //  filename for the user
+      } else {
+         abort(404, 'Template file not found.'); //  handle file not found error
+      }
+   });
 
    // ======================================== Mata Pelajaran =====================================
    Route::get('/list_mata_pelajaran/{id_kelas}', [AdminController::class, 'list_mata_pelajaran'])
@@ -184,7 +204,7 @@ Route::prefix('guru')->group(function () {
 });
 
 Route::get('/siswa/hlm_report_siswa', [SiswaController::class, 'hlm_laporan_nilai'])
-    ->name('siswa.report.siswa');
+   ->name('siswa.report.siswa');
 
 Route::get('/siswa', function () {
    return view('siswa_pages/home');
