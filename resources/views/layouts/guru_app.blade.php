@@ -8,6 +8,7 @@
 
       <div class="col-md-10 col-lg-10 main-content">
          @include('layouts.navbar')
+         @include('layouts.popup')
 
          <div class="p-3 key-content">
             @yield('guru_content')
