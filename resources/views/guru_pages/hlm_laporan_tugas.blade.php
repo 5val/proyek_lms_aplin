@@ -25,6 +25,7 @@
                     <th>No.</th>
                     <th>Nama Siswa</th>
                     <th>Tugas</th>
+                    <th>Mata Pelajaran</th>
                     <th>Nilai</th>
                     <th>Status</th>
                 </tr>
@@ -36,6 +37,7 @@
                          <td>{{ $counter++ }}</td>
                          <td>{{ $nilai->nama_siswa }}</td>
                          <td>{{ $nilai->nama_tugas }}</td>
+                         <td>{{ $nilai->nama_pelajaran }}</td>
                          <td>{{ $nilai->nilai_tugas }}</td>
                          <?php if($nilai->nilai_tugas >= 80): ?>
                            <td><span class="badge bg-success">Lulus</span></td>
@@ -50,14 +52,25 @@
             </table>
             </div>
 
-            <!-- Nilai Rata-Rata per Tugas -->
-            <div class="mt-4">
-            <h5>Rata-Rata Nilai Tugas</h5>
-            <?php foreach ($rata2 as $r): ?>
-               <div class="card bg-light p-3">
-                  <h6><strong>Rata-Rata Nilai {{ $r->nama_tugas }}:</strong> {{ $r->rata2 }}</h6>
-               </div>
-            <?php endforeach; ?>
+            <!-- Rata-rata Nilai Ujian -->
+            <div class="average-card-custom">
+               <h5 class="average-card-title">Rata-Rata Nilai per Tugas</h5>
+               <table class="average-table table-bordered table-lg">
+                     <thead class="table-header-custom">
+                        <tr>
+                           <th>Nama Tugas</th>
+                           <th>Nilai</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        @foreach ($rata2 as $r)
+                           <tr>
+                              <td><strong>{{ $r->nama_tugas }}</strong></td>
+                              <td>{{ number_format($r->rata2, 2) }}</tddecimals: >
+                           </tr>
+                        @endforeach
+                     </tbody>
+               </table>
             </div>
 
         </div>

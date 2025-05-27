@@ -85,6 +85,8 @@ Route::prefix('admin')->group(function () {
 
    // ===================================== Laporan ===============================================
    Route::get('/laporanguru', [AdminController::class, 'laporanguru']);
+   Route::get('/hlm_report_guru', [AdminController::class, 'hlm_report_guru'])
+   ->name('admin.report.guru');
    Route::get('/laporankelas', [AdminController::class, 'laporankelas']);
    Route::get('/laporanmapel', [AdminController::class, 'laporanmapel']);
    Route::get('/laporansiswa', [AdminController::class, 'laporansiswa']);

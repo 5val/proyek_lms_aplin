@@ -21,6 +21,7 @@ use App\Models\Tugas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Session;
@@ -350,10 +351,75 @@ class AdminController extends Controller
     }
 
     // ========================================= Laporan ============================================
-    public function laporanguru()
+    public function laporanguru(Request $request)
     {
-        return view('admin_pages.laporanguru');
+      if($request->query('periodeSelect')){
+         $periode = Periode::where('ID_PERIODE', $request->query('periodeSelect'))->first();
+      } else {
+         $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
+      }
+      $all_periode = Periode::all();
+      $all_guru = Guru::all();
+      return view('admin_pages.laporanguru', ["all_guru" => $all_guru, "all_periode" => $all_periode, "periode" => $periode]);
     }
+    public function hlm_report_guru(Request $request){
+    $id_periode = $request->query('id_periode');
+    $id_guru = $request->query('id_guru');
+
+    $guru = Guru::where("ID_GURU", $id_guru)->first();
+    $periode = Periode::where("ID_PERIODE", $id_periode)->first();
+
+    $list_report = DB::table("mata_pelajaran as mp")
+      ->join("pelajaran as p", 'mp.id_pelajaran', '=', 'p.id_pelajaran')
+      ->join('kelas as k', 'mp.id_kelas', '=', 'k.id_kelas')
+      ->join('detail_kelas as dk', 'k.id_detail_kelas', '=', 'dk.id_detail_kelas')
+      ->leftJoin('nilai_kelas as nk', 'mp.id_mata_pelajaran', '=', 'nk.id_mata_pelajaran')
+      ->where([['mp.id_guru', $id_guru], ['k.id_periode', $id_periode]])
+      ->groupBy(
+         'mp.id_mata_pelajaran',
+         'mp.id_guru',
+         'k.id_periode',
+         'p.nama_pelajaran',
+         'dk.nama_kelas'
+      )
+      ->select('mp.id_mata_pelajaran', 'mp.id_guru', 'k.id_periode', 'p.nama_pelajaran', 'dk.nama_kelas', DB::raw('AVG(nk.nilai_akhir) as rata2'))
+      ->get();
+
+      $jumlahMapel = DB::table("mata_pelajaran as mp")
+      ->join('kelas as k', 'mp.id_kelas', '=', 'k.id_kelas')
+      ->where([
+         ['mp.id_guru', '=', $id_guru],
+         ['k.id_periode', '=', $id_periode]
+      ])
+      ->select(DB::raw('COUNT(mp.id_mata_pelajaran) as jml'))
+      ->first();
+
+      $jumlahDinilai = DB::table('mata_pelajaran as mp')
+      ->join('pelajaran as p', 'mp.id_pelajaran', '=', 'p.id_pelajaran')
+      ->join('kelas as k', 'mp.id_kelas', '=', 'k.id_kelas')
+      ->join('detail_kelas as dk', 'k.id_detail_kelas', '=', 'dk.id_detail_kelas')
+      ->leftJoin('nilai_kelas as nk', 'mp.id_mata_pelajaran', '=', 'nk.id_mata_pelajaran')
+      ->select('mp.id_mata_pelajaran')
+      ->where([
+         ['mp.id_guru', '=', $id_guru],
+         ['k.id_periode', '=', $id_periode]
+      ])
+      ->groupBy(
+         'mp.id_mata_pelajaran'
+      )
+      ->havingRaw('AVG(nk.nilai_akhir) IS NOT NULL')
+      ->get();
+
+      $rata2_all = 0;
+      foreach ($list_report as $report) {
+         if($report->rata2 !== null) {
+            $rata2_all += $report->rata2;
+         }
+      }
+      $rata2_all /= count($jumlahDinilai);
+
+    return view('admin_pages.hlm_report_guru', ["guru" => $guru, "periode" => $periode, "list_report" => $list_report, "jumlahMapel" => $jumlahMapel, "jumlahDinilai" => $jumlahDinilai, "rata2_all" => $rata2_all]);
+}
     public function laporankelas()
     {
         return view('admin_pages.laporankelas');

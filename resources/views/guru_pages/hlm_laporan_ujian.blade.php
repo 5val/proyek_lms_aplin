@@ -54,14 +54,25 @@
             </table>
             </div>
 
-            <!-- Nilai Rata-Rata per Tugas -->
-            <div class="mt-4">
-            <h5>Rata-Rata Nilai Akhir</h5>
-            <?php foreach ($rata2 as $r): ?>
-               <div class="card bg-light p-3">
-                  <h6><strong>Rata-Rata Nilai Akhir {{ $r->nama_pelajaran }}:</strong> {{ $r->rata2 }}</h6>
-               </div>
-            <?php endforeach; ?>
+            <!-- Rata-rata Nilai Ujian -->
+            <div class="average-card-custom">
+               <h5 class="average-card-title">Rata-Rata Nilai Ujian per Mata Pelajaran</h5>
+               <table class="average-table table-bordered table-lg">
+                     <thead class="table-header-custom">
+                        <tr>
+                           <th>Mata Pelajaran</th>
+                           <th>Nilai</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        @foreach ($rata2 as $r)
+                           <tr>
+                              <td><strong>{{ $r->nama_pelajaran }}:</strong></td>
+                              <td>{{ number_format($r->rata2, 2) }}</tddecimals: >
+                           </tr>
+                        @endforeach
+                     </tbody>
+               </table>
             </div>
 
         </div>
