@@ -5,7 +5,7 @@
     <p>Admin</p>
   </div>
   <ul class="nav flex-column">
-    <li class="nav-item"><a class="nav-link {{ Request::is('admin/') ? 'active' : '' }}" href="/admin/">Home</a></li>
+    <li class="nav-item"><a class="nav-link {{ Request::is('admin') ? 'active' : '' }}" href="/admin/">Home</a></li>
     <li class="nav-item"><a class="nav-link {{ Request::is('admin/listguru') ? 'active' : '' }}"
         href="/admin/listguru">Guru</a></li>
     <li class="nav-item"><a class="nav-link {{ Request::is('admin/listsiswa') ? 'active' : '' }}"

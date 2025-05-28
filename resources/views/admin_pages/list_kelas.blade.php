@@ -40,7 +40,6 @@
     </table>
     </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function () {
     $('body').on('click', '.delete-class', function () {
@@ -112,7 +111,6 @@
     // <a href="/admin/edit_kelas/${kelas.id_kelas}" class="btn btn-primary btn-sm">Edit</a>
     // <button class="btn btn-danger btn-sm delete-class" data-id='${kelas.id_kelas}'>Delete</button>
     // </div>
-
     // Initial load (on page open)
     const selectedPeriode = $('#semesterSelect').val();
     loadKelas(selectedPeriode);
