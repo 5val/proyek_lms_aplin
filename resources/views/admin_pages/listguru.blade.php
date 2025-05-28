@@ -26,7 +26,6 @@
       </tr>
       </thead>
       <tbody>
-      <tbody>
       <?php foreach ($allGuru as $g): ?>
       <tr class="{{ $g->STATUS_GURU == "Active" ? "" : "inactive" }}">
         <td>{{ $g->ID_GURU }}</td>

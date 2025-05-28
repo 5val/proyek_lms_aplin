@@ -1,4 +1,4 @@
-<nav class="col-md-2 d-none d-md-block sidebar p-3" style="height: 100vh; overflow-y: auto; position: fixed;">
+<nav class="col-md-2 d-none d-md-block sidebar p-3" style="height: 100vh; overflow-y: auto; position: fixed; -ms-overflow-style: none;scrollbar-width: none;">
   <div class="mb-4">
     <img src="{{ asset('images/default_img.png') }}" class="rounded-circle mb-2" alt="User" width="60px">
     <div><strong>Ovaldo Oentoro</strong></div>
@@ -37,6 +37,6 @@
         </ul>
       </div>
     </li>
-    <li class="nav-item"><a class="nav-link" href="/">Sign out</a></li>
+    <li class="nav-item"><a class="nav-link" href="/" style="background-color: red; color: white;">Sign out</a></li>
   </ul>
 </nav>

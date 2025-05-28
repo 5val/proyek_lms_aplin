@@ -22,7 +22,6 @@
       </tr>
       </thead>
       <tbody>
-      <tbody>
       <?php foreach ($allpengumuman as $g): ?>
       <tr>
         <td>{{ $g->ID }}</td>
@@ -39,74 +38,6 @@
         </td>
       </tr>
       <?php endforeach; ?>
-      <!-- <tr>
-      <td>P0001</td>
-      <td>30/04/2025</td>
-      <td>Perubahan Jadwal UTS</td>
-      <td>UTS akan ditiadakan ...</td>
-      <td>
-      <div style="display: flex; gap: 5px;">
-      <button class="btn btn-primary"><a href="editguru.php"
-      style="text-decoration: none; color: white;">Edit</a></button>
-      <button class="btn btn-danger">Hapus</button>
-      </div>
-      </td>
-      </tr>
-      <tr>
-      <td>P0002</td>
-      <td>30/04/2025</td>
-      <td>Perubahan Jadwal UTS</td>
-      <td>UTS akan ditiadakan ...</td>
-      <td>
-      <div style="display: flex; gap: 5px;">
-      <button class="btn btn-primary"><a href="editguru.php"
-      style="text-decoration: none; color: white;">Edit</a></button>
-      <button class="btn btn-danger">Hapus</button>
-      </div>
-      </td>
-      </tr>
-      <tr>
-      <td>P0003</td>
-      <td>30/04/2025</td>
-      <td>Perubahan Jadwal UTS</td>
-      <td>UTS akan ditiadakan ...</td>
-
-      <td>
-      <div style="display: flex; gap: 5px;">
-      <button class="btn btn-primary"><a href="editguru.php"
-      style="text-decoration: none; color: white;">Edit</a></button>
-      <button class="btn btn-danger">Hapus</button>
-      </div>
-      </td>
-      </tr>
-      <tr>
-      <td>P0004</td>
-      <td>30/04/2025</td>
-      <td>Perubahan Jadwal UTS</td>
-      <td>UTS akan ditiadakan ...</td>
-
-      <td>
-      <div style="display: flex; gap: 5px;">
-      <button class="btn btn-primary"><a href="editguru.php"
-      style="text-decoration: none; color: white;">Edit</a></button>
-      <button class="btn btn-danger">Hapus</button>
-      </div>
-      </td>
-      </tr>
-      <tr>
-      <td>P0005</td>
-      <td>30/04/2025</td>
-      <td>Perubahan Jadwal UTS</td>
-      <td>UTS akan ditiadakan ...</td>
-
-      <td>
-      <div style="display: flex; gap: 5px;">
-      <button class="btn btn-primary"><a href="editguru.php"
-      style="text-decoration: none; color: white;">Edit</a></button>
-      <button class="btn btn-danger">Hapus</button>
-      </div>
-      </td>
-      </tr> -->
 
       </tbody>
     </table>

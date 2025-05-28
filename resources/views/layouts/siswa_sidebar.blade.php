@@ -20,6 +20,6 @@
             </ul>
           </div>
         </li>
-          <li class="nav-item"><a class="nav-link" href="/">Sign out</a></li>
+          <li class="nav-item"><a class="nav-link" href="/" style="background-color: red; color: white;">Sign out</a></li>
         </ul>
       </nav>
