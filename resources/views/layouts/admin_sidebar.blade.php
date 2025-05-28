@@ -28,10 +28,10 @@
         <ul class="nav flex-column ms-3">
           <li class="nav-item"><a class="nav-link {{ Request::is('admin/laporansiswa') ? 'active' : '' }}"
               href="/admin/laporansiswa">Laporan Siswa</a></li>
-          <li class="nav-item"><a class="nav-link {{ Request::is('admin/laporanmapel') ? 'active' : '' }}"
-              href="/admin/laporanmapel">Laporan Mata Pelajaran</a></li>
-          <li class="nav-item"><a class="nav-link {{ Request::is('admin/laporankelas') ? 'active' : '' }}"
-              href="/admin/laporankelas">Laporan Kelas</a></li>
+          <!-- <li class="nav-item"><a class="nav-link {{ Request::is('admin/laporanmapel') ? 'active' : '' }}"
+              href="/admin/laporanmapel">Laporan Mata Pelajaran</a></li> -->
+          <!-- <li class="nav-item"><a class="nav-link {{ Request::is('admin/laporankelas') ? 'active' : '' }}"
+              href="/admin/laporankelas">Laporan Kelas</a></li> -->
           <li class="nav-item"><a class="nav-link {{ Request::is('admin/laporanguru') ? 'active' : '' }}"
               href="/admin/laporanguru">Laporan Guru</a></li>
         </ul>
