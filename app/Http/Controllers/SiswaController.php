@@ -602,4 +602,15 @@ public function hlm_laporan_nilai(Request $request)
     ]);
 }
 
+public function liburNasional()
+{
+    // Bisa ditambahkan validasi siswa jika diperlukan
+    $siswa = Siswa::find(session('userActive')->ID_SISWA);
+    if (!$siswa) {
+        return redirect()->back()->with('error', 'Siswa tidak ditemukan.');
+    }
+
+    return view('siswa_pages.libur_nasional');
+}
+
 }

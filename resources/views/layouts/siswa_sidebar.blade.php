@@ -2,8 +2,8 @@
         <div class="mb-4">
          <a href="/siswa/hlm_about">
          <img src="{{ asset('images/default_img.png') }}" class="rounded-circle mb-2" alt="User" width="60px">
-         <div><strong>Jessica Natalie</strong></div>
-         <p>220/0001</p>
+         <div><strong>{{ session('userActive')->NAMA_SISWA }}</strong></div>
+         <p>{{ session('userActive')->ID_SISWA }}</p>
          </a>
        </div>
         <ul class="nav flex-column">
@@ -20,6 +20,14 @@
             </ul>
           </div>
         </li>
+          <li class="nav-item"><a class="nav-link {{ Request::is('siswa/libur_nasional') ? 'active' : '' }}" href="/siswa/libur_nasional">Libur Nasional</a></li>
           <li class="nav-item"><a class="nav-link" href="/" style="background-color: red; color: white;">Sign out</a></li>
         </ul>
       </nav>
+
+<?php
+if (!session()->has('userActive')) {
+    return redirect('/');
+    exit;
+}
+?>

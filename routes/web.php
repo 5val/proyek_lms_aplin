@@ -208,9 +208,12 @@ Route::prefix('guru')->group(function () {
 Route::get('/siswa/hlm_report_siswa', [SiswaController::class, 'hlm_laporan_nilai'])
    ->name('siswa.report.siswa');
 
+Route::get('/siswa/libur_nasional', [SiswaController::class, 'liburNasional'])->name('siswa.libur_nasional');
+
 Route::get('/siswa', function () {
    return view('siswa_pages/home');
 });
+
 
 Route::prefix('siswa')->group(function () {
    Route::get('/', [SiswaController::class, 'index']);
