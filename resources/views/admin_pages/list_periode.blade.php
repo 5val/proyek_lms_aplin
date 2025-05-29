@@ -1,8 +1,3 @@
-<?php
-// Mock data
-
-?>
-
 @extends('layouts.admin_app')
 
 @section('admin_content')

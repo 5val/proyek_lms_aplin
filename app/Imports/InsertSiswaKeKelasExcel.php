@@ -2,7 +2,10 @@
 
 namespace App\Imports;
 use App\Models\EnrollmentKelas;
+use DB;
+use Maatwebsite\Excel\Concerns\SkipsOnError;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure; // Optional: To skip rows that fail validation
@@ -10,9 +13,10 @@ use Maatwebsite\Excel\Validators\Failure;
 use App\Models\Guru;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Throwable;
 
 
-class InsertSiswaKeKelasExcel implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure
+class InsertSiswaKeKelasExcel implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure, SkipsOnError, WithChunkReading
 {
     /**
      * @param array $row
@@ -35,7 +39,10 @@ class InsertSiswaKeKelasExcel implements ToModel, WithHeadingRow, WithValidation
     public function rules(): array
     {
         return [
-            'id_kelas' => ['required', 'exists:Kelas,ID_KELAS'],
+            'id_kelas' => [
+                'required', 
+                'exists:Kelas,ID_KELAS', 
+                ],
             'id_siswa' => ['required', 'exists:Siswa,ID_SISWA'],
         ];
     }
@@ -45,7 +52,19 @@ class InsertSiswaKeKelasExcel implements ToModel, WithHeadingRow, WithValidation
         // Optional: Handle validation failures
         foreach ($failures as $failure) {
             // Log the row and error message
-            \Log::warning(sprintf('Row %s: %s', $failure->row(), implode(', ', $failure->errors())));
+            \Log::warning(sprintf('Row %s: %s', $failure->row(), implode(', ', array: $failure->errors())));
         }
+    }
+    public function onError(Throwable $e)
+    {
+        // Handle database exceptions (like duplicate entry)
+        // This will allow the import to continue
+        \Log::error(sprintf('Database Error - Row (unknown, as it happened during save): %s - %s', $e->getMessage(), $e->getTraceAsString()));
+
+    }
+    public function chunkSize(): int
+    {
+        return 1000; // You can adjust this number based on your server's memory limits
+                     // Common values are 500, 1000, 2000.
     }
 }

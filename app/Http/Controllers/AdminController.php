@@ -350,6 +350,13 @@ class AdminController extends Controller
         return redirect()->route('list_periode')->with('error', value: 'Sudah ada kelas dalam periode');
     }
 
+    // ========================================= Ruangan ============================================
+    public function list_ruangan()
+    {
+        $ruanganList = DetailKelas::all();
+        return view('admin_pages.list_ruangan', compact('ruanganList'));
+    }
+
     // ========================================= Laporan ============================================
     public function laporanguru(Request $request)
     {

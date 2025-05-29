@@ -72,6 +72,10 @@ Route::prefix('admin')->group(function () {
       }
    });
 
+   // ===================================== Ruangan ===============================================
+   Route::get('/list_ruangan', [AdminController::class, 'list_ruangan']);
+
+
    // ===================================== Pelajaran =============================================
    Route::get('/list_pelajaran', [AdminController::class, 'list_pelajaran'])->name('list_pelajaran');
    Route::get('/list_pelajaran/{id_pelajaran}', [AdminController::class, 'hapuspelajaran'])->name('hapuspelajaran');
