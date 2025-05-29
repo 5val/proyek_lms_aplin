@@ -5,7 +5,9 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GeminiController;
 
+Route::post('/ask-gemini', [GeminiController::class, 'ask']);
 Route::get('/', [MainController::class, 'index']);
 Route::post('/', [MainController::class, 'handleLogin']);
 Route::get('/register', [MainController::class, 'register']);

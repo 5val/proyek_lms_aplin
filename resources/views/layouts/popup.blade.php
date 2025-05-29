@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Gemini</title>
     <style>
         body {
@@ -125,7 +125,58 @@
             const chatBox = document.getElementById('chat-box');
             chatBox.style.display = chatBox.style.display === 'none' ? 'flex' : 'none';
         });
-    </script>
+    document.getElementById('send-button').addEventListener('click', function () {
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if (text !== '') {
+            const messages = document.getElementById('chat-box-messages');
+
+            // Tampilkan pesan user
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg-user';
+            userMsg.textContent = text;
+            messages.appendChild(userMsg);
+            input.value = '';
+
+            // Scroll ke bawah
+            messages.scrollTop = messages.scrollHeight;
+
+            // Loading state (opsional)
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'msg-bot';
+            loadingMsg.textContent = 'Mengetik...';
+            messages.appendChild(loadingMsg);
+            messages.scrollTop = messages.scrollHeight;
+
+            // Kirim ke Laravel
+            fetch('/ask-gemini', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ message: text })
+            })
+            .then(res => res.json())
+            .then(data => {
+                loadingMsg.remove(); // hapus loading
+                const botMsg = document.createElement('div');
+                botMsg.className = 'msg-bot';
+                botMsg.textContent = data.reply;
+                messages.appendChild(botMsg);
+                messages.scrollTop = messages.scrollHeight;
+            })
+            .catch(() => {
+                loadingMsg.remove();
+                const botMsg = document.createElement('div');
+                botMsg.className = 'msg-bot';
+                botMsg.textContent = 'Ups, gagal mendapatkan balasan.';
+                messages.appendChild(botMsg);
+                messages.scrollTop = messages.scrollHeight;
+            });
+        }
+    });
+</script>
 
 </body>
 </html>
