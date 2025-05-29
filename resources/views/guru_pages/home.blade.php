@@ -33,11 +33,11 @@
             <h5 class="mt-4">Tugas yang Sedang Berlangsung</h5>
             <div class="scroll-box mb-4 d-flex flex-row flex-nowrap overflow-auto">
                <?php foreach ($all_tugas as $t) : ?>
-               <a href="{{ url('/guru/hlm_detail_tugas/' . urlencode($t->ID_TUGAS)) }}">
+               <a href="{{ url('/guru/hlm_detail_tugas/' . urlencode($t->id_tugas)) }}">
                   <div class="card p-3 me-3">
-                     <strong>{{ $t->mataPelajaran->pelajaran->NAMA_PELAJARAN }}</strong>
-                     <p>{{ $t->DESKRIPSI_TUGAS }}</p>
-                     <small>Tenggat: {{ $t->DEADLINE_TUGAS }}</small>
+                     <strong>{{ $t->nama_pelajaran }}</strong>
+                     <p>{{ $t->deskripsi_tugas }}</p>
+                     <small>Tenggat: {{ $t->deadline_tugas }}</small>
                   </div>
                </a>
                <?php endforeach; ?>

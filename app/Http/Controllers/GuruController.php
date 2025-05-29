@@ -34,10 +34,17 @@ class GuruController extends Controller
          ->where('k.id_periode', $periode->ID_PERIODE)
          ->select('mp.id_mata_pelajaran', 'dk.nama_kelas', 'p.nama_pelajaran', 'mp.jam_pelajaran', 'mp.hari_pelajaran')
          ->get();
-      $allTugas = Tugas::with(['mataPelajaran.pelajaran'])
-         ->whereHas('mataPelajaran', function ($id) {
-            $id->where('id_guru', '=', session('userActive')->ID_GURU);
-         })->get();
+      // $allTugas = Tugas::with(['mataPelajaran.pelajaran'])
+      //    ->whereHas('mataPelajaran', function ($id) {
+      //       $id->where('id_guru', '=', session('userActive')->ID_GURU);
+      //    })->get();
+      $allTugas = DB::table("tugas as t")
+         ->join('mata_pelajaran as mp', 't.id_mata_pelajaran', '=', 'mp.id_mata_pelajaran')
+         ->join('pelajaran as p', 'mp.id_pelajaran', '=', 'p.id_pelajaran')
+         ->join('kelas as k', 'mp.id_kelas', '=', 'k.id_kelas')
+         ->where([['mp.id_guru', session('userActive')->ID_GURU], ['k.id_periode', $periode->ID_PERIODE], ['t.deadline_tugas', '>=', now()]])
+         ->select('t.id_tugas', 'p.nama_pelajaran', 't.deskripsi_tugas', 't.deadline_tugas')
+         ->get();
       $allPengumuman = Pengumuman::all();
       $jadwal = [];
       foreach ($allMataPelajaran as $a) {
