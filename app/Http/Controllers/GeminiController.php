@@ -36,9 +36,7 @@ class GeminiController extends Controller
         logger('Gemini response unexpected: '.json_encode($json));
         $text = 'Maaf, terjadi kesalahan.';
     }
-
     return response()->json(['reply' => $text]);
 }
-
 }
 ?>
