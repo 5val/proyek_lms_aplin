@@ -75,7 +75,9 @@ Route::prefix('admin')->group(function () {
    });
 
    // ===================================== Ruangan ===============================================
-   Route::get('/list_ruangan', [AdminController::class, 'list_ruangan']);
+   Route::get('/list_ruangan', [AdminController::class, 'list_ruangan'])->name('list_ruangan');
+   Route::post('/list_ruangan', [AdminController::class, 'add_ruangan']);
+   Route::post('/edit_ruangan', [AdminController::class, 'edit_ruangan']);
 
 
    // ===================================== Pelajaran =============================================
@@ -96,6 +98,10 @@ Route::prefix('admin')->group(function () {
    Route::get('/laporankelas', [AdminController::class, 'laporankelas']);
    Route::get('/laporanmapel', [AdminController::class, 'laporanmapel']);
    Route::get('/laporansiswa', [AdminController::class, 'laporansiswa']);
+   Route::get('/laporansiswa/{id_periode}', [AdminController::class, 'getListSiswaLaporan']);
+      Route::get('/hlm_report_siswa', [AdminController::class, 'hlm_report_siswa'])
+   ->name('admin.report.siswa');
+
 
 
    // ======================================= Kelas ===============================================

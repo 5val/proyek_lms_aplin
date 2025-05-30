@@ -28,7 +28,6 @@
                   <td>{{ $guru->ID_GURU }}</td>
                   <td>{{ $guru->NAMA_GURU }}</td>
                   <td><a href="{{ route('admin.report.guru', ['id_periode' => $periode->ID_PERIODE, "id_guru" => $guru->ID_GURU]) }}" class="btn btn-primary mb-3">Report</a></td>
-                  
                </tr>
             <?php endforeach; ?>
             </tbody>

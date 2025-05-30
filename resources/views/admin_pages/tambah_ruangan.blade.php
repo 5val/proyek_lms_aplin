@@ -2,7 +2,7 @@
     <br>
     <h4 style="text-align: center;">Tambah Ruangan</h4><br>
     <div class="mb-3">
-        <form action="/admin/tambah_ruangan" method="POST">
+        <form action="/admin/tambah_ruangan" method="POST" id="formMapel">
           @csrf
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">ID Ruangan</label>

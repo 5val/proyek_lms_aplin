@@ -60,6 +60,7 @@
                     $('#nama_kelas').val(namaKelas)
                 }
             })
+
         })
     </script>
 @endsection
