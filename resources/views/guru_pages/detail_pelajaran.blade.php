@@ -274,7 +274,7 @@
             <!-- Nilai Rata-Rata per Tugas -->
             <div class="mt-4">
                <div class="card bg-light p-3">
-                  <h6><strong>Rata-Rata Nilai Akhir:</strong> {{ $rata2[0]->rata2 }}</h6>
+                  <h6><strong>Rata-Rata Nilai Akhir:</strong> {{ count($rata2)>0? $rata2[0]->rata2:"0"  }}</h6>
                </div>
             </div>
             </div>

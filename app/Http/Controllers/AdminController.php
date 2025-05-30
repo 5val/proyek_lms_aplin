@@ -902,6 +902,24 @@ class AdminController extends Controller
             'message' => 'Mata Pelajaran berhasil delete'
         ]);
     }
+    public function detail_mata_pelajaran($id_mata_pelajaran){
+        $pertemuan = Pertemuan::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->orderBy('TANGGAL_PERTEMUAN', 'asc')->get();
+        $mataPelajaran = MataPelajaran::with('pelajaran')->where('ID_MATA_PELAJARAN', $id_mata_pelajaran)->first();
+        $kelas = Kelas::with('detailKelas')->where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->first();
+        $siswa = EnrollmentKelas::with(['siswa', 'kelas'])->where('id_kelas', '=', $kelas->ID_KELAS)->get();
+        $absen = DB::table('attendance as a')
+         ->join('pertemuan as p', 'a.id_pertemuan', '=', 'p.id_pertemuan')
+         ->join('siswa as s', 's.id_siswa', '=', 'a.id_siswa')
+         ->where('p.id_mata_pelajaran', '=', $id_mata_pelajaran)
+         ->select('a.id_attendance', 'p.id_pertemuan', 's.id_siswa', 's.nama_siswa')
+         ->get();
+        $arrAbsen = [];
+        foreach ($absen as $a) {
+         $arrAbsen[$a->id_siswa][$a->id_pertemuan] = $a;
+        }
+        $absen = $arrAbsen;
+        return view('admin_pages.detail_mata_pelajaran', compact('absen', 'pertemuan', 'siswa'));
+    }
 
 
     // ================================== Tambah Siswa =================================================

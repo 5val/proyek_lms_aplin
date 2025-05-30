@@ -157,6 +157,8 @@ Route::prefix('admin')->group(function () {
       ->where('id_mata_pelajaran', expression: '.*');
    Route::post('/delete_mata_pelajaran/{id_mata_pelajaran}', [AdminController::class, 'delete_mata_pelajaran'])
       ->where('id_mata_pelajaran', expression: '.*');
+   Route::get('/detail_mata_pelajaran/{id_kelas}', [AdminController::class, 'detail_mata_pelajaran'])
+      ->where('id_kelas', expression: '.*')->name('detail_mata_pelajaran');
 
    // ======================================== Upload Excel =====================================
    Route::get('/upload_kelas', [AdminController::class, 'upload_kelas']);
@@ -199,6 +201,7 @@ Route::prefix('guru')->group(function () {
    Route::put('/update_biodata', [GuruController::class, 'update_biodata'])->name('guru.update_biodata');
    Route::get('/hlm_jadwal', [GuruController::class, 'hlm_jadwal']);
    Route::get('/hlm_kelas', [GuruController::class, 'hlm_kelas']);
+   Route::get('/get_all_kelas', [GuruController::class, 'get_kelas_periode']);
    Route::get('/hlm_laporan_tugas', [GuruController::class, 'hlm_laporan_tugas']);
    Route::get('/hlm_laporan_ujian', [GuruController::class, 'hlm_laporan_ujian']);
    Route::get('/laporan_siswa/{id_siswa}', [GuruController::class, 'laporan_siswa'])

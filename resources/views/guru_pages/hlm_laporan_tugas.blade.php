@@ -4,9 +4,9 @@
 <form method="GET" action="/guru/hlm_laporan_tugas" class="mb-4">
         <label for="periodeSelect" class="form-label">Pilih Periode:</label>
         <select name="periodeSelect" id="periodeSelect" class="form-select" onchange="this.form.submit()">
-            @foreach($kelas_periode as $p)
-                <option value="{{ $p->periode->ID_PERIODE }}" {{ $periode->ID_PERIODE == $p->periode->ID_PERIODE ? 'selected' : '' }}>
-                    {{ $p->periode->PERIODE }}
+            @foreach($allPeriode as $p)
+                <option value="{{ $p->ID_PERIODE }}" {{ $periode->ID_PERIODE == $p->ID_PERIODE ? 'selected' : '' }}>
+                    {{ $p->PERIODE }}
                 </option>
             @endforeach
         </select>

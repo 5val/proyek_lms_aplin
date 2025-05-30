@@ -30,7 +30,7 @@
                         <td class="jam_pelajaran"><?= $pelajaran->JAM_PELAJARAN?></td>
                         <td>
                             <div class="d-grid gap-1">
-                                <button class="btn btn-primary btn-sm">List Pertemuan</button>
+                                <button class="btn btn-primary btn-sm detail-mapel">List Pertemuan</button>
                                 <button class="btn btn-primary btn-sm edit-mapel">Edit</button>
                                 <button class="btn btn-danger btn-sm delete-mapel">Delete</button>
                             </div>
@@ -88,12 +88,17 @@
             $('#formMapel').on('submit', function () {
                 $('#submitBTN').text('Submit')
             })
+            $('body').on('click', '.detail-mapel', function () {
+                var currentRow = $(this).closest('tr');
+                var idMapelToEdit = currentRow.find('.id_mapel').text().trim();
+                window.location.href = "/admin/detail_mata_pelajaran/"+idMapelToEdit
+            })
             $('body').on('click', '.delete-mapel', function () {
                 var currentRow = $(this).closest('tr');
                 var idMapelToEdit = currentRow.find('.id_mapel').text().trim();
                 delete_mapel(idMapelToEdit)
-
             })
+
             function delete_mapel(id_mapel) {
                 $.ajax({
                     url: '/admin/delete_mata_pelajaran/' + id_mapel,
