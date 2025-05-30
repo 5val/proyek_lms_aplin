@@ -235,6 +235,7 @@
             </div>
             <!-- Ujian Sub-tab -->
             <div class="tab-pane fade" id="ujian" role="tabpanel" aria-labelledby="ujian-subtab">
+               <a href="{{ route('uploadNilai.excel', ["id_mata_pelajaran" => $mata_pelajaran->ID_MATA_PELAJARAN]) }}" class="btn btn-primary mb-3">Upload Nilai</a>
                 <table class="table table-bordered bg-white">
                 <thead class="table-secondary">
                 <tr>

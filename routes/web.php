@@ -217,7 +217,7 @@ Route::prefix('guru')->group(function () {
    Route::post('/uploadtugas', [GuruController::class, 'posttugas']);
    Route::get('/walikelas', [GuruController::class, 'walikelas']);
    Route::post('/absensi', [GuruController::class, 'editattendance']);
-   // Add more admin routes here...
+   Route::get('/upload_nilai', [GuruController::class, 'upload_nilai'])->name('uploadNilai.excel');
 });
 
 Route::get('/siswa/hlm_report_siswa', [SiswaController::class, 'hlm_laporan_nilai'])

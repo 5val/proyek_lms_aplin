@@ -651,5 +651,10 @@ public function hlm_detail_tugas($id_tugas)
       }
       return response()->json(['message' => $message]);
    }
+    public function upload_nilai(Request $request) {
+      $id_mata_pelajaran = $request->query('id_mata_pelajaran');
+      $mata_pelajaran = MataPelajaran::with("pelajaran")->where("ID_MATA_PELAJARAN", $id_mata_pelajaran)->first();
+      return view('guru_pages.upload_nilai', ["mata_pelajaran" => $mata_pelajaran]);
+   }
 
 }
