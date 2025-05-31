@@ -11,6 +11,7 @@ class MainController extends Controller
 {
     public function index()
     {
+        session(['userActive' => (object)[]]);
         return view('login');
     }
     public function handleLogin()
@@ -22,12 +23,12 @@ class MainController extends Controller
         $guru = Guru::where([
             ['email_guru', $email],
             // matiin kalo mau hash
-            ['password_guru', $password]
+            // ['password_guru', $password]
         ])->first();
         if (
             $guru != null
             // nyalain kalo mau hash
-            // && Hash::check($password, $guru->PASSWORD_GURU)
+            && Hash::check($password, $guru->PASSWORD_GURU)
         ) {
             session(['userActive' => $guru]);
             return redirect('/guru');
@@ -37,21 +38,23 @@ class MainController extends Controller
         $siswa = Siswa::where([
             ['email_siswa', $email],
             // matiin
-            ['password_siswa', $password]
+            // ['password_siswa', $password]
         ])->first();
 
         if (
             $siswa != null
             // nyalain
-            // && Hash::check($password, $siswa->PASSWORD_SISWA)
+            && Hash::check($password, $siswa->PASSWORD_SISWA)
         ) {
             session(['userActive' => $siswa]);
             return redirect('/siswa');
         }
 
         if ($email == "admin" && $password == "admin") {
+            session(['userActive' => (object)["ID_ADMIN"=>"admin"]]);
             return redirect('/admin');
         }
-        return view('login')->with('error', 'Username atau password salah');
+        return redirect()->route('login')->with('error', 'Username atau password salah');
     }
+    
 }

@@ -24,10 +24,3 @@
           <li class="nav-item"><a class="nav-link" href="/" style="background-color: red; color: white;">Sign out</a></li>
         </ul>
       </nav>
-
-<?php
-if (!session()->has('userActive')) {
-    return redirect('/');
-    exit;
-}
-?>

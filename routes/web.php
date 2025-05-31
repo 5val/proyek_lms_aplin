@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GeminiController;
 
 Route::post('/ask-gemini', [GeminiController::class, 'ask']);
-Route::get('/', [MainController::class, 'index']);
+Route::get('/', [MainController::class, 'index'])->name('login');
 Route::post('/', [MainController::class, 'handleLogin']);
 Route::get('/register', [MainController::class, 'register']);
 Route::get('/home', function () {
@@ -19,7 +19,7 @@ Route::get('/admin', function () {
    return view('admin_pages/home');
 });
 
-Route::prefix('admin')->group(function () {
+Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
    Route::get('/', [AdminController::class, 'index']);
    // ===================================== Guru ===============================================
    Route::get('/editguru/{id_guru}', [AdminController::class, 'geteditguru'])
@@ -166,11 +166,11 @@ Route::prefix('admin')->group(function () {
 });
 
 
-Route::get('/guru', function () {
-   return view('guru_pages/home');
-});
+// Route::get('/guru', function () {
+//    return view('guru_pages/home');
+// });
 
-Route::prefix('guru')->group(function () {
+Route::middleware(['guru.auth'])->prefix('guru')->group(function () {
    Route::get('/', [GuruController::class, 'index']);
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [GuruController::class, 'detail_pelajaran'])->where('id_mata_pelajaran', '.*');
    Route::get('/editmateri/{id_materi}', [GuruController::class, 'editmateri'])->where('id_materi', '.*');
@@ -218,19 +218,24 @@ Route::prefix('guru')->group(function () {
    Route::get('/walikelas', [GuruController::class, 'walikelas']);
    Route::post('/absensi', [GuruController::class, 'editattendance']);
    Route::get('/upload_nilai', [GuruController::class, 'upload_nilai'])->name('uploadNilai.excel');
+   Route::post('/upload_nilai', [GuruController::class, 'uploadNilai'])->name('uploadNilaiMapel.excel');
+   Route::get('/downloadTempNilai', function () {
+      $filePath = storage_path('app/template_excel/template_nilai.xlsx'); //  path to your file
+      if (file_exists($filePath)) {
+         return response()->download($filePath, 'template_nilai.xlsx'); //  filename for the user
+      } else {
+         abort(404, 'Template file not found.'); //  handle file not found error
+      }
+   });
 });
 
-Route::get('/siswa/hlm_report_siswa', [SiswaController::class, 'hlm_laporan_nilai'])
-   ->name('siswa.report.siswa');
 
-Route::get('/siswa/libur_nasional', [SiswaController::class, 'liburNasional'])->name('siswa.libur_nasional');
-
-Route::get('/siswa', function () {
-   return view('siswa_pages/home');
-});
+// Route::get('/siswa', function () {
+//    return view('siswa_pages/home');
+// });
 
 
-Route::prefix('siswa')->group(function () {
+Route::middleware(['siswa.auth'])->prefix('siswa')->group(function () {
    Route::get('/', [SiswaController::class, 'index']);
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [SiswaController::class, 'detail_pelajaran'])
       ->where('id_mata_pelajaran', expression: '.*');
@@ -245,6 +250,9 @@ Route::prefix('siswa')->group(function () {
    Route::get('/hlm_kelas', [SiswaController::class, 'hlm_kelas']);
    Route::get('/hlm_laporan_tugas', [SiswaController::class, 'hlm_laporan_tugas'])->name('siswa.laporan_tugas');
    Route::get('/hlm_laporan_ujian', [SiswaController::class, 'hlm_laporan_ujian'])->name('siswa.laporan_ujian');
+   Route::get('/hlm_report_siswa', [SiswaController::class, 'hlm_laporan_nilai'])
+   ->name('siswa.report.siswa');
+   Route::get('/libur_nasional', [SiswaController::class, 'liburNasional'])->name('siswa.libur_nasional');
 
    // Route::get('/siswa/laporan_tugas', [SiswaController::class, 'hlm_laporan_tugas'])->name('siswa.laporan_tugas');
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,6 +26,7 @@
 
 <body>
     <div class="container">
+        
         <div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
             <form method="POST">
                 @csrf
@@ -42,9 +44,15 @@
                     </div>
 
                     <input type="submit" value="Login" class="btn btn-primary w-100"><br>
-                    Don't have account ? <a href="signup.php">Sign Up</a>
-                </div>
+                    <!-- Don't have account ? <a href="signup.php">Sign Up</a> -->
+                    @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                    @endif
+                    </div>
             </form>
+            
         </div>
     </div>
 </body>

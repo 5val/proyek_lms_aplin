@@ -115,8 +115,8 @@ class AdminController extends Controller
                 'NAMA_GURU' => $nama,
                 'EMAIL_GURU' => $email,
                 // nyalain
-                // 'PASSWORD_GURU' => Hash::make($password),
-                'PASSWORD_GURU' => $password,
+                'PASSWORD_GURU' => Hash::make($password),
+                // 'PASSWORD_GURU' => $password,
                 'ALAMAT_GURU' => $alamat,
                 'NO_TELPON_GURU' => $telp,
                 'STATUS_GURU' => $status,
@@ -251,8 +251,8 @@ class AdminController extends Controller
                 'NAMA_SISWA' => $nama,
                 'EMAIL_SISWA' => $email,
                 // nyalain
-                // 'PASSWORD_SISWA' => Hash::make($password),
-                'PASSWORD_SISWA' => $password,
+                'PASSWORD_SISWA' => Hash::make($password),
+                // 'PASSWORD_SISWA' => $password,
                 'ALAMAT_SISWA' => $alamat,
                 'NO_TELPON_SISWA' => $telp,
                 'STATUS_SISWA' => $status,
@@ -1003,7 +1003,6 @@ class AdminController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls',
         ]);
-
         try {
             // Correct way to call the import() method:
             Excel::import(new InsertSiswaKeKelasExcel, $request->file('file')); // Using the Facade
@@ -1019,9 +1018,6 @@ class AdminController extends Controller
 
         return redirect()->back();
     }
-
-
-
     public function tambahguru()
     {
         return view('admin_pages.tambahguru');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\InsertNilaiExcel;
 use App\Models\Attendance;
 use App\Models\DetailKelas;
 use App\Models\EnrollmentKelas;
@@ -18,7 +19,9 @@ use Illuminate\Http\Request;
 use App\Models\Guru;
 use App\Models\Siswa;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class GuruController extends Controller
 {
@@ -656,5 +659,20 @@ public function hlm_detail_tugas($id_tugas)
       $mata_pelajaran = MataPelajaran::with("pelajaran")->where("ID_MATA_PELAJARAN", $id_mata_pelajaran)->first();
       return view('guru_pages.upload_nilai', ["mata_pelajaran" => $mata_pelajaran]);
    }
+   public function uploadNilai(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+        $id_mata_pelajaran = $request->id_mata_pelajaran;
+        try {
+            Excel::import(new InsertNilaiExcel($id_mata_pelajaran), $request->file('file'));
+            Session::flash('success', 'Data imported successfully!');
+        } catch (\Exception $e) {
+            Session::flash('error', 'Import failed: ' . $e->getMessage());
+        }
+        return redirect()->back();
+    }
+
 
 }
