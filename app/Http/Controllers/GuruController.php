@@ -131,8 +131,8 @@ class GuruController extends Controller
     }
     public function editpengumuman($ID)
     {
-        $pengumuman = Tugas::findOrFail($ID);
-        $mataPelajaran = $ID->mataPelajaran; // asumsi relasi `mataPelajaran` ada
+        $pengumuman = Pengumuman::findOrFail($ID);
+        $mataPelajaran = $pengumuman->mataPelajaran; // asumsi relasi `mataPelajaran` ada
         $kelas = Kelas::with('detailKelas')->find($mataPelajaran->ID_KELAS);
         $jumlah = EnrollmentKelas::where('ID_KELAS', $mataPelajaran->ID_KELAS)->count();
         $semester = substr($mataPelajaran->ID_KELAS, -1) == '1' ? 'Ganjil' : 'Genap';
@@ -140,7 +140,11 @@ class GuruController extends Controller
     }
     public function updatepengumuman(Request $request, $ID){
         $pengumuman = Pengumuman::find($ID);
+        if (!$pengumuman) {
+            return redirect()->back()->withErrors(['msg' => 'Pengumuman tidak ditemukan.']);
+        }
          $validatedData = $request->validate([
+         'ID_MATA_PELAJARAN' => 'required|max:255',
           'Judul' => 'required|string|max:255',
           'Deskripsi' => 'nullable|string'
         // tambahkan validasi lain sesuai kebutuhan
@@ -466,7 +470,7 @@ public function hlm_detail_tugas($id_tugas)
         $kelas = Kelas::with('detailKelas')->where('ID_KELAS', '=', $mataPelajaran->ID_KELAS)->first();
         $semester = substr($mataPelajaran->ID_KELAS, -1) == '1'? 'Ganjil' : 'Genap';
       $pengumuman = Pengumuman::all();
-      return view('guru_pages.tambahpengumuman', ['mataPelajaran' => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'pengumuman' => $pengumuman]);
+      return view('guru_pages.tambahpengumuman', ['mata_pelajaran' => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'pengumuman' => $pengumuman]);
     }
 
      public function postpengumuman(Request $request)
@@ -478,12 +482,13 @@ public function hlm_detail_tugas($id_tugas)
       //    }
       //   $filename = basename($file);
       //   move_uploaded_file($_FILES['file']['tmp_name'], $uploadDir . $filename);
-
         $validatedData = $request->validate([
+            'ID_MATA_PELAJARAN' => 'required|max:255',
             'Judul' => 'required|max:255',
-            'Isi' => 'required',
+            'Deskripsi' => 'required',
         ]);
         $pengumuman = Pengumuman::create($validatedData);
+         
         return redirect(url('/guru/detail_pelajaran/' . urlencode($request->ID_MATA_PELAJARAN)));
     }
 
@@ -557,17 +562,23 @@ public function hlm_detail_tugas($id_tugas)
 
     public function editmateri($id_materi)
     {
-        $materi = Materi::where('ID_MATERI', '=', $id_materi)->first();
-        return view('guru_pages.editmateri', ["materi" => $materi]);
+        $materi = Materi::findOrFail($id_materi);
+        $mataPelajaran = $materi->mataPelajaran;
+        $kelas = Kelas::with('detailKelas')->find($mataPelajaran->ID_KELAS);
+        $jumlah = EnrollmentKelas::where('ID_KELAS', $mataPelajaran->ID_KELAS)->count();
+        $semester = substr($mataPelajaran->ID_KELAS, -1) == '1' ? 'Ganjil' : 'Genap';
+        return view('guru_pages.editmateri', ["mata_pelajaran" => $mataPelajaran, "kelas" => $kelas, "jumlah" => $jumlah, "semester" => $semester,"materi" => $materi]);
     }
 
-    public function updatemateri(Request $request){
-      $id_materi = $request->input('ID_MATERI');
-      $materi = Materi::where('ID_MATERI', '=', $id_materi)->first();
+    public function updatemateri(Request $request, $id_materi){
+      $materi = Materi::find($id_materi);
+      if (!$materi) {
+         return redirect()->back()->withErrors(['msg' => 'Materi tidak ditemukan.']);
+      }
       $validatedData = $request->validate([
          'ID_MATA_PELAJARAN' => 'required|max:255',
-         'NAMA_MATERI' => 'required|max:255',
-         'DESKRIPSI_MATERI' => 'required',
+         'NAMA_MATERI' => 'required|string|max:255',
+         'DESKRIPSI_MATERI' => 'nullable|string',
          'FILE_MATERI' => 'nullable'
       ]);
 
@@ -581,8 +592,13 @@ public function hlm_detail_tugas($id_tugas)
          $filepath = $file->storeAs('uploads/materi', $filename, 'public');
          $validatedData['FILE_MATERI'] = $filename;
       }
-
-      $materi->update($validatedData);
+      $materi->NAMA_MATERI = $validatedData['NAMA_MATERI'];
+      $materi->DESKRIPSI_MATERI = $validatedData['DESKRIPSI_MATERI'];     
+      if (isset($validatedData['FILE_MATERI'])) {
+         $materi->FILE_MATERI = $validatedData['FILE_MATERI'];
+      }
+      $materi->save();
+      // $materi->update($validatedData);
    
       return redirect(url('/guru/detail_pelajaran/' . urlencode($request->ID_MATA_PELAJARAN)));
     }

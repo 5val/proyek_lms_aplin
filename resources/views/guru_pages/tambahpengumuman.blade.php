@@ -16,9 +16,10 @@
         <div class="content-box">
             <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/detail_pelajaran/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}">Back</a></button><br><br>
        <div class="material-box2">
-         <form method="POST" action="/guru/tambahpengumuman">
+        <form method="POST" action="{{ url('/guru/tambahpengumuman') }}">
          @csrf
          <h4 style="text-align: center;">Tambah Pengumuman</h4><br>
+            <input type="hidden" name="ID_MATA_PELAJARAN" value="{{ $mata_pelajaran->ID_MATA_PELAJARAN }}">
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Judul pengumuman</label>
             <input class="form-control" type="text" placeholder="Default input" name="Judul" aria-label="default input example">

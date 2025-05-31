@@ -26,11 +26,11 @@
 
          <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Judul pengumuman</label>
-            <input class="form-control" type="text" aria-label="default input example" name = "Judul" value="{{ $pengumuman->Judul }}">
+            <input class="form-control" type="text" aria-label="default input example" name = "Judul" value="{{ old('Judul', $pengumuman->Judul) }}">
           </div>
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Detail pengumuman</label>
-            <textarea class="form-control" type="text" name="Deskripsi" aria-label="default input example">{{ $pengumuman->Deskripsi }}</textarea>
+            <textarea class="form-control" type="text" name="Deskripsi" aria-label="default input example">{{ old('Deskripsi', $pengumuman->Deskripsi) }}</textarea>
           </div>
           
           <div class="d-grid gap-2">

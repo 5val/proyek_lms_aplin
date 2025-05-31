@@ -173,8 +173,11 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
 Route::middleware(['guru.auth'])->prefix('guru')->group(function () {
    Route::get('/', [GuruController::class, 'index']);
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [GuruController::class, 'detail_pelajaran'])->where('id_mata_pelajaran', '.*');
-   Route::get('/editmateri/{id_materi}', [GuruController::class, 'editmateri'])->where('id_materi', '.*');
-   Route::put('/editmateri', [GuruController::class, 'updatemateri']);
+   Route::get('/editmateri/{id_materi}', [GuruController::class, 'editmateri'])
+      ->where('id_materi', '.*')
+      ->name('guru.editmateri');
+   Route::put('/updatemateri/{id_materi}', [GuruController::class, 'updatemateri'])->where('id_materi', '.*')
+      ->name('guru.updatemateri');
    Route::get('/editpengumuman/{ID}', [GuruController::class, 'editpengumuman'])
       ->where('ID', '.*')
       ->name('guru.editpengumuman');
@@ -206,7 +209,8 @@ Route::middleware(['guru.auth'])->prefix('guru')->group(function () {
    Route::get('/hlm_laporan_ujian', [GuruController::class, 'hlm_laporan_ujian']);
    Route::get('/laporan_siswa/{id_siswa}', [GuruController::class, 'laporan_siswa'])
       ->where('id_siswa', '.*');
-   Route::get('/tambahpengumuman', [GuruController::class, 'tambahpengumuman']);
+   Route::get('/tambahpengumuman/{id_mata_pelajaran}', [GuruController::class, 'tambahpengumuman'])
+      ->where('id_mata_pelajaran', '.*');
    Route::post('/tambahpengumuman', [GuruController::class, 'postpengumuman']);
    Route::get('/tambahpertemuan/{id_mata_pelajaran}', [GuruController::class, 'tambahpertemuan'])->where('id_mata_pelajaran', '.*');
    Route::post('/tambahpertemuan', [GuruController::class, 'postpertemuan']);

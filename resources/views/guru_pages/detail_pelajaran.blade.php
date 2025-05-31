@@ -55,7 +55,9 @@
                             <div class="mt-auto">
                                 <a href="{{ asset('storage/uploads/materi/' . $m->FILE_MATERI) }}" download class="d-block mb-2">Download Materi</a>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-primary w-50"><a href="{{ url('/guru/editmateri/' . urlencode($m->ID_MATERI)) }}" style="text-decoration: none; color: black;">Edit</a></button>
+                                    <button class="btn btn-sm btn-outline-primary w-50">
+                                        <a href="{{ route('guru.editmateri', $m->ID_MATERI) }}" style="text-decoration:none;">Edit</a>
+                                    </button>
                                     <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
                                 </div>
                             </div>
@@ -132,10 +134,10 @@
                             <p class="card-text flex-grow-1">{{ $pt->DETAIL_PERTEMUAN }}</p>
                             <div class="mt-auto">
                                 <p>{{ $pt->TANGGAL_PERTEMUAN }}</p>
-                                <div class="d-flex gap-2">
+                                <!-- <div class="d-flex gap-2">
                                     <button class="btn btn-sm btn-outline-primary w-50" onclick="window.location.href='/guru/editmateri'">Edit</button>
                                     <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
