@@ -8,7 +8,7 @@
 @section('admin_content')
     <div class="container mt-5">
         <a href="/admin/tambah_pelajaran" class="btn btn-success me-1">Tambah</a>
-        <h3>List Kelas</h3>
+        <h3>List Pelajaran</h3>
 
         <!-- Table -->
         <div class="container mt-4">

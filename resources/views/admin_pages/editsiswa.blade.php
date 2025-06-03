@@ -6,7 +6,7 @@
   </div>
 
   <div>
-    <button class="btn btn-danger"><a style="text-decoration: none;">Back</a></button><br><br>
+    <a class="btn btn-danger" style="text-decoration: none;" href="/admin/listsiswa">Back</a><br><br>
     <div class="material-box">
     <br>
     <h4 style="text-align: center;">Edit Siswa</h4><br>

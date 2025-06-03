@@ -5,7 +5,7 @@
 
   </div>
 
-  <button class="btn btn-danger"><a style="text-decoration: none;" href="/admin/listsiswa">Back</a></button><br><br>
+  <a style="text-decoration: none;" class="btn btn-danger" href="/admin/listsiswa">Back</a><br><br>
   <br>
   <h4 style="text-align: center;">Tambah Siswa</h4><br>
   <form action="/admin/tambahsiswa" method="POST">
