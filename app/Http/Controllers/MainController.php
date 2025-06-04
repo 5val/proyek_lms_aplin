@@ -11,7 +11,7 @@ class MainController extends Controller
 {
     public function index()
     {
-        session(['userActive' => (object)[]]);
+        session(['userActive' => (object) []]);
         return view('login');
     }
     public function handleLogin()
@@ -30,6 +30,9 @@ class MainController extends Controller
             // nyalain kalo mau hash
             && Hash::check($password, $guru->PASSWORD_GURU)
         ) {
+            if ($guru->STATUS_GURU != "Active") {
+                return redirect()->route('login')->with('error', 'User Nonactive');
+            }
             session(['userActive' => $guru]);
             return redirect('/guru');
         }
@@ -46,15 +49,18 @@ class MainController extends Controller
             // nyalain
             && Hash::check($password, $siswa->PASSWORD_SISWA)
         ) {
+            if ($siswa->STATUS_SISWA != "Active") {
+                return redirect()->route('login')->with('error', 'User Nonactive');
+            }
             session(['userActive' => $siswa]);
             return redirect('/siswa');
         }
 
         if ($email == "admin" && $password == "admin") {
-            session(['userActive' => (object)["ID_ADMIN"=>"admin"]]);
+            session(['userActive' => (object) ["ID_ADMIN" => "admin"]]);
             return redirect('/admin');
         }
         return redirect()->route('login')->with('error', 'Username atau password salah');
     }
-    
+
 }
