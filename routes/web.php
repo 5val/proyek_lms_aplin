@@ -183,11 +183,18 @@ Route::middleware(['guru.auth'])->prefix('guru')->group(function () {
       ->name('guru.editpengumuman');
    Route::put('/updatepengumuman/{ID}', [GuruController::class, 'updatepengumuman'])->where('ID', '.*')
       ->name('guru.updatepengumuman');
+   Route::delete('/deletepengumuman/{ID}', [GuruController::class, 'deletepengumuman'])
+    ->name('guru.deletepengumuman');
+   Route::delete('/deletetugas/{id_tugas}', [GuruController::class, 'deletetugas'])
+    ->name('guru.deletetugas');
+   Route::delete('/deletemateri/{id_materi}', [GuruController::class, 'deletemateri'])
+    ->name('guru.deletemateri');
    Route::get('/edittugas/{id_tugas}', [GuruController::class, 'edittugas'])
       ->where('id_tugas', '.*')
       ->name('guru.edittugas');
    Route::put('/updatetugas/{id_tugas}', [GuruController::class, 'updatetugas'])->where('id_tugas', '.*')
       ->name('guru.updatetugas');
+   
    Route::get('/hlm_about', [GuruController::class, 'hlm_about']);
    Route::get('/hlm_detail_pengumuman', [GuruController::class, 'hlm_detail_pengumuman']);
    Route::get('/edit_nilai_tugas/{id_submission}', [GuruController::class, 'edit_nilai_tugas'])

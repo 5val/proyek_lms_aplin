@@ -129,14 +129,16 @@ class GuruController extends Controller
    $pengumuman = Pengumuman::all();
       return view('guru_pages.detail_pelajaran', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'materi' => $materi, 'tugas' => $tugas, 'siswa' => $siswa, 'pertemuan' => $pertemuan, 'list_nilai_tugas' => $listNilaiTugas, 'rata2_tugas' => $rata2Tugas, 'list_nilai' => $listNilai, 'rata2' => $rata2, 'absen' => $arrAbsen, 'pengumuman' => $pengumuman]);
     }
-    public function editpengumuman($ID)
+    public function editpengumuman($ID, Request $request)
     {
         $pengumuman = Pengumuman::findOrFail($ID);
-        $mataPelajaran = $pengumuman->mataPelajaran; // asumsi relasi `mataPelajaran` ada
-        $kelas = Kelas::with('detailKelas')->find($mataPelajaran->ID_KELAS);
-        $jumlah = EnrollmentKelas::where('ID_KELAS', $mataPelajaran->ID_KELAS)->count();
-        $semester = substr($mataPelajaran->ID_KELAS, -1) == '1' ? 'Ganjil' : 'Genap';
-        return view('guru_pages.editpengumuman', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'pengumuman' => $pengumuman]);
+        $mataPelajaran = $request->query('mata_pelajaran');
+      //   $mataPelajaran = $pengumuman->mataPelajaran; // asumsi relasi `mataPelajaran` ada
+      //   $kelas = Kelas::with('detailKelas')->find($mataPelajaran->ID_KELAS);
+      //   $jumlah = EnrollmentKelas::where('ID_KELAS', $mataPelajaran->ID_KELAS)->count();
+      //   $semester = substr($mataPelajaran->ID_KELAS, -1) == '1' ? 'Ganjil' : 'Genap';
+      //   return view('guru_pages.editpengumuman', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'pengumuman' => $pengumuman]);
+        return view('guru_pages.editpengumuman', ['pengumuman' => $pengumuman, "mata_pelajaran" => $mataPelajaran]);
     }
     public function updatepengumuman(Request $request, $ID){
         $pengumuman = Pengumuman::find($ID);
@@ -144,16 +146,60 @@ class GuruController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Pengumuman tidak ditemukan.']);
         }
          $validatedData = $request->validate([
-         'ID_MATA_PELAJARAN' => 'required|max:255',
           'Judul' => 'required|string|max:255',
-          'Deskripsi' => 'nullable|string'
+          'Deskripsi' => 'nullable|string',
+          'ID_MATA_PELAJARAN' => 'required|max:255',
         // tambahkan validasi lain sesuai kebutuhan
         ]);
         $pengumuman->Judul = $validatedData['Judul'];
         $pengumuman->Deskripsi = $validatedData['Deskripsi'];
         $pengumuman->save();
-        return redirect(url('/guru/detail_pelajaran/' . urlencode($request->ID_MATA_PELAJARAN)));
+        return redirect(url('/guru/detail_pelajaran/' . urlencode($request->input('ID_MATA_PELAJARAN'))));
+      //   return redirect(url('/guru/detail_pelajaran/' . urlencode($request)));
+      //   return redirect(url('/guru/detail_pelajaran/'));
     }
+
+    public function deletepengumuman($ID)
+      {
+         $pengumuman = Pengumuman::find($ID);
+
+         if (!$pengumuman) {
+            return redirect()->back()->withErrors(['msg' => 'Pengumuman tidak ditemukan.']);
+         }
+
+         $pengumuman->delete();
+
+         return redirect()->back()->with('success', 'Pengumuman berhasil dihapus.');
+      }
+    public function deletemateri($id_materi)
+      {
+         $materi = Materi::find($id_materi);
+
+         if (!$materi) {
+            return redirect()->back()->withErrors(['msg' => 'Materi tidak ditemukan.']);
+         }
+
+         $id_pelajaran = $materi->ID_PELAJARAN;
+         $materi->delete();
+
+         return redirect()->route('guru.detailpelajaran', ['id_pelajaran' => $id_pelajaran])
+            ->with('success', 'Materi berhasil dihapus.');
+      }
+    public function deletetugas($id_tugas)
+      {
+         $tugas = Tugas::find($id_tugas);
+
+         if (!$tugas) {
+            return redirect()->back()->withErrors(['msg' => 'Tugas tidak ditemukan.']);
+         }
+
+         $id_pelajaran = $tugas->ID_PELAJARAN;
+         $tugas->delete();
+
+         return redirect()->route('guru.detailpelajaran', ['id_pelajaran' => $id_pelajaran])
+            ->with('success', 'Tugas berhasil dihapus.');
+      }
+
     public function edittugas($id_tugas)
     {
        $tugas = Tugas::findOrFail($id_tugas);

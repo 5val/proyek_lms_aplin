@@ -58,7 +58,11 @@
                                     <button class="btn btn-sm btn-outline-primary w-50">
                                         <a href="{{ route('guru.editmateri', $m->ID_MATERI) }}" style="text-decoration:none;">Edit</a>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
+                                    <form action="{{ route('guru.deletemateri', $m->ID_MATERI) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengumuman ini?');" class="w-50">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">Hapus</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -88,7 +92,11 @@
                                     <button class="btn btn-sm btn-outline-primary w-50">
                                         <a href="{{ route('guru.edittugas', $t->ID_TUGAS) }}" style="text-decoration:none;">Edit</a>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
+                                     <form action="{{ route('guru.deletetugas', $t->ID_TUGAS) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengumuman ini?');" class="w-50">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">Hapus</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -299,8 +307,17 @@
                             <p class="card-text flex-grow-1">{{ $p->Deskripsi }}</p>
                             <div class="mt-auto">
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-primary w-50"><a href="{{ route('guru.editpengumuman', $p->ID) }}" style="text-decoration:none;">Edit</a></button>
-                                    <button class="btn btn-sm btn-outline-danger w-50">Hapus</button>
+                                    <button class="btn btn-sm btn-outline-primary w-50">
+                                    <a href="{{ route('guru.editpengumuman', ['ID' => $p->ID, 'mata_pelajaran' => $mata_pelajaran->ID_MATA_PELAJARAN]) }}" style="text-decoration:none;">
+                                        Edit
+                                    </a>
+                                    </button>
+                                    <!-- <button class="btn btn-sm btn-outline-primary w-50"><a href="{{ route('guru.editpengumuman', $p->ID) }}" style="text-decoration:none;">Edit</a></button> -->
+                                   <form action="{{ route('guru.deletepengumuman', $p->ID) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengumuman ini?');" class="w-50">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">Hapus</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

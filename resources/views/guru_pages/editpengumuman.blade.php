@@ -2,28 +2,19 @@
 
 @section('guru_content')
 <div class="topbar rounded mt-3">
-         <h3>{{ $mata_pelajaran->pelajaran->NAMA_PELAJARAN }}</h3>
-          <p class="text-muted">{{ $kelas->detailKelas->NAMA_KELAS }}</p>
-          <div class="row">
-            <div class="col">Jumlah Murid<br><strong>{{ $jumlah }}</strong></div>
-            <div class="col">Ruang Kelas<br><strong>{{ $kelas->ID_DETAIL_KELAS }}</strong></div>
-            <div class="col">Hari<br><strong>{{ $mata_pelajaran->HARI_PELAJARAN }}</strong></div>
-            <div class="col">Jam<br><strong>{{ $mata_pelajaran->JAM_PELAJARAN }}</strong></div>
-            <div class="col">Semester<br><strong>{{ $semester }}</strong></div>
-          </div>
+       
         </div>
 
         <!-- Tabs -->
        <br>
         <div class="content-box">
-          <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/detail_pelajaran/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}">Back</a></button><br><br>
+
        <div class="material-box2">
          <form action="{{ route('guru.updatepengumuman', urlencode($pengumuman->ID)) }}" method="POST">
           @csrf
           @method("PUT") 
          <h4 style="text-align: center;">Edit Pengumuman</h4><br>
-          <input type="hidden" name="ID_MATA_PELAJARAN" value="{{ $mata_pelajaran->ID_MATA_PELAJARAN }}">
-
+         <input type="hidden" name="ID_MATA_PELAJARAN" value="{{ $mata_pelajaran }}">
          <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Judul pengumuman</label>
             <input class="form-control" type="text" aria-label="default input example" name = "Judul" value="{{ old('Judul', $pengumuman->Judul) }}">
