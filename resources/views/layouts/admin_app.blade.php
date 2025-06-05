@@ -2,16 +2,22 @@
 
 @section('content')
   <div class="row g-0 mx-0 d-flex">
-    <div>
     @include('layouts.admin_sidebar')
-    </div>
 
-    <div class="col-md-10 col-lg-10 main-content">
+    <div class="col-5 main-content flex-grow-1">
     @include('layouts.navbar')
 
     <div class="p-3 key-content">
       @yield('admin_content')
     </div>
     </div>
+    <script>
+    $(document).ready(function () {
+      $("#toggleSidebarBtn").on('click', function () {
+      $("#sidebarAdmin").toggleClass('d-none');
+      })
+    })
+    </script>
+  </div>
   </div>
 @endsection

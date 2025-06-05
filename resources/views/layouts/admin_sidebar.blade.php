@@ -1,4 +1,4 @@
-<nav class="col-md-2 d-none d-md-block sidebar p-3" style="height: 100vh; overflow-y: auto; position: fixed; -ms-overflow-style: none;scrollbar-width: none;">
+<nav id="sidebarAdmin" class="col-3 sidebar p-3">
   <div class="mb-4">
     <img src="{{ asset('images/default_img.png') }}" class="rounded-circle mb-2" alt="User" width="60px">
     <div><strong>Admin</strong></div>

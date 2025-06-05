@@ -1,10 +1,30 @@
 body {
    background-color: #F3F3E0;
+   font-family: Verdana, Geneva, Tahoma, sans-serif;
+   font-size: small;
  }
+ html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* Mencegah scroll global */
+}
+.full-layout {
+    height: 100vh;
+  }
+.key-content{
+  height: 85vh;
+  flex-grow: 1;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+   scrollbar-width: none;
+}
  .sidebar {
    background-color: #133E87;
    color: white;
-   min-height: 100vh;
+   height: 100vh;
+   overflow-y: scroll;
+   -ms-overflow-style: none;
+   scrollbar-width: none;
  }
  .sidebar a {
    color: white;
@@ -166,19 +186,10 @@ body {
 
  .main-content{
    margin-left: auto;
- }
-
- .key-content{
-   overflow-y: auto;
- }
-
- .sidebar{
    height: 100vh;
-   position: fixed;
-   /* top: 0; */
-   overflow: hidden;
-   z-index: 1040;
  }
+
+ 
  .task-card {
   background: white;
   border-radius: 10px;
