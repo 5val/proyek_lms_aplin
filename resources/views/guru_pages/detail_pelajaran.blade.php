@@ -58,7 +58,10 @@
                                     <button class="btn btn-sm btn-outline-primary w-50">
                                         <a href="{{ route('guru.editmateri', $m->ID_MATERI) }}" style="text-decoration:none;">Edit</a>
                                     </button>
-                                    <form action="{{ route('guru.deletemateri', $m->ID_MATERI) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengumuman ini?');" class="w-50">
+                                    <!-- <button class="btn btn-sm btn-outline-primary w-50">
+                                        <a href="{{ route('guru.deletemateri', $m->ID_MATERI) }}" style="text-decoration:none;">Hapus</a>
+                                    </button> -->
+                                    <form action="{{ route('guru.deletemateri', base64_encode($m->ID_MATERI)) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus materi ini?');" class="w-50">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger w-100">Hapus</button>
@@ -79,20 +82,21 @@
         </button>
         <div class="row">
             @foreach ($tugas as $t)
-               <a style="text-decoration: none; color: black;" href="{{ url('/guru/hlm_detail_tugas/' . urlencode($t->ID_TUGAS)) }}">
-                <div class="col-md-4 mb-4">
+               <div class="col-md-4 mb-4">
                     <div class="card h-100 d-flex flex-column">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ $t->NAMA_TUGAS }}</h5>
-                            <p class="card-text flex-grow-1">{{ $t->DESKRIPSI_TUGAS }}</p>
-                            <p>ID: {{ $t->ID_TUGAS }}</p>
+                            <a href="{{ url('/guru/hlm_detail_tugas/' . urlencode($t->ID_TUGAS)) }}" style="text-decoration: none; color: black;">
+                                <h5 class="card-title">{{ $t->NAMA_TUGAS }}</h5>
+                                <p class="card-text flex-grow-1">{{ $t->DESKRIPSI_TUGAS }}</p>
+                                <p>ID: {{ $t->ID_TUGAS }}</p>
+                            </a>
                             <div class="mt-auto">
                                 <p class="card-text">Deadline: {{ $t->DEADLINE_TUGAS }}</p>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-sm btn-outline-primary w-50">
                                         <a href="{{ route('guru.edittugas', $t->ID_TUGAS) }}" style="text-decoration:none;">Edit</a>
                                     </button>
-                                     <form action="{{ route('guru.deletetugas', $t->ID_TUGAS) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengumuman ini?');" class="w-50">
+                                    <form action="{{ route('guru.deletetugas', base64_encode($t->ID_TUGAS)) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus tugas ini?');" class="w-50">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger w-100">Hapus</button>
@@ -102,7 +106,6 @@
                         </div>
                     </div>
                 </div>
-                </a>
             @endforeach
         </div>
     </div>

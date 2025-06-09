@@ -185,10 +185,12 @@ Route::middleware(['guru.auth'])->prefix('guru')->group(function () {
       ->name('guru.updatepengumuman');
    Route::delete('/deletepengumuman/{ID}', [GuruController::class, 'deletepengumuman'])
     ->name('guru.deletepengumuman');
-   Route::delete('/deletetugas/{id_tugas}', [GuruController::class, 'deletetugas'])
-    ->name('guru.deletetugas');
+Route::delete('/deletetugas/{id_tugas}', [GuruController::class, 'deletetugas'])
+      ->where('id_tugas', '.*')
+      ->name('guru.deletetugas');
    Route::delete('/deletemateri/{id_materi}', [GuruController::class, 'deletemateri'])
-    ->name('guru.deletemateri');
+      ->where('id_materi', '.*')
+      ->name('guru.deletemateri');
    Route::get('/edittugas/{id_tugas}', [GuruController::class, 'edittugas'])
       ->where('id_tugas', '.*')
       ->name('guru.edittugas');

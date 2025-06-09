@@ -173,31 +173,31 @@ class GuruController extends Controller
       }
     public function deletemateri($id_materi)
       {
+         $id_materi = base64_decode($id_materi);
          $materi = Materi::find($id_materi);
 
          if (!$materi) {
             return redirect()->back()->withErrors(['msg' => 'Materi tidak ditemukan.']);
          }
 
-         $id_pelajaran = $materi->ID_PELAJARAN;
+         $id_mata_pelajaran = $materi->ID_MATA_PELAJARAN;
          $materi->delete();
 
-         return redirect()->route('guru.detailpelajaran', ['id_pelajaran' => $id_pelajaran])
-            ->with('success', 'Materi berhasil dihapus.');
+        return redirect()->back()->with('success', 'Materi berhasil dihapus.');
       }
     public function deletetugas($id_tugas)
       {
+         $id_tugas = base64_decode($id_tugas);
          $tugas = Tugas::find($id_tugas);
 
          if (!$tugas) {
             return redirect()->back()->withErrors(['msg' => 'Tugas tidak ditemukan.']);
          }
 
-         $id_pelajaran = $tugas->ID_PELAJARAN;
+         $id_mata_pelajaran = $tugas->ID_MATA_PELAJARAN;
          $tugas->delete();
 
-         return redirect()->route('guru.detailpelajaran', ['id_pelajaran' => $id_pelajaran])
-            ->with('success', 'Tugas berhasil dihapus.');
+         return redirect()->back()->with('success', 'Tugas berhasil dihapus.');
       }
 
     public function edittugas($id_tugas)
