@@ -32,9 +32,6 @@ body {
   background-color: #133E87;
   color: white;
   height: 100vh; /* ini yang bikin sidebar sampai bawah */
-  position: fixed; /* jika ingin tetap diam saat scroll */
-  top: 0;
-  left: 0;
   z-index: 1000;
 }
  .sidebar a {
@@ -195,10 +192,6 @@ body {
    z-index: 1030;
  } */
   .title-sekolah {
-  position: fixed;
-  top: 0;
-  left: 250px; /* karena sidebar width 250px */
-  right: 0;
   height: 60px;
   background-color: #133E87;
   color: white;
@@ -206,16 +199,11 @@ body {
   z-index: 1030;
 }
 
- /* .main-content{
+ .main-content{
    margin-left: auto;
    height: 100vh;
- } */
-.main-content {
-  margin-left: 250px; /* untuk menghindari tabrakan dengan sidebar */
-  /* padding: 20px; */
-   padding: 80px 20px 20px 20px;
-  flex-grow: 1;
-}
+ }
+
  
  .task-card {
   background: white;
