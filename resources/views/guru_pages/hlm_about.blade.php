@@ -20,7 +20,7 @@
             <!-- Biodata Pribadi -->
     <div class="col-md-6">
         <h5 class="mb-3">Biodata</h5>
-        <table class="table table-borderless">
+        <table class="table table-borderless no-data-table">
             <tr><th>Email</th><td>{{ $guru->EMAIL_GURU }}</td></tr>
             <tr><th>Alamat</th><td>{{ $guru->ALAMAT_GURU }}</td></tr>
             <tr><th>No. Telepon</th><td>{{ $guru->NO_TELPON_GURU }}</td></tr>

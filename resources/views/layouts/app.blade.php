@@ -34,7 +34,7 @@
    <script>
       // DataTables initialization script
       $(document).ready(function () {
-         $('table').DataTable({ order: [[0, 'desc']] });
+         $('table').not('.no-data-table').DataTable({ order: [[0, 'desc']] });
       });
    </script>
 </body>

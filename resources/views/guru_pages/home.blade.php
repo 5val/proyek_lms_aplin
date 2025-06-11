@@ -60,7 +60,7 @@
             $listJam = ['07:00-08:30', '08:30-10:00', '10:00-11:30', '12:00-13:30', '13:30-15:00'];
             ?>
             <div class="table-responsive">
-            <table class="table table-bordered timetable-table bg-white">
+            <table class="table table-bordered timetable-table bg-white no-data-table">
                 <thead class="table-secondary">
                 <tr>
                     <th>Hari</th>

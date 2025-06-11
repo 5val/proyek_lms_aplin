@@ -19,7 +19,7 @@
     <div class="row">
         <div class="col-md-6">
             <h5 class="mb-3">Biodata</h5>
-            <table class="table table-borderless">
+            <table class="table table-borderless no-data-table">
                 <tr><th>Email</th><td>{{ $siswa->EMAIL_SISWA }}</td></tr>
                 <tr><th>Alamat</th><td>{{ $siswa->ALAMAT_SISWA }}</td></tr>
                 <tr><th>No. Telepon</th><td>{{ $siswa->NO_TELPON_SISWA }}</td></tr>

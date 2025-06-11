@@ -456,7 +456,7 @@ public function hlm_detail_tugas($id_tugas)
             ->join('pelajaran as p', 'mp.id_pelajaran', '=', 'p.id_pelajaran')
             ->join('siswa as s', 's.id_siswa', '=', 'nk.id_siswa')
             ->where('mp.id_kelas', '=', $kelas->ID_KELAS)
-            ->select('nk.id_nilai', 's.nama_siswa', 'p.nama_pelajaran', 'nk.nilai_uts', 'nk.nilai_tugas', 'nk.nilai_akhir')
+            ->select('nk.id_nilai', 's.nama_siswa', 'p.nama_pelajaran', 'nk.nilai_uts', 'nk.nilai_uas', 'nk.nilai_tugas', 'nk.nilai_akhir')
             ->get();
          $rata2 = DB::table('nilai_kelas as nk')
             ->join('mata_pelajaran as mp', 'nk.id_mata_pelajaran', '=', 'mp.id_mata_pelajaran')

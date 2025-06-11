@@ -10,7 +10,7 @@
     @endphp
 
     <div class="table-responsive">
-        <table class="table table-bordered timetable-table bg-white">
+        <table class="table table-bordered timetable-table bg-white no-data-table">
             <thead class="table-primary">
                 <tr>
                     <th>Hari</th>

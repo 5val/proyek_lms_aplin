@@ -26,6 +26,7 @@
                     <th>Nama Siswa</th>
                     <th>Mata Pelajaran</th>
                     <th>Nilai UTS</th>
+                    <th>Nilai UAS</th>
                     <th>Nilai Tugas</th>
                     <th>Nilai Akhir</th>
                     <th>Status</th>
@@ -39,6 +40,7 @@
                          <td>{{ $nilai->nama_siswa }}</td>
                          <td>{{ $nilai->nama_pelajaran }}</td>
                          <td>{{ $nilai->nilai_uts }}</td>
+                         <td>{{ $nilai->nilai_uas }}</td>
                          <td>{{ $nilai->nilai_tugas }}</td>
                          <td>{{ $nilai->nilai_akhir }}</td>
                          <?php if($nilai->nilai_akhir >= 80): ?>
@@ -56,7 +58,7 @@
 
             <!-- Rata-rata Nilai Ujian -->
             <div class="average-card-custom">
-               <h5 class="average-card-title">Rata-Rata Nilai Ujian per Mata Pelajaran</h5>
+               <h5 class="average-card-title">Rata-Rata Nilai Akhir per Mata Pelajaran</h5>
                <table class="average-table table-bordered table-lg">
                      <thead class="table-header-custom">
                         <tr>
