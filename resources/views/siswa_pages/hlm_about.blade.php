@@ -4,7 +4,7 @@
 <div class="content-box mt-4">
     <div class="row align-items-center mb-4">
         <div class="col-auto">
-            <img src="../asset/default_img.png" alt="Avatar" class="rounded-circle" width="100" height="100">
+            <!-- <img src="../asset/default_img.png" alt="Avatar" class="rounded-circle" width="100" height="100"> -->
         </div>
         <div class="col">
             <h4 class="mb-1">{{ $siswa->NAMA_SISWA }}</h4>

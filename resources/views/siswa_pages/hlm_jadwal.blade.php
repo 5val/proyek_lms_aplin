@@ -4,7 +4,7 @@
 <div class="p-3">
           <h4 class="mb-3">Jadwal Pelajaran</h4>
           <div class="timetable table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-bordered no-data-table">
               <thead>
                 <tr>
                   <th>Hari</th>

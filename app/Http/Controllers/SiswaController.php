@@ -9,6 +9,7 @@ use App\Models\MataPelajaran;
 use App\Models\EnrollmentKelas;
 use App\Models\SubmissionTugas;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\Tugas;
 use App\Models\Pelajaran;
@@ -289,7 +290,8 @@ class SiswaController extends Controller
 
         // Update password jika ada perubahan
         if ($request->has('password') && !empty($validatedData['password'])) {
-            $siswa->PASSWORD_SISWA = $validatedData['password'];  // Encrypt password
+            // $siswa->PASSWORD_SISWA = $validatedData['password'];
+            $siswa->PASSWORD_SISWA = Hash::make($validatedData['password']);  // Encrypt password
         }
 
         $siswa->save();

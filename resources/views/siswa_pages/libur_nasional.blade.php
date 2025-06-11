@@ -54,7 +54,7 @@ function getHolidayIcon(name) {
     
     if (lowerName.includes('tahun baru masehi')) return '<i class="fas fa-calendar-alt text-warning"></i>';
     if (lowerName.includes('imlek')) return '<i class="fas fa-dragon text-danger"></i>';
-    if (lowerName.includes('nyepi')) return '<i class="fas fa-lotus text-info"></i>';
+    if (lowerName.includes('nyepi')) return '<i class="fas fa-calendar-day text-secondary"></i>';
     if (lowerName.includes('idul fitri')) return '<i class="fas fa-star-and-crescent text-success"></i>';
     if (lowerName.includes('idul adha')) return '<i class="fas fa-kaaba text-success"></i>';
     if (lowerName.includes('wafat') || lowerName.includes('kebangkitan') || lowerName.includes('kenaikan')) return '<i class="fas fa-cross text-primary"></i>';

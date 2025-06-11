@@ -110,7 +110,7 @@
           <!-- Timetable -->
           <h5>Jadwal Pelajaran (Senin - Jumat)</h5>
           <div class="table-responsive">
-            <table class="table table-bordered timetable-table bg-white">
+            <table class="table table-bordered timetable-table bg-white no-data-table">
               <thead class="table-secondary">
                 <tr>
                   <th>Hari</th>
