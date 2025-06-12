@@ -38,22 +38,88 @@ class MainController extends Controller
         }
 
         // Login siswa
-        $siswa = Siswa::where([
-            ['email_siswa', $email],
-            // matiin
-            // ['password_siswa', $password]
-        ])->first();
+        // $siswa = Siswa::where([
+        //     ['email_siswa', $email],
+        //     // matiin
+        //     ['password_siswa', $password]
+        // ])->first();
 
-        if (
-            $siswa != null
-            // nyalain
-            && Hash::check($password, $siswa->PASSWORD_SISWA)
-        ) {
-            if ($siswa->STATUS_SISWA != "Active") {
-                return redirect()->route('login')->with('error', 'User Nonactive');
+        // if (
+        //     $siswa != null
+        //     // nyalain
+        //     // && Hash::check($password, $siswa->PASSWORD_SISWA)
+        // ) {
+        //     if ($siswa->STATUS_SISWA != "Active") {
+        //         return redirect()->route('login')->with('error', 'User Nonactive');
+        //     }
+        //     session(['userActive' => $siswa]);
+        //     return redirect('/siswa');
+        // } else {
+        //     $siswa = Siswa::where([
+        //     ['email_siswa', $email]
+        //     ])->first();
+        //     if ($siswa != null && Hash::check($password, $siswa->PASSWORD_SISWA)) {
+        //         if ($siswa->STATUS_SISWA != "Active") {
+        //             return redirect()->route('login')->with('error', 'User Nonactive');
+        //         }
+        //         session(['userActive' => $siswa]);
+        //         return redirect('/siswa');
+        //     }
+        // }
+        // 1. Cari siswa hanya berdasarkan email.
+        $siswa = Siswa::where('email_siswa', $email)->first();
+
+        // 2. Jika siswa dengan email tersebut ada, lanjutkan pengecekan.
+        if ($siswa) {
+            $password_is_valid = false;
+            $stored_password = $siswa->PASSWORD_SISWA;
+            $input_password = $password;
+
+            // --- LOGIKA UTAMA: DETEKSI FORMAT PASSWORD ---
+
+            // A. Cek apakah ini HASH BCRYPT (standar Laravel)?
+            // Hash Bcrypt selalu diawali dengan '$2y$' dan panjangnya 60 karakter.
+            if (str_starts_with($stored_password, '$2y$')) {
+                if (Hash::check($input_password, $stored_password)) {
+                    $password_is_valid = true;
+                }
             }
-            session(['userActive' => $siswa]);
-            return redirect('/siswa');
+            // B. Cek apakah ini HASH MD5? (Contoh algoritma lama)
+            // Hash MD5 panjangnya selalu 32 karakter hexadecimal.
+            elseif (strlen($stored_password) === 32 && ctype_xdigit($stored_password)) {
+                if (md5($input_password) === $stored_password) {
+                    $password_is_valid = true;
+                }
+            }
+            // C. Jika bukan format di atas, anggap ini PLAIN TEXT.
+            else {
+                if ($input_password === $stored_password) {
+                    $password_is_valid = true;
+                }
+            }
+
+            // --- AKHIR LOGIKA DETEKSI ---
+
+
+            // 3. Jika dari salah satu metode di atas password terbukti valid.
+            if ($password_is_valid) {
+                
+                // SANGAT PENTING: Jika password belum Bcrypt, update sekarang juga!
+                // Ini akan mengamankan akun siswa secara otomatis saat mereka login.
+                if (!str_starts_with($stored_password, '$2y$')) {
+                    $siswa->PASSWORD_SISWA = Hash::make($input_password);
+                    $siswa->save();
+                }
+
+                // 4. Cek status aktif siswa.
+                if ($siswa->STATUS_SISWA != "Active") {
+                    return redirect()->route('login')->with('error', 'Akun Anda tidak aktif');
+                }
+
+                // 5. Login berhasil, buat session.
+                session(['userActive' => $siswa]);
+                return redirect('/siswa');
+            }
         }
 
         if ($email == "admin" && $password == "admin") {
