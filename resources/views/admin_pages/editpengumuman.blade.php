@@ -8,7 +8,7 @@
   <div class="material-box">
     <br>
     <h4 style="text-align: center;">Edit Pengumuman</h4><br>
-    <form action="{{ url('/admin/editpengumuman/' . urlencode($pengumuman->ID)) }}" method="POST">
+    <form action="{{ url('/admin/editpengumuman/' . base64_encode($pengumuman->ID)) }}" method="POST">
     @csrf
     @method("PUT")
     <div class="mb-3">

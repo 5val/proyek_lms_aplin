@@ -35,9 +35,9 @@
       <td>{{ $g->STATUS_SISWA == "Active" ? "Aktif" : "Inaktif" }}</td>
       <td>
         <div style="display: flex; gap: 5px;">
-        <button class="btn btn-primary"><a href="{{ url('/admin/editsiswa/' . urlencode($g->ID_SISWA)) }}"
+        <button class="btn btn-primary"><a href="{{ url('/admin/editsiswa/' . base64_encode($g->ID_SISWA)) }}"
           style="text-decoration: none; color: white;">Edit</a></button>
-        <button class="btn btn-danger"><a href="{{ url('/admin/listsiswa/' . urlencode($g->ID_SISWA)) }}"
+        <button class="btn btn-danger"><a href="{{ url('/admin/listsiswa/' . base64_encode($g->ID_SISWA)) }}"
           style="text-decoration: none; color: white;">{{ $g->STATUS_SISWA == "Active" ? "Hapus" : "Buat Aktif" }}</a></button>
         </div>
       </td>

@@ -7,7 +7,7 @@
         <div class="content-box">
           <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url()->previous() }}">Back</a></button><br><br>
        <div class="material-box2">
-         <form action="{{ route('guru.updatemateri', urlencode($materi->ID_MATERI)) }}" method="POST" enctype="multipart/form-data">
+         <form action="{{ route('guru.updatemateri', base64_encode($materi->ID_MATERI)) }}" method="POST" enctype="multipart/form-data">
           @csrf
           @method("PUT") 
          <h4 style="text-align: center;">Edit Materi</h4><br>

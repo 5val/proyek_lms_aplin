@@ -12,7 +12,7 @@
           <h5 class="mt-4">Kelas yang Anda Ajar:</h5>
         <div class="grid-container" id="container_kelas">
          <?php foreach ($all_kelas as $k) : ?>
-            <a href="{{ url('/guru/detail_pelajaran/' . urlencode($k->id_mata_pelajaran)) }}" class="text-decoration-none text-dark">
+            <a href="{{ url('/guru/detail_pelajaran/' . base64_encode($k->id_mata_pelajaran)) }}" class="text-decoration-none text-dark">
                <div class="grid-item">
                <i class="fas fa-calculator"></i>
                <h5>{{ $k->nama_pelajaran }}</h5>
@@ -32,7 +32,7 @@
                         let row = "";                        
                         data.forEach(function(kelas){
                            row+= `
-                           <a href="/guru/detail_pelajaran/${encodeURIComponent(kelas.id_mata_pelajaran)}" class="text-decoration-none text-dark">
+                           <a href="/guru/detail_pelajaran/${btoa(kelas.id_mata_pelajaran)}" class="text-decoration-none text-dark">
                                <div class="grid-item">
                                <i class="fas fa-calculator"></i>
                                <h5>${ kelas.nama_pelajaran }</h5>

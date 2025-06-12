@@ -36,9 +36,9 @@
         <td>{{ $g->STATUS_GURU == "Active" ? "Aktif" : "In aktif" }}</td>
         <td>
         <div style="display: flex; gap: 5px;">
-          <button class="btn btn-primary"><a href="{{ url('/admin/editguru/' . urlencode($g->ID_GURU)) }}"
+          <button class="btn btn-primary"><a href="{{ url('/admin/editguru/' . base64_encode($g->ID_GURU)) }}"
             style="text-decoration: none; color: white;">Edit</a></button>
-          <button class="btn btn-danger"><a href="{{ url('/admin/listguru/' . urlencode($g->ID_GURU)) }}"
+          <button class="btn btn-danger"><a href="{{ url('/admin/listguru/' . base64_encode($g->ID_GURU)) }}"
             style="text-decoration: none; color: white;">{{ $g->STATUS_GURU == "Active" ? "Hapus" : "Buat Aktif" }}</a></button>
         </div>
         </td>

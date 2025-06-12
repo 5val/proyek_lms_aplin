@@ -10,7 +10,7 @@
         <div class="content-box">
 
        <div class="material-box2">
-         <form action="{{ route('guru.updatepengumuman', urlencode($pengumuman->ID)) }}" method="POST">
+         <form action="{{ route('guru.updatepengumuman', base64_encode($pengumuman->ID)) }}" method="POST">
           @csrf
           @method("PUT") 
          <h4 style="text-align: center;">Edit Pengumuman</h4><br>

@@ -30,9 +30,9 @@
         <td>{{ $g->Deskripsi}}</td>
         <td>
         <div style="display: flex; gap: 5px;">
-          <button class="btn btn-primary"><a href="{{ url('/admin/editpengumuman/' . urlencode($g->ID)) }}"
+          <button class="btn btn-primary"><a href="{{ url('/admin/editpengumuman/' . base64_encode($g->ID)) }}"
             style="text-decoration: none; color: white;">Edit</a></button>
-          <button class="btn btn-danger"><a href="{{ url('/admin/listpengumuman/' . urlencode($g->ID)) }}"
+          <button class="btn btn-danger"><a href="{{ url('/admin/listpengumuman/' . base64_encode($g->ID)) }}"
             style="text-decoration: none; color: white;">Delete</a></button>
         </div>
         </td>

@@ -16,9 +16,9 @@
         <!-- Tabs -->
        <br>
         <div class="content-box">
-          <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/detail_pelajaran/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}">Back</a></button><br><br>
+          <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/detail_pelajaran/' . base64_encode($mata_pelajaran->ID_MATA_PELAJARAN)) }}">Back</a></button><br><br>
        <div class="material-box2">
-         <form action="{{ route('guru.updatetugas', urlencode($tugas->ID_TUGAS)) }}" method="POST">
+         <form action="{{ route('guru.updatetugas', base64_encode($tugas->ID_TUGAS)) }}" method="POST">
           @csrf
           @method("PUT") 
          <h4 style="text-align: center;">Edit Tugas</h4><br>

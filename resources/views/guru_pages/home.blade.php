@@ -19,7 +19,7 @@
       <h5 class="mt-4">Pelajaran yang Diajarkan</h5>
       <div class="scroll-box mb-4 d-flex flex-row flex-nowrap overflow-auto">
         <?php foreach ($mata_pelajaran as $m): ?>
-        <a href="{{ url('/guru/detail_pelajaran/' . urlencode($m->id_mata_pelajaran)) }}">
+        <a href="{{ url('/guru/detail_pelajaran/' . base64_encode($m->id_mata_pelajaran)) }}">
           <div class="card p-3 me-3 text-center">
             <div class="card-body">
                <i class="fas fa-calculator fa-2x mb-2"></i>
@@ -35,7 +35,7 @@
       <h5 class="mt-4">Tugas yang Sedang Berlangsung</h5>
       <div class="scroll-box mb-4 d-flex flex-row flex-nowrap overflow-auto">
         <?php foreach ($all_tugas as $t): ?>
-        <a href="{{ url('/guru/hlm_detail_tugas/' . urlencode($t->id_tugas)) }}">
+        <a href="{{ url('/guru/hlm_detail_tugas/' . base64_encode($t->id_tugas)) }}">
           <div class="card p-3 me-3">
             <strong>{{ $t->nama_pelajaran }}</strong>
             <p>{{ $t->deskripsi_tugas }}</p>

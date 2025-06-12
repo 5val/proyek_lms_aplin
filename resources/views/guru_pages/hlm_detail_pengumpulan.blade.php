@@ -2,6 +2,7 @@
 
 @section('guru_content')
    <div class="content">
+      <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/hlm_detail_tugas/' . base64_encode($submission->ID_TUGAS)) }}">Back</a></button><br><br>
           <h4 class="mb-3">Detail Pengumpulan Tugas</h4>
 
           <!-- Informasi Tugas -->

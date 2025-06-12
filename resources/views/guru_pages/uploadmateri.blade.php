@@ -14,7 +14,7 @@
         </div>
         <br>
 <class="content-box">
-    <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/detail_pelajaran/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}">Back</a></button><br><br>
+    <button class="btn btn-danger"><a style="text-decoration: none; color: white;" href="{{ url('/guru/detail_pelajaran/' . base64_encode($mata_pelajaran->ID_MATA_PELAJARAN)) }}">Back</a></button><br><br>
        <div class="material-box2">
          <form method="POST" action="/guru/uploadmateri" enctype="multipart/form-data">
          @csrf

@@ -31,7 +31,7 @@
                 <span>{{ $s->siswa->NAMA_SISWA }}</span>
                 <div class="d-flex align-items-center">
                     <span class="badge bg-success me-2">Sudah Mengumpulkan</span>
-                    <a href="{{ url('/guru/hlm_detail_pengumpulan/' . urlencode($s->ID_SUBMISSION)) }}" class="text-decoration-none text-dark">
+                    <a href="{{ url('/guru/hlm_detail_pengumpulan/' . base64_encode($s->ID_SUBMISSION)) }}" class="text-decoration-none text-dark">
                     <button class="btn btn-info btn-sm">Lihat Tugas</button></a>
                 </div>
             </li>

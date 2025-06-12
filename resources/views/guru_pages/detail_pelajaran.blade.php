@@ -43,7 +43,7 @@
     <!-- Materi Tab -->
     <div class="tab-pane fade show active" id="materi-tab-content" role="tabpanel" aria-labelledby="materi-tab">
         <button class="btn btn-primary my-3">
-            <a href="{{ url('/guru/uploadmateri/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Materi</a>
+            <a href="{{ url('/guru/uploadmateri/' . base64_encode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Materi</a>
         </button>
         <div class="row">
             @foreach ($materi as $m)
@@ -78,14 +78,14 @@
     <!-- Tugas Tab -->
     <div class="tab-pane fade" id="tugas-tab-content" role="tabpanel" aria-labelledby="tugas-tab">
         <button class="btn btn-primary my-3">
-            <a href="{{ url('/guru/uploadtugas/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Tugas</a>
+            <a href="{{ url('/guru/uploadtugas/' . base64_encode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Tugas</a>
         </button>
         <div class="row">
             @foreach ($tugas as $t)
                <div class="col-md-4 mb-4">
                     <div class="card h-100 d-flex flex-column">
                         <div class="card-body d-flex flex-column">
-                            <a href="{{ url('/guru/hlm_detail_tugas/' . urlencode($t->ID_TUGAS)) }}" style="text-decoration: none; color: black;">
+                            <a href="{{ url('/guru/hlm_detail_tugas/' . base64_encode($t->ID_TUGAS)) }}" style="text-decoration: none; color: black;">
                                 <h5 class="card-title">{{ $t->NAMA_TUGAS }}</h5>
                                 <p class="card-text flex-grow-1">{{ $t->DESKRIPSI_TUGAS }}</p>
                                 <p>ID: {{ $t->ID_TUGAS }}</p>
@@ -133,7 +133,7 @@
     <!-- Pertemuan Tab -->
     <div class="tab-pane fade" id="pertemuan-tab-content" role="tabpanel" aria-labelledby="pertemuan-tab">
         <button class="btn btn-primary my-3">
-            <a href="{{ url('/guru/tambahpertemuan/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Pertemuan</a>
+            <a href="{{ url('/guru/tambahpertemuan/' . base64_encode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Pertemuan</a>
         </button>
         <div class="row">
             <?php $counter = 1; ?>
@@ -231,7 +231,7 @@
                            <?php else: ?>
                               <td><span class="badge bg-danger">Gagal</span></td>
                            <?php endif; ?>
-                           <td><a href="{{ url('/guru/edit_nilai_tugas/' . urlencode($nilai->id_submission)) }}" class="btn btn-warning btn-sm">Edit</a></td>
+                           <td><a href="{{ url('/guru/edit_nilai_tugas/' . base64_encode($nilai->id_submission)) }}" class="btn btn-warning btn-sm">Edit</a></td>
                         </tr>
                      <?php endforeach; ?>
                   </tbody>
@@ -279,7 +279,7 @@
                          <?php else: ?>
                            <td><span class="badge bg-danger">Gagal</span></td>
                          <?php endif; ?>
-                         <td><a href="{{ url('/guru/edit_nilai_ujian/' . urlencode($nilai->id_nilai)) }}" class="btn btn-warning btn-sm">Edit</a></td>
+                         <td><a href="{{ url('/guru/edit_nilai_ujian/' . base64_encode($nilai->id_nilai)) }}" class="btn btn-warning btn-sm">Edit</a></td>
                      </tr>
                   <?php endforeach; ?>
                 </tbody>
@@ -298,7 +298,7 @@
     <!-- Pengumuman Tab -->
     <div class="tab-pane fade" id="pengumuman-tab-content" role="tabpanel" aria-labelledby="pengumuman-tab">
          <button class="btn btn-primary my-3">
-            <a href="{{ url('/guru/tambahpengumuman/' . urlencode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Pengumuman</a>
+            <a href="{{ url('/guru/tambahpengumuman/' . base64_encode($mata_pelajaran->ID_MATA_PELAJARAN)) }}" style="text-decoration: none; color: white;">Tambah Pengumuman</a>
         </button>
         <div class="row">
             <?php foreach ($pengumuman as $p): ?>

@@ -10,7 +10,7 @@
   <div class="material-box">
     <br>
     <h4 style="text-align: center;">Edit Guru</h4><br>
-    <form action="{{ url('/admin/editguru/' . urlencode($guru->ID_GURU)) }}" method="POST">
+    <form action="{{ url('/admin/editguru/' . base64_encode($guru->ID_GURU)) }}" method="POST">
     @csrf
     @method('PUT')
     <div class="mb-3">

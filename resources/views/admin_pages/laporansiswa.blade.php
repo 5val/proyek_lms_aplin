@@ -51,7 +51,7 @@
                   <td>${siswa.ID_SISWA}</td>
                   <td>${siswa.NAMA_SISWA}</td>
                   <td>
-                    <a href="hlm_report_siswa?id_periode=${periodeId}&id_siswa=${encodeURIComponent(siswa.ID_SISWA)}"
+                    <a href="hlm_report_siswa?id_periode=${periodeId}&id_siswa=${btoa(siswa.ID_SISWA)}"
                     class="btn btn-primary">
                       Report
                     </a>
