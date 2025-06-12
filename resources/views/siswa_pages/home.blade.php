@@ -12,7 +12,7 @@
               <?php $counter = 0; // Inisialisasi counter untuk menghitung jumlah mata pelajaran ?>
               <?php foreach($matapelajaran as $m): ?>
                   <?php if($counter < 3): // Menampilkan 3 pertama ?>
-                      <a href="{{ url('/siswa/detail_pelajaran/' . urlencode($m->ID_MATA_PELAJARAN)) }}" class="text-decoration-none text-dark">
+                      <a href="{{ url('/siswa/detail_pelajaran/' . base64_encode($m->ID_MATA_PELAJARAN)) }}" class="text-decoration-none text-dark">
                           <div class="card p-3">
                               <div class="card-body">
                                   <i class="fas fa-book-open"></i>
@@ -21,7 +21,7 @@
                           </div>
                       </a>
                   <?php else: // Menyembunyikan mata pelajaran selanjutnya ?>
-                    <a href="{{ url('/siswa/detail_pelajaran/' . urlencode($m->ID_MATA_PELAJARAN)) }}" class="text-decoration-none text-dark">
+                    <a href="{{ url('/siswa/detail_pelajaran/' . base64_encode($m->ID_MATA_PELAJARAN)) }}" class="text-decoration-none text-dark">
                       <div class="card p-3 hidden-card" style="display:none;">
                           <div class="card-body">
                               <i class="fas fa-book-open"></i>
@@ -86,7 +86,7 @@
           <div class="scroll-box mb-4">
 
           @foreach($tugas as $t)
-              <a href="{{ url('/siswa/hlm_detail_tugas/' . urlencode($t->ID_TUGAS)) }}" class="text-decoration-none text-dark">
+              <a href="{{ url('/siswa/hlm_detail_tugas/' . base64_encode($t->ID_TUGAS)) }}" class="text-decoration-none text-dark">
               <!-- <a href="/siswa/hlm_detail_tugas/{{ $t->ID_TUGAS }}"> -->
                   <div class="card p-3">
                       <strong>{{ $t->NAMA_PELAJARAN }}</strong>

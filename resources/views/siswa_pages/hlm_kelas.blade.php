@@ -8,7 +8,7 @@
           <h5 class="mt-4">Kelas Pelajaran</h5>
         <div class="grid-container">
             @foreach($matapelajaran as $mp)
-            <a href="{{ url('/siswa/detail_pelajaran/' . urlencode($mp->ID_MATA_PELAJARAN)) }}" class="text-decoration-none text-dark">
+            <a href="{{ url('/siswa/detail_pelajaran/' . base64_encode($mp->ID_MATA_PELAJARAN)) }}" class="text-decoration-none text-dark">
                 <div class="grid-item">
                     <i class="fas fa-book"></i>
                     <h5>{{ $mp->NAMA_PELAJARAN }}</h5>

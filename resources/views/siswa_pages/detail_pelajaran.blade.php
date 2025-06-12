@@ -45,7 +45,7 @@
         <div class="row g-4">
             @foreach($tugas as $t)
             <div class="col-md-4">
-                <a href="{{ url('/siswa/hlm_detail_tugas/' . urlencode($t->ID_TUGAS)) }}" class="card h-100 p-3 d-flex flex-column">
+                <a href="{{ url('/siswa/hlm_detail_tugas/' . base64_encode($t->ID_TUGAS)) }}" class="card h-100 p-3 d-flex flex-column">
                     <h5 class="card-title">{{ $t->NAMA_TUGAS }}</h5>
                     <p class="card-text">{{ $t->DESKRIPSI_TUGAS }}</p>
                     <p class="card-deadline mt-auto text-end">Deadline: {{ $t->DEADLINE_TUGAS }}</p>

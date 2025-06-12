@@ -43,7 +43,7 @@
     <h5>Belum Dikumpulkan</h5>
     <div class="row">
         @foreach ($tugasBelumDikirim as $t)
-        <a href="{{ url('/siswa/hlm_detail_tugas/' . urlencode($t->ID_TUGAS)) }}" class="text-decoration-none text-dark">
+        <a href="{{ url('/siswa/hlm_detail_tugas/' . base64_encode($t->ID_TUGAS)) }}" class="text-decoration-none text-dark">
             <div class="col-md-4 mb-3">
                 <div class="task-card">
                     <h5>{{ $t->NAMA_PELAJARAN }} - {{ $t->NAMA_TUGAS }}</h5>

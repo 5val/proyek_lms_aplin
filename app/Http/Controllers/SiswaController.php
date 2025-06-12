@@ -98,6 +98,7 @@ class SiswaController extends Controller
 
     public function detail_pelajaran($id_mata_pelajaran)
     {
+        $id_mata_pelajaran = base64_decode($id_mata_pelajaran);
         $mataPelajaran = MataPelajaran::find($id_mata_pelajaran);
 
         if (!$mataPelajaran) {
@@ -170,6 +171,7 @@ class SiswaController extends Controller
     }
     public function hlm_detail_tugas($id_tugas)
     {
+        $id_tugas =  base64_decode($id_tugas);
         $id_tugas = str_replace('+', ' ', $id_tugas);
         $tugas = Tugas::find($id_tugas);
 
