@@ -50,7 +50,7 @@ class AdminController extends Controller
     // ========================================= Guru ===================================================
     public function geteditguru($id_guru)
     {
-      $id_guru = base64_decode($id_guru);
+        $id_guru = base64_decode($id_guru);
         $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
         if (count($guru) <= 0) {
             $allGuru = DB::select("select * from guru");
@@ -61,7 +61,7 @@ class AdminController extends Controller
     }
     public function editguru(Request $request, $id_guru)
     {
-      $id_guru = base64_decode($id_guru);
+        $id_guru = base64_decode($id_guru);
         $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
         if (count($guru) > 0) {
             $id = $request->input("id");
@@ -81,7 +81,7 @@ class AdminController extends Controller
     }
     public function hapusguru($id_guru)
     {
-      $id_guru = base64_decode($id_guru);
+        $id_guru = base64_decode($id_guru);
         $guru = DB::select("select * from guru where id_guru = ?", [$id_guru]);
         if (count($guru) > 0) {
             $status = '';
@@ -156,13 +156,13 @@ class AdminController extends Controller
     // ========================================= Pengumuman ============================================
     public function geteditpengumuman($id)
     {
-      $id = base64_decode($id);
+        $id = base64_decode($id);
         $pengumuman = Pengumuman::find($id);
         return view('admin_pages.editpengumuman', ["pengumuman" => $pengumuman]);
     }
     public function editpengumuman(Request $request, $id)
     {
-      $id = base64_decode($id);
+        $id = base64_decode($id);
         $pengumuman = Pengumuman::find($id);
         $pengumuman->Judul = $request->input('Judul');
         $pengumuman->Deskripsi = $request->input('Deskripsi');
@@ -185,7 +185,7 @@ class AdminController extends Controller
     }
     public function hapuspengumuman($id_pengumuman)
     {
-      $id_pengumuman = base64_decode($id_pengumuman);
+        $id_pengumuman = base64_decode($id_pengumuman);
         $pengumuman = Pengumuman::find($id_pengumuman);
         $pengumuman->delete();
         return redirect('/admin/listpengumuman');
@@ -193,7 +193,7 @@ class AdminController extends Controller
     // ========================================= Siswa =================================================
     public function geteditsiswa($id_siswa)
     {
-      $id_siswa = base64_decode($id_siswa);
+        $id_siswa = base64_decode($id_siswa);
         $siswa = DB::select("select * from siswa where id_siswa = ?", [$id_siswa]);
         if (count($siswa) <= 0) {
             $allsiswa = DB::select("select * from siswa");
@@ -204,7 +204,7 @@ class AdminController extends Controller
     }
     public function editsiswa(Request $request, $id_siswa)
     {
-      $id_siswa = base64_decode($id_siswa);
+        $id_siswa = base64_decode($id_siswa);
         $siswa = DB::select("select * from siswa where id_siswa = ?", [$id_siswa]);
         if (count($siswa) > 0) {
             $id = $request->input("id");
@@ -224,7 +224,7 @@ class AdminController extends Controller
     }
     public function hapussiswa($id_siswa)
     {
-      $id_siswa = base64_decode($id_siswa);
+        $id_siswa = base64_decode($id_siswa);
         $siswa = DB::select("select * from siswa where id_siswa = ?", [$id_siswa]);
         if (count($siswa) > 0) {
             $status = '';
@@ -393,8 +393,10 @@ class AdminController extends Controller
         ]);
         $nama_kelas = $request->nama_kelas;
         $id_ruangan = $request->id_ruangan;
+
         $ruangan_kelas = $request->nama_ruangan;
         $ruanganToEdit = DetailKelas::find($id_ruangan, 'ID_DETAIL_KELAS');
+
         $ruanganToEdit->NAMA_KELAS = $nama_kelas;
         $ruanganToEdit->save();
         return redirect()->route('list_ruangan');
@@ -467,8 +469,8 @@ class AdminController extends Controller
                 $rata2_all += $report->rata2;
             }
         }
-        if(count($jumlahDinilai) > 0) {
-           $rata2_all /= count($jumlahDinilai);
+        if (count($jumlahDinilai) > 0) {
+            $rata2_all /= count($jumlahDinilai);
         }
 
         return view('admin_pages.hlm_report_guru', ["guru" => $guru, "periode" => $periode, "list_report" => $list_report, "jumlahMapel" => $jumlahMapel, "jumlahDinilai" => $jumlahDinilai, "rata2_all" => $rata2_all]);
@@ -489,7 +491,7 @@ class AdminController extends Controller
     }
     public function getListSiswaLaporan($id_periode)
     {
-      $id_periode = base64_decode($id_periode);
+        $id_periode = base64_decode($id_periode);
         $all_siswa = Siswa::with(['kelass'])
             ->whereHas('kelass', function ($query) use ($id_periode) {
                 $query->where('ID_PERIODE', $id_periode);

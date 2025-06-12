@@ -41,19 +41,20 @@
         </div>
     </div>
     <script>
-        $(document).ready(function (){
+        $(document).ready(function () {
             $('#formMapel').attr('action', '/admin/list_ruangan');
             $('body').on('click', '.edit_btn', function () {
                 var $currentRow = $(this).closest('tr');
                 var idRuangan = $currentRow.find('.id_ruangan').text().trim();
                 var ruanganKelas = $currentRow.find('.ruangan_kelas').text().trim();
-                var namaKelas = $currentRow.find('.nama_kelas').text().trim();                
+                var namaKelas = $currentRow.find('.nama_kelas').text().trim();
                 $('#formMapel').attr('action', '/admin/edit_ruangan');
                 if (idRuangan) {
-                    $('#id_ruangan').val(idRuangan)                  
+                    $('#id_ruangan').val(idRuangan)
+
                 }
                 if (ruanganKelas) {
-                    $('#nama_ruangan').prop('disabled', true)
+                    $('#nama_ruangan').prop('readonly', true)
                     $('#nama_ruangan').val(ruanganKelas)
                 }
                 if (namaKelas) {
