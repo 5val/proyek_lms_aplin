@@ -234,7 +234,7 @@ class SiswaController extends Controller
         SubmissionTugas::create($submissionData);
 
         // Redirect ke halaman detail tugas (ganti URL sesuai route kamu)
-        return redirect(url('/siswa/hlm_detail_tugas/' . urlencode($validatedData['ID_TUGAS'])));
+        return redirect(url('/siswa/hlm_detail_tugas/' . base64_encode($validatedData['ID_TUGAS'])));
     }
 
     // public function download($filename)
