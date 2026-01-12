@@ -19,23 +19,59 @@ class MainController extends Controller
         $email = $_POST["email"];
         $password = $_POST["password"];
 
-        //   Login guru
-        $guru = Guru::where([
-            ['email_guru', $email],
-            // matiin kalo mau hash
-            // ['password_guru', $password]
-        ])->first();
-        if (
-            $guru != null
-            // nyalain kalo mau hash
-            && Hash::check($password, $guru->PASSWORD_GURU)
-        ) {
-            if ($guru->STATUS_GURU != "Active") {
-                return redirect()->route('login')->with('error', 'User Nonactive');
+        $guru = Guru::where('email_guru', $email)->first();
+
+        if ($guru) {
+            $isAuthenticated = false;
+            $dbPassword = $guru->PASSWORD_GURU;
+
+            // 1. Cek apakah password di DB adalah Bcrypt Hash yang valid
+            // Hash Bcrypt selalu dimulai dengan '$2y$' (atau '$2a$' / '$2x$')
+            if (str_starts_with($dbPassword, '$2y$')) {
+                // Jika formatnya hash, gunakan Hash::check
+                if (Hash::check($password, $dbPassword)) {
+                    $isAuthenticated = true;
+                }
+            } else {
+                // 2. Jika bukan format hash (berarti masih plain text dari seeder)
+                if ($dbPassword === $password) {
+                    // Login berhasil, lalu otomatis ubah ke hash agar aman
+                    $guru->PASSWORD_GURU = Hash::make($password);
+                    $guru->save();
+                    
+                    $isAuthenticated = true;
+                }
             }
-            session(['userActive' => $guru]);
-            return redirect('/guru');
+
+            // 3. Eksekusi Login
+            if ($isAuthenticated) {
+                if ($guru->STATUS_GURU != "Active") {
+                    return redirect()->route('login')->with('error', 'User Nonactive');
+                }
+
+                session(['userActive' => $guru]);
+                return redirect('/guru');
+            }
         }
+
+
+        //   Login guru
+        // $guru = Guru::where([
+        //     ['email_guru', $email],
+        //     // matiin kalo mau hash
+        //     ['password_guru', $password]
+        // ])->first();
+        // if (
+        //     $guru != null
+        //     // nyalain kalo mau hash
+        //     // && Hash::check($password, $guru->PASSWORD_GURU)
+        // ) {
+        //     if ($guru->STATUS_GURU != "Active") {
+        //         return redirect()->route('login')->with('error', 'User Nonactive');
+        //     }
+        //     session(['userActive' => $guru]);
+        //     return redirect('/guru');
+        // }
 
         // Login siswa
         // $siswa = Siswa::where([
