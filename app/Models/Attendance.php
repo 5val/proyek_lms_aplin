@@ -14,7 +14,7 @@ class Attendance extends Model
     protected $table = 'ATTENDANCE';
     protected $primaryKey = 'ID_ATTENDANCE';
     public $timestamps = false;
-    protected $fillable = ['ID_SISWA', 'ID_PERTEMUAN'];
+    protected $fillable = ['ID_SISWA', 'ID_PERTEMUAN', 'STATUS'];
 
     /**
      * Get the siswa that owns the Attendance.

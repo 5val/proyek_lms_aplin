@@ -825,9 +825,8 @@ class AdminController extends Controller
             })
                 ->where('ID_GURU', $request->pengajar)
                 ->where('HARI_PELAJARAN', $day)
-                ->where(function ($query) use ($time) {
-                    $query->where('JAM_PELAJARAN', [$time]);
-                })->exists();
+                ->where('JAM_PELAJARAN', $time)
+                ->exists();
             if ($teacherBusy) {
                 $validator->errors()->add('pengajar', 'Guru sudah memiliki jadwal pada waktu tersebut.');
             }
@@ -837,9 +836,8 @@ class AdminController extends Controller
             })
                 ->where('ID_KELAS', $request->kelas)
                 ->where('HARI_PELAJARAN', $day)
-                ->where(function ($query) use ($time) {
-                    $query->where('JAM_PELAJARAN', [$time]);
-                })->exists();
+                ->where('JAM_PELAJARAN', $time)
+                ->exists();
 
             if ($classBusy) {
                 $validator->errors()->add('waktu', 'Kelas sudah memiliki pelajaran pada waktu tersebut.');
@@ -891,8 +889,8 @@ class AdminController extends Controller
             })
                 ->where('ID_GURU', $request->pengajar)
                 ->where('HARI_PELAJARAN', $day)
-                ->where('ID_MATA_PELAJARAN', '!=', $mataPelajaran->ID_MATA_PELAJARAN) // Kecualikan record saat ini
-                ->where('JAM_PELAJARAN', $time) // Asumsikan JAM_PELAJARAN menyimpan nilai waktu tunggal
+                ->where('ID_MATA_PELAJARAN', '!=', $mataPelajaran->ID_MATA_PELAJARAN)
+                ->where('JAM_PELAJARAN', $time)
                 ->exists();
 
             if ($teacherBusy) {
@@ -905,8 +903,8 @@ class AdminController extends Controller
             })
                 ->where('ID_KELAS', $request->kelas)
                 ->where('HARI_PELAJARAN', $day)
-                ->where('ID_MATA_PELAJARAN', '!=', $mataPelajaran->ID_MATA_PELAJARAN) // Kecualikan record saat ini
-                ->where('JAM_PELAJARAN', $time) // Asumsikan JAM_PELAJARAN menyimpan nilai waktu tunggal
+                ->where('ID_MATA_PELAJARAN', '!=', $mataPelajaran->ID_MATA_PELAJARAN)
+                ->where('JAM_PELAJARAN', $time)
                 ->exists();
 
             if ($classBusy) {

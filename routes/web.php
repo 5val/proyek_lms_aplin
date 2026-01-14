@@ -10,6 +10,8 @@ use App\Http\Controllers\GeminiController;
 Route::post('/ask-gemini', [GeminiController::class, 'ask']);
 Route::get('/', [MainController::class, 'index'])->name('login');
 Route::post('/', [MainController::class, 'handleLogin']);
+Route::get('/reset-password', [MainController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [MainController::class, 'handleReset'])->name('password.reset.submit');
 Route::get('/register', [MainController::class, 'register']);
 Route::get('/home', function () {
    return view('home');

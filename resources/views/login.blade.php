@@ -120,10 +120,16 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                <a href="{{ route('password.reset') }}" class="btn btn-outline-light w-100 mt-2">Reset Password</a>
 
                 @if (session('error'))
                     <div class="alert alert-danger mt-3 mb-0">
                         {{ session('error') }}
+                    </div>
+                @endif
+                @if (session('success'))
+                    <div class="alert alert-success mt-3 mb-0">
+                        {{ session('success') }}
                     </div>
                 @endif
 

@@ -751,18 +751,31 @@ public function hlm_detail_tugas($id_tugas)
     public function editattendance(Request $request) {
       $id_siswa = $request->input('id_siswa');
       $id_pertemuan = $request->input('id_pertemuan');
-      $status = $request->input('status');
-      if ($status == "true") {
-         Attendance::create([
-            'ID_SISWA' => $id_siswa,
-            'ID_PERTEMUAN' => $id_pertemuan
-         ]);
-         $message = 'Absensi ditambah';
-      } else {
+      $statusInput = strtolower((string) $request->input('status', 'hadir'));
+
+      $allowedStatuses = ['hadir', 'izin', 'sakit', 'alpa'];
+      $removeSignals = ['false', 'remove', 'hapus'];
+
+      if (in_array($statusInput, $removeSignals, true)) {
          Attendance::where([['ID_SISWA', $id_siswa], ['ID_PERTEMUAN', $id_pertemuan]])->delete();
-         $message = 'Absensi dihapus.';
+         return response()->json(['message' => 'Absensi dihapus.']);
       }
-      return response()->json(['message' => $message]);
+
+      $normalizedStatus = in_array($statusInput, $allowedStatuses, true)
+         ? ucfirst($statusInput)
+         : 'Hadir';
+
+      Attendance::updateOrCreate(
+         [
+            'ID_SISWA' => $id_siswa,
+            'ID_PERTEMUAN' => $id_pertemuan,
+         ],
+         [
+            'STATUS' => $normalizedStatus,
+         ]
+      );
+
+      return response()->json(['message' => 'Absensi diperbarui.']);
    }
     public function upload_nilai(Request $request) {
       $id_mata_pelajaran = $request->query('id_mata_pelajaran');
