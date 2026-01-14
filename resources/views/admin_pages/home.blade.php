@@ -56,7 +56,7 @@
     <h5>Pengumuman Terbaru</h5>
     <div>
     <?php foreach ($listPengumuman as $pengumuman):?>
-    <div class="bg-white shadow-sm rounded p-3 mb-3">
+      <div class="announcement-card p-3 mb-3">
       <h5 class="fw-bold"><?= $pengumuman->Judul?></h5>
       <p><?= $pengumuman->Deskripsi?></p>
     </div>

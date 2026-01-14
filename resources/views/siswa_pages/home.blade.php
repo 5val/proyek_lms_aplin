@@ -7,7 +7,7 @@
           <!-- Pelajaran Siswa -->
           <h5 class="mt-4">Pelajaran</h5>
           <button class="toggle-btn" id="toggleBtn">Tampilkan Semua Pelajaran</button>
-          
+
           <div class="scroll-box mb-4">
               <?php $counter = 0; // Inisialisasi counter untuk menghitung jumlah mata pelajaran ?>
               <?php foreach($matapelajaran as $m): ?>
@@ -100,12 +100,12 @@
 
           <!-- Pengumuman -->
           <h5>Pengumuman</h5>
-          <?php foreach ($pengumuman as $p): ?>
-          <div class="bg-white shadow-sm rounded p-3 mb-3">
-            <h6 class="fw-bold">{{ $p->Judul }}</h6>
-            <p>{{ $p->Deskripsi }}</p>
-          </div>
-          <?php endforeach; ?>
+                    <?php foreach ($pengumuman as $p): ?>
+                    <div class="announcement-card mb-3">
+                        <h6 class="fw-bold">{{ $p->Judul }}</h6>
+                        <p>{{ $p->Deskripsi }}</p>
+                    </div>
+                    <?php endforeach; ?>
 
           <!-- Timetable -->
           <h5>Jadwal Pelajaran (Senin - Jumat)</h5>
@@ -173,7 +173,7 @@
                 </tr> -->
               </tbody>
             </table>
-            
+
 @endsection
 
 @section('custom-scripts')
@@ -181,7 +181,7 @@
    document.getElementById('toggleBtn').addEventListener('click', function() {
       const hiddenCards = document.querySelectorAll('.hidden-card');
       const btn = document.getElementById('toggleBtn');
-      
+
       hiddenCards.forEach(card => {
           if (card.style.display === 'none') {
               card.style.display = 'block'; // Mengubah display menjadi block

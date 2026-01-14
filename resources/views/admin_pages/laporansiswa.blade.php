@@ -6,34 +6,43 @@
     </div>
     <div>
     <br>
-    <h4 style="text-align: center;">Laporan Siswa</h4><br>
-    <select name="" id="select_periode">
-      <?php foreach($all_periode as $item):?>
-        <option value="<?=$item->ID_PERIODE?>"{{ $item == $periode? 'selected':'' }}><?=$item->PERIODE?></option>
-      <?php endforeach;?>
-    </select>
-    <table class="table table-bordered align-middle" id="siswaTable">
-      <thead>
-      <tr class="thead" style="font-weight: bold; background-color: #608BC1;">
-        <td>ID Siswa</td>
-        <td>Nama Siswa</td>
-        <td>Action</td>
-      </tr>
-      </thead>
-      <tbody>
-        <?php foreach($all_siswa as $siswa): ?>
+    <div class="average-card-custom">
+      <h4 class="average-card-title text-center">Laporan Siswa</h4>
+      <div class="mb-3">
+        <label for="select_periode" class="form-label">Pilih Periode:</label>
+        <select name="" id="select_periode" class="form-select" style="max-width: 260px;">
+          <?php foreach($all_periode as $item):?>
+            <option value="<?=$item->ID_PERIODE?>"{{ $item == $periode? 'selected':'' }}><?=$item->PERIODE?></option>
+          <?php endforeach;?>
+        </select>
+      </div>
+
+      <div class="table-responsive-custom mt-3">
+        <table class="average-table table-bordered table-lg" id="siswaTable">
+          <thead class="table-header-custom">
           <tr>
-            <td><?= $siswa->ID_SISWA?></td>
-            <td><?= $siswa->NAMA_SISWA?></td>
-            <td>
-              <a href="{{ route('admin.report.siswa', ['id_periode' => $periode->ID_PERIODE, "id_siswa" => $siswa->ID_SISWA]) }}" class="btn btn-primary">
-                Report
-              </a>
-            </td>
+            <th>ID Siswa</th>
+            <th>Nama Siswa</th>
+            <th>Action</th>
           </tr>
-        <?php endforeach;?>
-      </tbody>
-    </table>
+          </thead>
+          <tbody>
+            <?php foreach($all_siswa as $siswa): ?>
+              <tr>
+                <td><?= $siswa->ID_SISWA?></td>
+                <td><?= $siswa->NAMA_SISWA?></td>
+                <td>
+                  <a href="{{ route('admin.report.siswa', ['id_periode' => $periode->ID_PERIODE, "id_siswa" => $siswa->ID_SISWA]) }}" class="btn btn-outline-primary btn-sm" title="Report">
+                    <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
+                    <span class="visually-hidden">Report</span>
+                  </a>
+                </td>
+              </tr>
+            <?php endforeach;?>
+          </tbody>
+        </table>
+      </div>
+    </div>
     </div>
   </div>
   <script>
@@ -66,8 +75,8 @@
           }
         })
       })
-      
+
     })
-    
+
   </script>
 @endsection

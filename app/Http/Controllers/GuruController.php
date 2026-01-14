@@ -232,7 +232,7 @@ class GuruController extends Controller
         $tugas->DESKRIPSI_TUGAS = $validatedData['DESKRIPSI_TUGAS'];
         $tugas->DEADLINE_TUGAS = $validatedData['DEADLINE_TUGAS'];
         $tugas->save();
-        
+
         return redirect(url('/guru/detail_pelajaran/' . base64_encode($request->ID_MATA_PELAJARAN)));
     }
     public function hlm_about()
@@ -243,7 +243,7 @@ class GuruController extends Controller
             return response()->json(['message' => 'Guru tidak ditemukan.'], 404);
         }
         $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->first();
-        $waliKelas = DetailKelas::find($kelas->ID_DETAIL_KELAS);  
+        $waliKelas = DetailKelas::find($kelas->ID_DETAIL_KELAS);
         return view('guru_pages.hlm_about', [
           'guru' => $guru,
           'wali_kelas' => $waliKelas
@@ -320,7 +320,7 @@ public function hlm_detail_tugas($id_tugas)
       ]);
       return redirect($request->input('redirect_to'));
     }
- 
+
     public function hlm_edit_about()
     {
        $guru = Guru::find(session('userActive')->ID_GURU);
@@ -366,7 +366,7 @@ public function hlm_detail_tugas($id_tugas)
         return redirect('/guru/hlm_about')->with('success', 'Biodata berhasil diperbarui');
     }
     public function hlm_jadwal()
-{ 
+{
     $periode = Periode::orderBy('ID_PERIODE', 'desc')->first();
 
     $allMataPelajaran = DB::table('mata_pelajaran as mp')
@@ -445,7 +445,23 @@ public function hlm_detail_tugas($id_tugas)
             ->groupBy('t.nama_tugas')
             ->select('t.nama_tugas', DB::raw('AVG(st.nilai_tugas) as rata2'))
             ->get();
-         return view('guru_pages.hlm_laporan_tugas', ['kelas' => $kelas, 'kelas_periode' => $kelas_periode, 'periode' => $periode, 'list_nilai' => $listNilai, 'rata2' => $rata2, 'allPeriode'=>$allPeriode]);
+         $rata2SiswaTugas = DB::table('submission_tugas as st')
+            ->join('tugas as t', 'st.id_tugas', '=', 't.id_tugas')
+            ->join('siswa as s', 'st.id_siswa', '=', 's.id_siswa')
+            ->join('mata_pelajaran as mp', 't.id_mata_pelajaran', '=', 'mp.id_mata_pelajaran')
+            ->where('mp.id_kelas', '=', $kelas->ID_KELAS)
+            ->groupBy('s.nama_siswa')
+            ->select('s.nama_siswa', DB::raw('AVG(st.nilai_tugas) as rata2'))
+            ->get();
+         return view('guru_pages.hlm_laporan_tugas', [
+            'kelas' => $kelas,
+            'kelas_periode' => $kelas_periode,
+            'periode' => $periode,
+            'list_nilai' => $listNilai,
+            'rata2' => $rata2,
+            'rata2SiswaTugas' => $rata2SiswaTugas,
+            'allPeriode' => $allPeriode,
+         ]);
       } else {
          return view('guru_pages.hlm_laporan_tugas', ['kelas' => null , 'kelas_periode' => $kelas_periode, 'periode' => $periode, 'allPeriode'=>$allPeriode]);
       }
@@ -476,7 +492,22 @@ public function hlm_detail_tugas($id_tugas)
             ->groupBy('p.nama_pelajaran')
             ->select('p.nama_pelajaran', DB::raw('AVG(nk.nilai_akhir) as rata2'))
             ->get();
-         return view('guru_pages.hlm_laporan_ujian', ['kelas' => $kelas, 'kelas_periode' => $kelas_periode, 'periode' => $periode, 'list_nilai' => $listNilai, 'rata2' => $rata2 , 'allPeriode'=>$allPeriode]);
+         $rata2Siswa = DB::table('nilai_kelas as nk')
+            ->join('mata_pelajaran as mp', 'nk.id_mata_pelajaran', '=', 'mp.id_mata_pelajaran')
+            ->join('siswa as s', 's.id_siswa', '=', 'nk.id_siswa')
+            ->where('mp.id_kelas', '=', $kelas->ID_KELAS)
+            ->groupBy('s.nama_siswa')
+            ->select('s.nama_siswa', DB::raw('AVG(nk.nilai_akhir) as rata2'))
+            ->get();
+         return view('guru_pages.hlm_laporan_ujian', [
+            'kelas' => $kelas,
+            'kelas_periode' => $kelas_periode,
+            'periode' => $periode,
+            'list_nilai' => $listNilai,
+            'rata2' => $rata2,
+            'rata2Siswa' => $rata2Siswa,
+            'allPeriode' => $allPeriode,
+         ]);
       } else {
          return view('guru_pages.hlm_laporan_ujian', ['kelas' => null , 'kelas_periode' => $kelas_periode, 'periode' => $periode, 'allPeriode'=>$allPeriode]);
       }
@@ -546,7 +577,7 @@ public function hlm_detail_tugas($id_tugas)
             'Deskripsi' => 'required',
         ]);
         $pengumuman = Pengumuman::create($validatedData);
-         
+
         return redirect(url('/guru/detail_pelajaran/' . base64_encode($request->ID_MATA_PELAJARAN)));
     }
 
@@ -560,7 +591,7 @@ public function hlm_detail_tugas($id_tugas)
       $pertemuan = Pertemuan::where('ID_MATA_PELAJARAN', '=', $id_mata_pelajaran)->get();
       return view('guru_pages.tambahpertemuan', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'pertemuan' => $pertemuan]);
     }
-    
+
      public function postpertemuan(Request $request)
     {
 
@@ -616,7 +647,7 @@ public function hlm_detail_tugas($id_tugas)
          }
 
         $materi = Materi::create($validatedData);
-      
+
         return redirect(url('/guru/detail_pelajaran/' . base64_encode($request->ID_MATA_PELAJARAN)));
     }
 
@@ -655,13 +686,13 @@ public function hlm_detail_tugas($id_tugas)
          $validatedData['FILE_MATERI'] = $filename;
       }
       $materi->NAMA_MATERI = $validatedData['NAMA_MATERI'];
-      $materi->DESKRIPSI_MATERI = $validatedData['DESKRIPSI_MATERI'];     
+      $materi->DESKRIPSI_MATERI = $validatedData['DESKRIPSI_MATERI'];
       if (isset($validatedData['FILE_MATERI'])) {
          $materi->FILE_MATERI = $validatedData['FILE_MATERI'];
       }
       $materi->save();
       // $materi->update($validatedData);
-   
+
       return redirect(url('/guru/detail_pelajaran/' . base64_encode($request->ID_MATA_PELAJARAN)));
     }
     public function posttugas(Request $request)
@@ -682,7 +713,7 @@ public function hlm_detail_tugas($id_tugas)
         ]);
 
         $tugas = Tugas::create($validatedData);
-      
+
         return redirect(url('/guru/detail_pelajaran/' . base64_encode($request->ID_MATA_PELAJARAN)));
     }
     public function uploadtugas($id_mata_pelajaran)
@@ -705,7 +736,7 @@ public function hlm_detail_tugas($id_tugas)
       $allPeriode = Periode::all();
       $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->where('ID_PERIODE', '=', $periode->ID_PERIODE)->first();
       $kelas_periode = Kelas::with('periode')->where('ID_GURU', session('userActive')->ID_GURU)->get();
-      
+
       if($kelas != null) {
          $waliKelas = DetailKelas::find($kelas->ID_DETAIL_KELAS);
          $jumlah = EnrollmentKelas::where('ID_KELAS', '=', $kelas->ID_KELAS)->count();

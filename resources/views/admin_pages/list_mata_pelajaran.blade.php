@@ -29,10 +29,19 @@
                         <td class="hari_pelajaran"><?= $pelajaran->HARI_PELAJARAN ?></td>
                         <td class="jam_pelajaran"><?= $pelajaran->JAM_PELAJARAN?></td>
                         <td>
-                            <div class="d-grid gap-1">
-                                <button class="btn btn-primary btn-sm detail-mapel">List Pertemuan</button>
-                                <button class="btn btn-primary btn-sm edit-mapel">Edit</button>
-                                <button class="btn btn-danger btn-sm delete-mapel">Delete</button>
+                            <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                <button class="btn btn-primary btn-sm detail-mapel" title="List Pertemuan">
+                                    <i class="bi bi-list-task" aria-hidden="true"></i>
+                                    <span class="visually-hidden">List Pertemuan</span>
+                                </button>
+                                <button class="btn btn-warning btn-sm edit-mapel" title="Edit">
+                                    <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                    <span class="visually-hidden">Edit</span>
+                                </button>
+                                <button class="btn btn-danger btn-sm text-white delete-mapel" title="Delete">
+                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                    <span class="visually-hidden">Delete</span>
+                                </button>
                             </div>
                         </td>
                     </tr>

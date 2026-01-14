@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use Session;
 use Str;
@@ -325,6 +326,25 @@ class AdminController extends Controller
         return redirect()->route('list_pelajaran')->with('success', 'Berhasil update!');
 
     }
+
+    public function update_pelajaran(Request $request, $id)
+    {
+        $pelajaran = Pelajaran::findOrFail($id);
+
+        $request->validate([
+            'name' => [
+                'required',
+                Rule::unique('pelajaran', 'NAMA_PELAJARAN')->ignore($pelajaran->ID_PELAJARAN, 'ID_PELAJARAN'),
+            ],
+            'status' => 'required|in:Active,Inactive',
+        ]);
+
+        $pelajaran->NAMA_PELAJARAN = $request->input('name');
+        $pelajaran->STATUS = $request->input('status');
+        $pelajaran->save();
+
+        return redirect()->route('list_pelajaran')->with('success', 'Pelajaran berhasil diperbarui');
+    }
     // ========================================= Periode ===========================================
     public function list_periode()
     {
@@ -357,6 +377,23 @@ class AdminController extends Controller
             return redirect()->route('list_periode')->with('success', 'Berhasil delete periode');
         }
         return redirect()->route('list_periode')->with('error', value: 'Sudah ada kelas dalam periode');
+    }
+
+    public function update_periode(Request $request, $id_periode)
+    {
+        $periode = Periode::findOrFail($id_periode);
+
+        $request->validate([
+            'periode' => [
+                'required',
+                Rule::unique('periode', 'PERIODE')->ignore($periode->ID_PERIODE, 'ID_PERIODE'),
+            ],
+        ]);
+
+        $periode->PERIODE = $request->input('periode');
+        $periode->save();
+
+        return redirect()->route('list_periode')->with('success', 'Periode berhasil diperbarui');
     }
 
     // ========================================= Ruangan ============================================
@@ -886,15 +923,13 @@ class AdminController extends Controller
         // Jalankan validasi
         $validator->validate();
 
-        // Perbarui record MataPelajaran
-        $mataPelajaran->delete();
-        MataPelajaran::create([
-            'ID_GURU' => $request->pengajar,
-            'ID_KELAS' => $request->kelas,
-            'ID_PELAJARAN' => $request->pelajaran,
-            'HARI_PELAJARAN' => $request->hari,
-            'JAM_PELAJARAN' => $request->waktu
-        ]);
+        // Perbarui record MataPelajaran tanpa menghapus data terkait
+        $mataPelajaran->ID_PELAJARAN = $request->pelajaran;
+        $mataPelajaran->ID_GURU = $request->pengajar;
+        $mataPelajaran->ID_KELAS = $request->kelas;
+        $mataPelajaran->HARI_PELAJARAN = $request->hari;
+        $mataPelajaran->JAM_PELAJARAN = $request->waktu;
+        $mataPelajaran->save();
 
         // Redirect kembali ke daftar mata pelajaran untuk kelas yang diperbarui
         return redirect()->route('list_mata_pelajaran', ['id_kelas' => $request->kelas])->with('success', 'Jadwal berhasil diperbarui.');

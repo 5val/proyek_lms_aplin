@@ -85,11 +85,13 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
    Route::get('/list_pelajaran/{id_pelajaran}', [AdminController::class, 'hapuspelajaran'])->name('hapuspelajaran');
    Route::get('/tambah_pelajaran', [AdminController::class, 'tambah_pelajaran']);
    Route::post('/tambah_pelajaran', [AdminController::class, 'postpelajaran']);
+   Route::put('/update_pelajaran/{id_pelajaran}', [AdminController::class, 'update_pelajaran'])->name('update_pelajaran');
 
    // ===================================== Periode ===============================================
    Route::get('/list_periode', [AdminController::class, 'list_periode'])->name('list_periode');
    Route::get('/add_periode', [AdminController::class, 'add_periode']);
    Route::get('/delete_periode/{id_periode}', [AdminController::class, 'delete_periode']);
+   Route::put('/update_periode/{id_periode}', [AdminController::class, 'update_periode'])->name('update_periode');
 
    // ===================================== Laporan ===============================================
    Route::get('/laporanguru', [AdminController::class, 'laporanguru']);
@@ -196,7 +198,7 @@ Route::delete('/deletetugas/{id_tugas}', [GuruController::class, 'deletetugas'])
       ->name('guru.edittugas');
    Route::put('/updatetugas/{id_tugas}', [GuruController::class, 'updatetugas'])->where('id_tugas', '.*')
       ->name('guru.updatetugas');
-   
+
    Route::get('/hlm_about', [GuruController::class, 'hlm_about']);
    Route::get('/hlm_detail_pengumuman', [GuruController::class, 'hlm_detail_pengumuman']);
    Route::get('/edit_nilai_tugas/{id_submission}', [GuruController::class, 'edit_nilai_tugas'])
