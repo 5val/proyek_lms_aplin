@@ -7,7 +7,7 @@
         <div class="d-flex align-items-center gap-3 flex-wrap">
           <h3 class="average-card-title mb-0">List Kelas</h3>
           <div class="d-flex align-items-center gap-2">
-            <label for="semesterSelect" class="text-muted small mb-0">Periode</label>
+            <label for="semesterSelect" class="text-light small mb-0">Periode</label>
             <select class="form-select form-select-sm bg-dark text-light border-secondary" id="semesterSelect" style="width: 220px;">
               <?php foreach ($semesters as $semester): ?>
               <option value="{{ $semester->ID_PERIODE }}" <?= $semester->ID_PERIODE == $latestPeriode ? 'selected' : '' ?>>
@@ -26,17 +26,17 @@
 
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
         <div class="d-flex align-items-center gap-2">
-          <span class="text-muted small">Show</span>
+          <span class="text-light small">Show</span>
           <select id="pageSizeSelect" class="form-select form-select-sm bg-dark text-light border-secondary" style="width: 80px;">
             <option value="5">5</option>
             <option value="10" selected>10</option>
             <option value="25">25</option>
             <option value="50">50</option>
           </select>
-          <span class="text-muted small">entries</span>
+          <span class="text-light small">entries</span>
         </div>
         <div class="d-flex align-items-center gap-2">
-          <label for="tableSearch" class="text-muted small mb-0">Search:</label>
+          <label for="tableSearch" class="text-light small mb-0">Search:</label>
           <input type="text" class="form-control form-control-sm bg-dark text-light border-secondary" id="tableSearch" placeholder="Cari kelas..." style="width: 240px;">
         </div>
       </div>
@@ -54,14 +54,14 @@
           </thead>
           <tbody>
             <tr>
-              <td colspan="5" class="text-center text-muted py-4">Memuat data...</td>
+              <td colspan="5" class="text-center text-light py-4">Memuat data...</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
-        <small class="text-muted" id="tableSummary">Showing 0 to 0 of 0 entries</small>
+        <small class="text-light" id="tableSummary">Showing 0 to 0 of 0 entries</small>
         <div class="d-flex gap-2">
           <button class="btn btn-secondary btn-sm" id="prevPage">Previous</button>
           <button class="btn btn-secondary btn-sm" id="nextPage">Next</button>
@@ -98,7 +98,7 @@
         const pageItems = filtered.slice(startIndex, startIndex + pageSize);
 
         if (pageItems.length === 0) {
-          $tableBody.html('<tr><td colspan="5" class="text-center text-muted py-4">Tidak ada data kelas.</td></tr>');
+          $tableBody.html('<tr><td colspan="5" class="text-center text-light py-4">Tidak ada data kelas.</td></tr>');
         } else {
           const rows = pageItems.map((kelas) => `
               <tr>
@@ -137,7 +137,7 @@
       }
 
       function loadKelas(periodeId) {
-        $tableBody.html('<tr><td colspan="5" class="text-center text-muted py-4">Memuat data...</td></tr>');
+        $tableBody.html('<tr><td colspan="5" class="text-center text-light py-4">Memuat data...</td></tr>');
 
         $.ajax({
           url: '/admin/get_classes/' + periodeId,

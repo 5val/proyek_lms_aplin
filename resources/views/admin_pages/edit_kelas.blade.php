@@ -38,6 +38,12 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="kapasitas" class="form-label fw-bold">Kapasitas (jumlah siswa)</label>
+                        <input type="number" min="1" class="form-control" id="kapasitas" name="kapasitas"
+                            value="<?= $kelas->KAPASITAS ?? '' ?>" required>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="waliKelas" class="form-label fw-bold">Wali Kelas</label>
                         <select class="form-select" id="waliKelas" name="wali_kelas">
                             <option selected value="<?= $kelas->wali->ID_GURU ?>">

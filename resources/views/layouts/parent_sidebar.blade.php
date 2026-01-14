@@ -11,6 +11,7 @@
   </div>
   <ul class="nav flex-column">
     <li class="nav-item"><a class="nav-link {{ Request::is('orangtua') || Request::is('orangtua/') ? 'active' : '' }}" href="/orangtua"><i class="bi bi-house-door me-2"></i>Beranda</a></li>
+    <li class="nav-item"><a class="nav-link {{ Request::is('orangtua/tagihan*') ? 'active' : '' }}" href="/orangtua/tagihan"><i class="bi bi-credit-card me-2"></i>Tagihan</a></li>
     <li class="nav-item"><a class="nav-link" href="/orangtua#absensi"><i class="bi bi-clipboard-check me-2"></i>Absensi</a></li>
     <li class="nav-item"><a class="nav-link" href="/orangtua#jadwal"><i class="bi bi-calendar-week me-2"></i>Jadwal</a></li>
     <li class="nav-item"><a class="nav-link" href="/orangtua#tugas"><i class="bi bi-check2-square me-2"></i>Tugas</a></li>

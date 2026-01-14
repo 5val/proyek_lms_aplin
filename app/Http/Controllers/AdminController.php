@@ -747,6 +747,7 @@ class AdminController extends Controller
         // Update the class details
         $kelas->ID_DETAIL_KELAS = $request->input('ruangan');
         $kelas->ID_GURU = $request->input('wali_kelas');
+        $kelas->KAPASITAS = $request->input('kapasitas', 0);
 
         $kelas->save();
 
@@ -760,6 +761,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'ruangan' => 'required|exists:detail_kelas,ID_DETAIL_KELAS', // Adjust as needed
             'wali_kelas' => 'required|exists:guru,ID_GURU', // Adjust as needed
+            'kapasitas' => 'required|integer|min:1',
         ]);
 
         // Create new class
@@ -767,6 +769,7 @@ class AdminController extends Controller
             'ID_DETAIL_KELAS' => $validated['ruangan'],
             'ID_GURU' => $validated['wali_kelas'],
             'ID_PERIODE' => $currPeriode,
+            'KAPASITAS' => $validated['kapasitas'],
         ]);
 
         return redirect()->route('list_kelas')->with('success', 'Class added successfully.');
@@ -980,17 +983,19 @@ class AdminController extends Controller
     // ================================== Tambah Siswa =================================================
     public function list_tambah_siswa_ke_kelas($id_kelas)
     {
-        $currPeriode = Kelas::find($id_kelas)->ID_PERIODE;
-        $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with('siswa')->get();
+        $kelasDetail = Kelas::with('periode')->findOrFail($id_kelas);
+        $currPeriode = $kelasDetail->ID_PERIODE;
+        $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with(['siswa', 'kelas'])->get();
+        $enrolledCount = $kelasList->count();
         $siswaList = Siswa::whereDoesntHave('kelass', function ($query) use ($currPeriode) {
             $query->where('ID_PERIODE', $currPeriode);
         })->where('STATUS_SISWA', 'Active')->get();
         // $siswaList = EnrollmentKelas::whereNotIn('ID_KELAS', [$id_kelas])->with(['siswa'])->get();
-        return view('admin_pages.list_tambah_siswa_ke_kelas', compact('siswaList', 'kelasList', 'id_kelas'));
+        return view('admin_pages.list_tambah_siswa_ke_kelas', compact('siswaList', 'kelasList', 'id_kelas', 'kelasDetail', 'enrolledCount'));
     }
     public function get_list_siswa_di_kelas($id_kelas)
     {
-        $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with(['siswa'])->get();
+        $kelasList = EnrollmentKelas::where('ID_KELAS', $id_kelas)->with(['siswa', 'kelas'])->get();
         return response()->json($kelasList);
     }
     public function get_list_siswa_available($id_kelas)
@@ -1005,6 +1010,15 @@ class AdminController extends Controller
     {
         $siswaId = $request->input('idSiswa');
         $kelasId = $request->input('idKelas');
+        $kelas = Kelas::findOrFail($kelasId);
+        $kapasitas = (int)($kelas->KAPASITAS ?? 0);
+        $enrolledCount = EnrollmentKelas::where('ID_KELAS', $kelasId)->count();
+        if ($kapasitas > 0 && $enrolledCount >= $kapasitas) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kapasitas kelas sudah penuh'
+            ], 422);
+        }
         EnrollmentKelas::create([
             'ID_KELAS' => $kelasId,
             'ID_SISWA' => $siswaId,

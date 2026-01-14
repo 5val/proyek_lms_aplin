@@ -263,6 +263,8 @@ Route::delete('/deletetugas/{id_tugas}', [GuruController::class, 'deletetugas'])
 // Portal Orang Tua (menggunakan sesi siswa, ROLE Parent)
 Route::middleware(['siswa.auth'])->prefix('orangtua')->group(function () {
    Route::get('/', [ParentController::class, 'index'])->name('orangtua.dashboard');
+   Route::get('/tagihan', [ParentController::class, 'fees'])->name('orangtua.fees');
+   Route::post('/tagihan/{fee}/pay', [ParentController::class, 'payFee'])->name('orangtua.fee.pay');
 });
 
 

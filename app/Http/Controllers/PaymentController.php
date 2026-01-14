@@ -47,7 +47,7 @@ class PaymentController extends Controller
         $statusMap = [
             'capture' => 'Paid',
             'settlement' => 'Paid',
-            'pending' => 'Unpaid',
+            'pending' => 'Pending',
             'deny' => 'Failed',
             'expire' => 'Overdue',
             'cancel' => 'Cancelled',

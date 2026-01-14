@@ -10,6 +10,24 @@
         </div>
     </div>
 
+    <form method="GET" class="average-card-custom p-3 mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label text-light">Filter Periode</label>
+                <select name="periode" class="form-select">
+                    <option value="all">Semua Periode</option>
+                    @foreach($periodes as $p)
+                        <option value="{{ $p->ID_PERIODE }}" {{ ($selectedPeriode ?? 'all') == $p->ID_PERIODE ? 'selected' : '' }}>{{ $p->PERIODE }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button class="btn btn-primary w-100" type="submit">Terapkan</button>
+                <a class="btn btn-outline-secondary w-100" href="{{ route('admin.finance.fees') }}">Reset</a>
+            </div>
+        </div>
+    </form>
+
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
@@ -26,27 +44,91 @@
     <div class="row g-3 mb-3">
         <div class="col-md-4">
             <div class="average-card-custom p-3 d-flex justify-content-between align-items-center">
-                <span class="text-muted">Sudah bayar</span>
+                <span class="text-light">Sudah bayar</span>
                 <span class="fw-bold text-success">{{ $paidCount }}</span>
             </div>
         </div>
         <div class="col-md-4">
             <div class="average-card-custom p-3 d-flex justify-content-between align-items-center">
-                <span class="text-muted">Belum bayar</span>
+                <span class="text-light">Belum bayar</span>
                 <span class="fw-bold text-danger">{{ $unpaidCount }}</span>
             </div>
         </div>
         <div class="col-md-4">
             <div class="average-card-custom p-3 d-flex justify-content-between align-items-center">
-                <span class="text-muted">Terlambat</span>
+                <span class="text-light">Terlambat</span>
                 <span class="fw-bold text-warning">{{ $overdueCount }}</span>
+            </div>
+        </div>
+    </div>
+
+    @php
+        $feesByCategory = $fees->groupBy(fn($f) => $f->component->category->NAME ?? 'Tanpa Kategori');
+        $feesByStatus = $fees->groupBy('STATUS');
+    @endphp
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <div class="average-card-custom p-3">
+                <h5 class="text-light mb-3">Ringkasan per Kategori</h5>
+                <div class="table-responsive-custom">
+                    <table class="average-table table-bordered align-middle mb-0 text-light no-data-table">
+                        <thead class="table-header-custom">
+                            <tr>
+                                <th>Kategori</th>
+                                <th>Jumlah Tagihan</th>
+                                <th>Total Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-light">
+                            @forelse($feesByCategory as $cat => $items)
+                                @php($totalCat = $items->sum('AMOUNT'))
+                                <tr>
+                                    <td>{{ $cat }}</td>
+                                    <td>{{ $items->count() }}</td>
+                                    <td>Rp {{ number_format($totalCat, 0, ',', '.') }}</td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="3" class="text-light">Belum ada data</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="average-card-custom p-3">
+                <h5 class="text-light mb-3">Ringkasan per Status</h5>
+                <div class="table-responsive-custom">
+                    <table class="average-table table-bordered align-middle mb-0 text-light no-data-table">
+                        <thead class="table-header-custom">
+                            <tr>
+                                <th>Status</th>
+                                <th>Jumlah Tagihan</th>
+                                <th>Total Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-light">
+                            @forelse($feesByStatus as $status => $items)
+                                @php($totalStatus = $items->sum('AMOUNT'))
+                                <tr>
+                                    <td>{{ $status }}</td>
+                                    <td>{{ $items->count() }}</td>
+                                    <td>Rp {{ number_format($totalStatus, 0, ',', '.') }}</td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="3" class="text-light">Belum ada data</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="average-card-custom">
         <div class="table-responsive-custom">
-            <table class="average-table table-bordered table-lg align-middle mb-0 no-data-table">
+            <table class="average-table table-bordered table-lg align-middle mb-0 no-data-table text-light">
                 <thead class="table-header-custom">
                     <tr>
                         <th>Invoice</th>
@@ -59,42 +141,41 @@
                         <th>Tindakan</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($fees as $f)
-                    <tr>
-                        <td>{{ $f->INVOICE_CODE }}</td>
-                        <td>{{ $f->siswa->NAMA_SISWA ?? '-' }}</td>
-                        <td>{{ $f->periode->PERIODE ?? '-' }}</td>
-                        <td>{{ $f->component->NAME ?? '-' }}</td>
-                        <td>Rp {{ number_format($f->AMOUNT, 0, ',', '.') }}</td>
-                        <td>{{ $f->DUE_DATE }}</td>
-                        <td>
-                            @php
-                                $badgeClass = 'bg-secondary';
-                                if ($f->STATUS === 'Paid') $badgeClass = 'bg-success';
-                                elseif ($f->STATUS === 'Unpaid') $badgeClass = 'bg-danger';
-                                elseif ($f->STATUS === 'Overdue') $badgeClass = 'bg-warning text-dark';
-                            @endphp
-                            <span class="badge {{ $badgeClass }}">{{ $f->STATUS }}</span>
-                        </td>
-                        <td class="d-flex gap-1">
-                            <form method="POST" action="{{ route('admin.finance.fees.status', $f->ID_STUDENT_FEE) }}">
-                                @csrf
-                                <input type="hidden" name="status" value="Paid">
-                                <button class="btn btn-sm btn-success" type="submit">Tandai Lunas</button>
-                            </form>
-                            <form method="POST" action="{{ route('admin.finance.fees.status', $f->ID_STUDENT_FEE) }}">
-                                @csrf
-                                <input type="hidden" name="status" value="Unpaid">
-                                <button class="btn btn-sm btn-outline-secondary" type="submit">Belum</button>
-                            </form>
-                        </td>
-                    </tr>
-                    @endforeach
+                <tbody class="text-light">
+                    @forelse($fees as $f)
+                        <tr>
+                            <td>{{ $f->INVOICE_CODE }}</td>
+                            <td>{{ $f->siswa->NAMA_SISWA ?? '-' }}</td>
+                            <td>{{ $f->periode->PERIODE ?? '-' }}</td>
+                            <td>{{ $f->component->NAME ?? '-' }}</td>
+                            <td>Rp {{ number_format($f->AMOUNT, 0, ',', '.') }}</td>
+                            <td>{{ $f->DUE_DATE }}</td>
+                            <td>
+                                <span class="badge {{ $f->STATUS === 'Paid' ? 'bg-success' : ($f->STATUS === 'Unpaid' ? 'bg-danger' : ($f->STATUS === 'Overdue' ? 'bg-warning text-dark' : 'bg-secondary')) }}">{{ $f->STATUS }}</span>
+                            </td>
+                            <td class="d-flex gap-1">
+                                <form method="POST" action="{{ route('admin.finance.fees.status', $f->ID_STUDENT_FEE) }}">
+                                    @csrf
+                                    <input type="hidden" name="status" value="Paid">
+                                    <button class="btn btn-sm btn-success" type="submit">Tandai Lunas</button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.finance.fees.status', $f->ID_STUDENT_FEE) }}">
+                                    @csrf
+                                    <input type="hidden" name="status" value="Unpaid">
+                                    <button class="btn btn-sm btn-outline-secondary" type="submit">Belum</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center text-light">Belum ada tagihan pada periode ini</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
     </div>
+
 </div>
 
 <!-- Modal Buat Tagihan -->

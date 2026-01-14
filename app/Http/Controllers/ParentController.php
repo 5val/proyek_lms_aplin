@@ -5,14 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Siswa;
 use App\Models\Pengumuman;
+use App\Models\StudentFee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 class ParentController extends Controller
 {
     public function index(Request $request)
     {
-        $siswa = Siswa::find(session('userActive')->ID_SISWA ?? null);
+        $user = session('userActive');
+        if (! $user || ($user->ROLE ?? null) !== 'Parent') {
+            abort(403, 'Hanya orang tua yang dapat mengakses halaman ini');
+        }
+
+        $siswa = Siswa::find($user->ID_SISWA ?? null);
         if (! $siswa) {
             abort(403, 'Siswa tidak ditemukan');
         }
@@ -79,6 +87,110 @@ class ParentController extends Controller
             'materi' => $materi,
             'attendanceStats' => $attendanceStats,
             'pengumuman' => $pengumuman,
+        ]);
+    }
+
+    public function fees(Request $request)
+    {
+        $user = session('userActive');
+        if (! $user || ($user->ROLE ?? null) !== 'Parent') {
+            abort(403, 'Hanya orang tua yang dapat mengakses tagihan');
+        }
+
+        $siswa = Siswa::find($user->ID_SISWA ?? null);
+        if (! $siswa) {
+            abort(403, 'Siswa tidak ditemukan');
+        }
+
+        $fees = StudentFee::with(['component', 'periode', 'payments' => function ($q) {
+            $q->orderByDesc('PAID_AT');
+        }])
+            ->where('ID_SISWA', $siswa->ID_SISWA)
+            ->orderByDesc('created_at')
+            ->get();
+
+        $clientKey = config('services.midtrans.client_key');
+        $isProduction = (bool) config('services.midtrans.is_production');
+
+        return view('orangtua_pages.fees', [
+            'siswa' => $siswa,
+            'fees' => $fees,
+            'clientKey' => $clientKey,
+            'isProduction' => $isProduction,
+        ]);
+    }
+
+    public function payFee(Request $request, StudentFee $fee)
+    {
+        $user = session('userActive');
+        if (! $user || ($user->ROLE ?? null) !== 'Parent') {
+            return response()->json(['message' => 'Hanya orang tua yang dapat membayar tagihan'], 403);
+        }
+
+        $siswa = Siswa::find($user->ID_SISWA ?? null);
+        if (! $siswa || $fee->ID_SISWA !== $siswa->ID_SISWA) {
+            return response()->json(['message' => 'Tagihan tidak ditemukan untuk siswa ini'], 404);
+        }
+
+        if ($fee->STATUS === 'Paid') {
+            return response()->json(['message' => 'Tagihan sudah lunas'], 400);
+        }
+
+        $serverKey = config('services.midtrans.server_key');
+        $clientKey = config('services.midtrans.client_key');
+        if (! $serverKey || ! $clientKey) {
+            return response()->json(['message' => 'Konfigurasi Midtrans belum lengkap'], 500);
+        }
+
+        $baseUrl = config('services.midtrans.is_production') ? 'https://app.midtrans.com' : 'https://app.sandbox.midtrans.com';
+        $orderId = $fee->INVOICE_CODE;
+        $grossAmount = (int) round($fee->AMOUNT);
+
+        $payload = [
+            'transaction_details' => [
+                'order_id' => $orderId,
+                'gross_amount' => $grossAmount,
+            ],
+            'customer_details' => [
+                'first_name' => $siswa->NAMA_SISWA,
+                'email' => $siswa->EMAIL_SISWA,
+                'phone' => $siswa->NO_TELPON_SISWA,
+            ],
+            'item_details' => [
+                [
+                    'id' => $fee->ID_COMPONENT,
+                    'price' => $grossAmount,
+                    'quantity' => 1,
+                    'name' => $fee->component->NAME ?? 'Tagihan SPP',
+                ],
+            ],
+            'callbacks' => [
+                'finish' => route('orangtua.fees'),
+            ],
+        ];
+
+        $response = Http::withBasicAuth($serverKey, '')
+            ->acceptJson()
+            ->post($baseUrl . '/snap/v1/transactions', $payload);
+
+        if (! $response->successful()) {
+            Log::error('Gagal membuat transaksi Midtrans', [
+                'fee_id' => $fee->ID_STUDENT_FEE,
+                'response' => $response->json(),
+            ]);
+            return response()->json(['message' => 'Gagal membuat transaksi Midtrans'], 502);
+        }
+
+        $data = $response->json();
+
+        $fee->MIDTRANS_ORDER_ID = $orderId;
+        $fee->save();
+
+        return response()->json([
+            'token' => $data['token'] ?? null,
+            'redirect_url' => $data['redirect_url'] ?? null,
+            'snap_base_url' => $baseUrl,
+            'client_key' => $clientKey,
         ]);
     }
 }

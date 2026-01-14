@@ -20,7 +20,7 @@ class Kelas extends Model
     protected $casts = [
         'ID_DETAIL_KELAS' => 'string',
     ];
-    protected $fillable = ['ID_KELAS', 'ID_DETAIL_KELAS', 'ID_GURU', 'ID_PERIODE'];
+    protected $fillable = ['ID_KELAS', 'ID_DETAIL_KELAS', 'ID_GURU', 'ID_PERIODE', 'KAPASITAS'];
 
     /**
      * Get the detailKelas that owns the Kelas.

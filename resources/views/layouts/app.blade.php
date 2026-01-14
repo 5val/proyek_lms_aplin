@@ -37,6 +37,7 @@
          $('table').not('.no-data-table').DataTable({ order: [[0, 'desc']] });
       });
    </script>
+   @stack('scripts')
 </body>
 
 </html>

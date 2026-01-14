@@ -98,17 +98,32 @@ class AdminFinanceController extends Controller
         return redirect()->route('admin.finance.components')->with('success', 'Kategori dihapus');
     }
 
-    public function listFees()
+    public function listFees(Request $request)
     {
-        $fees = StudentFee::with(['siswa', 'periode', 'component'])
-            ->orderByDesc('created_at')
-            ->limit(200)
-            ->get();
-        $components = FeeComponent::where('STATUS', 'Active')->orderBy('NAME')->with('category')->get();
         $periodes = Periode::orderByDesc('ID_PERIODE')->get();
+        $selectedPeriode = $request->query('periode');
+
+        $feesQuery = StudentFee::with(['siswa', 'periode', 'component'])
+            ->orderByDesc('created_at');
+
+        if ($selectedPeriode && $selectedPeriode !== 'all') {
+            $feesQuery->where('ID_PERIODE', $selectedPeriode);
+        }
+
+        $fees = $feesQuery->limit(200)->get();
+
+        $components = FeeComponent::where('STATUS', 'Active')->orderBy('NAME')->with('category')->get();
         $kelass = Kelas::with('detailKelas')->orderBy('ID_KELAS')->get();
         $siswas = Siswa::orderBy('NAMA_SISWA')->get();
-        return view('admin_pages.finance_fees', compact('fees', 'components', 'periodes', 'kelass', 'siswas'));
+
+        return view('admin_pages.finance_fees', [
+            'fees' => $fees,
+            'components' => $components,
+            'periodes' => $periodes,
+            'kelass' => $kelass,
+            'siswas' => $siswas,
+            'selectedPeriode' => $selectedPeriode,
+        ]);
     }
 
     public function storeFeeBatch(Request $request)
@@ -167,7 +182,7 @@ class AdminFinanceController extends Controller
     public function updateFeeStatus(Request $request, $id)
     {
         $data = $request->validate([
-            'status' => ['required', Rule::in(['Paid', 'Unpaid', 'Overdue', 'Cancelled'])],
+            'status' => ['required', Rule::in(['Paid', 'Pending', 'Unpaid', 'Overdue', 'Cancelled'])],
         ]);
 
         $fee = StudentFee::findOrFail($id);

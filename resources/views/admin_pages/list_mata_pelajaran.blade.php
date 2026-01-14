@@ -1,53 +1,53 @@
 @extends('layouts.admin_app')
 
 @section('admin_content')
-    <div class="container mt-2">
+    <div class="container mt-2 text-light">
         <a href="/admin/list_kelas" class="btn btn-danger">Back</a>
         @include('admin_pages.tambah_mata_pelajaran')
 
-        <!-- Table -->
-        <div class="container mt-5">
-            <hr>
-            <h3>List Mata Pelajaran</h3>
-            <table class="table table-bordered align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Kode Mata Pelajaran</th>
-                        <th>Pelajaran</th>
-                        <th>Pengajar</th>
-                        <th>Hari</th>
-                        <th>Waktu</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($kelasList as $pelajaran): ?>
-                    <tr>
-                        <td class="id_mapel"><?= $pelajaran->ID_MATA_PELAJARAN?></td>
-                        <td class="nama_mapel"><?= $pelajaran->pelajaran->NAMA_PELAJARAN ?></td>
-                        <td class="nama_guru"><?= $pelajaran->guru->NAMA_GURU ?></td>
-                        <td class="hari_pelajaran"><?= $pelajaran->HARI_PELAJARAN ?></td>
-                        <td class="jam_pelajaran"><?= $pelajaran->JAM_PELAJARAN?></td>
-                        <td>
-                            <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
-                                <button class="btn btn-primary btn-sm detail-mapel" title="List Pertemuan">
-                                    <i class="bi bi-list-task" aria-hidden="true"></i>
-                                    <span class="visually-hidden">List Pertemuan</span>
-                                </button>
-                                <button class="btn btn-warning btn-sm edit-mapel" title="Edit">
-                                    <i class="bi bi-pencil-square" aria-hidden="true"></i>
-                                    <span class="visually-hidden">Edit</span>
-                                </button>
-                                <button class="btn btn-danger btn-sm text-white delete-mapel" title="Delete">
-                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                    <span class="visually-hidden">Delete</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+        <div class="average-card-custom p-3 mt-4">
+            <h3 class="average-card-title mb-3">List Mata Pelajaran</h3>
+            <div class="table-responsive-custom">
+                <table class="average-table table-bordered align-middle mb-0">
+                    <thead class="table-header-custom">
+                        <tr>
+                            <th>Kode Mata Pelajaran</th>
+                            <th>Pelajaran</th>
+                            <th>Pengajar</th>
+                            <th>Hari</th>
+                            <th>Waktu</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($kelasList as $pelajaran): ?>
+                        <tr>
+                            <td class="id_mapel"><?= $pelajaran->ID_MATA_PELAJARAN?></td>
+                            <td class="nama_mapel"><?= $pelajaran->pelajaran->NAMA_PELAJARAN ?></td>
+                            <td class="nama_guru"><?= $pelajaran->guru->NAMA_GURU ?></td>
+                            <td class="hari_pelajaran"><?= $pelajaran->HARI_PELAJARAN ?></td>
+                            <td class="jam_pelajaran"><?= $pelajaran->JAM_PELAJARAN?></td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                    <button class="btn btn-primary btn-sm detail-mapel" title="List Pertemuan">
+                                        <i class="bi bi-list-task" aria-hidden="true"></i>
+                                        <span class="visually-hidden">List Pertemuan</span>
+                                    </button>
+                                    <button class="btn btn-warning btn-sm edit-mapel" title="Edit">
+                                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                        <span class="visually-hidden">Edit</span>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm text-white delete-mapel" title="Delete">
+                                        <i class="bi bi-trash" aria-hidden="true"></i>
+                                        <span class="visually-hidden">Delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <script>
