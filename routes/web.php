@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminFinanceController;
+use App\Http\Controllers\ParentController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GeminiController;
 
@@ -12,6 +15,7 @@ Route::get('/', [MainController::class, 'index'])->name('login');
 Route::post('/', [MainController::class, 'handleLogin']);
 Route::get('/reset-password', [MainController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [MainController::class, 'handleReset'])->name('password.reset.submit');
+Route::post('/midtrans/webhook', [PaymentController::class, 'midtransCallback']);
 Route::get('/register', [MainController::class, 'register']);
 Route::get('/home', function () {
    return view('home');
@@ -167,6 +171,16 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
    // ======================================== Upload Excel =====================================
    Route::get('/upload_kelas', [AdminController::class, 'upload_kelas']);
    // Add more admin routes here...
+
+   // ======================================== Keuangan ==============================================
+   Route::get('/keuangan', [AdminFinanceController::class, 'components'])->name('admin.finance.components');
+   Route::post('/keuangan/component', [AdminFinanceController::class, 'storeComponent'])->name('admin.finance.component.store');
+   Route::delete('/keuangan/component/{id}', [AdminFinanceController::class, 'deleteComponent'])->name('admin.finance.component.delete');
+   Route::post('/keuangan/kategori', [AdminFinanceController::class, 'storeCategory'])->name('admin.finance.category.store');
+   Route::delete('/keuangan/kategori/{id}', [AdminFinanceController::class, 'deleteCategory'])->name('admin.finance.category.delete');
+   Route::get('/keuangan/tagihan', [AdminFinanceController::class, 'listFees'])->name('admin.finance.fees');
+   Route::post('/keuangan/tagihan/batch', [AdminFinanceController::class, 'storeFeeBatch'])->name('admin.finance.fees.store');
+   Route::post('/keuangan/tagihan/{id}/status', [AdminFinanceController::class, 'updateFeeStatus'])->name('admin.finance.fees.status');
 });
 
 
@@ -244,6 +258,11 @@ Route::delete('/deletetugas/{id_tugas}', [GuruController::class, 'deletetugas'])
          abort(404, 'Template file not found.'); //  handle file not found error
       }
    });
+});
+
+// Portal Orang Tua (menggunakan sesi siswa, ROLE Parent)
+Route::middleware(['siswa.auth'])->prefix('orangtua')->group(function () {
+   Route::get('/', [ParentController::class, 'index'])->name('orangtua.dashboard');
 });
 
 

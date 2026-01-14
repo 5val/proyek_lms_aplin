@@ -211,12 +211,16 @@ class AdminController extends Controller
             $id = $request->input("id");
             $nama = $request->input("nama");
             $email = $request->input("email");
+            $emailOrtu = $request->input("email_orangtua");
             $alamat = $request->input("alamat");
             $telp = $request->input("telp");
             $status = $request->input("status");
-            DB::update("update siswa set nama_siswa = ?, email_siswa = ?, alamat_siswa = ?, no_telpon_siswa = ?, status_siswa = ? where id_siswa = ?", [$nama, $email, $alamat, $telp, $status, $id]);
+            DB::update(
+                "update siswa set nama_siswa = ?, email_siswa = ?, email_orangtua = ?, alamat_siswa = ?, no_telpon_siswa = ?, status_siswa = ? where id_siswa = ?",
+                [$nama, $email, $emailOrtu, $alamat, $telp, $status, $id]
+            );
         }
-        return redirect('/admin/listsiswa');
+        return redirect('/admin/listsiswa')->with('success', 'Data siswa diperbarui');
     }
     public function listsiswa()
     {
@@ -242,6 +246,7 @@ class AdminController extends Controller
     {
         $nama = $request->input("nama");
         $email = $request->input("email");
+        $emailOrtu = $request->input("email_orangtua");
         $password = $request->input("password");
         $alamat = $request->input("alamat");
         $telp = $request->input("telp");
@@ -253,13 +258,14 @@ class AdminController extends Controller
         // } else {
         //     return view('admin_pages.tambahsiswa');
         // }
-        $siswa = Siswa::where('EMAIL_SISWA', $email)->get();
+        $siswa = Siswa::where('EMAIL_SISWA', $email)->orWhere('EMAIL_ORANGTUA', $emailOrtu)->get();
         if (!$siswa->isEmpty()) {
-            return view('admin_pages.tambahsiswa');
+            return redirect('/admin/tambahsiswa')->with('error', 'Email siswa atau email orang tua sudah terdaftar');
         } else {
             Siswa::create([
                 'NAMA_SISWA' => $nama,
                 'EMAIL_SISWA' => $email,
+                'EMAIL_ORANGTUA' => $emailOrtu,
                 // nyalain
                 'PASSWORD_SISWA' => Hash::make($password),
                 // 'PASSWORD_SISWA' => $password,
@@ -267,7 +273,7 @@ class AdminController extends Controller
                 'NO_TELPON_SISWA' => $telp,
                 'STATUS_SISWA' => $status,
             ]);
-            return redirect('/admin/listsiswa');
+            return redirect('/admin/listsiswa')->with('success', 'Siswa berhasil ditambahkan');
         }
     }
     public function displayUploadSiswa()

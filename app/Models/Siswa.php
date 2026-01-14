@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\StudentStatusHistory;
 
 class Siswa extends Model
 {
@@ -17,8 +18,18 @@ class Siswa extends Model
     protected $casts = [
         'ID_SISWA' => 'string',
     ];
-    protected $fillable = ['ID_SISWA', 'NAMA_SISWA', 'EMAIL_SISWA', 'PASSWORD_SISWA', 'ALAMAT_SISWA', 'NO_TELPON_SISWA', 'STATUS_SISWA'];
-    protected $hidden = ['PASSWORD_SISWA'];
+    protected $fillable = [
+        'ID_SISWA',
+        'NAMA_SISWA',
+        'EMAIL_SISWA',
+        'PASSWORD_SISWA',
+        'EMAIL_ORANGTUA',
+        'PASSWORD_ORANGTUA',
+        'ALAMAT_SISWA',
+        'NO_TELPON_SISWA',
+        'STATUS_SISWA',
+    ];
+    protected $hidden = ['PASSWORD_SISWA', 'PASSWORD_ORANGTUA'];
 
     /**
      * Get all of the attendances for the Siswa.
@@ -50,5 +61,10 @@ class Siswa extends Model
     public function kelass(): BelongsToMany
     {
         return $this->belongsToMany(Kelas::class, 'ENROLLMENT_KELAS', 'ID_SISWA', 'ID_KELAS');
+    }
+
+    public function statusHistory(): HasMany
+    {
+        return $this->hasMany(StudentStatusHistory::class, 'ID_SISWA', 'ID_SISWA');
     }
 }

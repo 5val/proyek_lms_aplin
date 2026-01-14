@@ -7,6 +7,12 @@
 
   <div>
     <a class="btn btn-danger" style="text-decoration: none;" href="/admin/listsiswa">Back</a><br><br>
+    @if(session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+      <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
     <div class="material-box">
     <br>
     <h4 style="text-align: center;">Edit Siswa</h4><br>
@@ -27,6 +33,11 @@
       <label for="exampleFormControlTextarea1" class="form-label">Email</label>
       <input class="form-control" type="email" name="email" placeholder="daniel@gmail.com"
         aria-label="default input example" value="{{ $siswa->EMAIL_SISWA }}" required>
+      </div>
+      <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">Email Orang Tua</label>
+      <input class="form-control" type="email" name="email_orangtua" placeholder="ortu@gmail.com"
+        aria-label="default input example" value="{{ $siswa->EMAIL_ORANGTUA }}">
       </div>
       <div class="mb-3">
       <label for="exampleFormControlTextarea1" class="form-label">Alamat sekarang</label>

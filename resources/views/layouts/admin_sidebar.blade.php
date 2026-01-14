@@ -20,6 +20,7 @@
       href="/admin/list_periode"><i class="bi bi-calendar-event me-2"></i>Periode</a></li>
     <li class="nav-item"><a class="nav-link {{ Request::is('admin/list_ruangan') ? 'active' : '' }}"
       href="/admin/list_ruangan"><i class="bi bi-building me-2"></i>Ruangan</a></li>
+    <li class="nav-item"><a class="nav-link {{ Request::is('admin/keuangan*') ? 'active' : '' }}" href="/admin/keuangan"><i class="bi bi-wallet2 me-2"></i>Keuangan</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="collapse" href="#submenuLaporan" role="button"
       aria-expanded="false" aria-controls="submenuLaporan">
       <i class="bi bi-file-earmark-bar-graph me-2"></i>Laporan

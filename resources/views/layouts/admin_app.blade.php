@@ -2,7 +2,15 @@
 
 @section('content')
   <div class="row g-0 mx-0 d-flex position-relative">
-    @include('layouts.admin_sidebar')
+    @php
+      $activeUser = session('userActive');
+      $isParent = $activeUser && isset($activeUser->ROLE) && $activeUser->ROLE === 'Parent';
+    @endphp
+    @if($isParent)
+      @include('layouts.parent_sidebar')
+    @else
+      @include('layouts.admin_sidebar')
+    @endif
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <div class="col-5 main-content flex-grow-1" id="mainContent">
