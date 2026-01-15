@@ -12,6 +12,12 @@
       href="/admin/listsiswa"><i class="bi bi-people me-2"></i>Siswa</a></li>
     <li class="nav-item"><a class="nav-link {{ Request::is('admin/list_pelajaran') ? 'active' : '' }}"
       href="/admin/list_pelajaran"><i class="bi bi-book me-2"></i>Pelajaran</a></li>
+    <li class="nav-item"><a class="nav-link {{ Request::is('admin/buku*') ? 'active' : '' }}"
+      href="/admin/buku"><i class="bi bi-book-half me-2"></i>Buku</a></li>
+    <li class="nav-item"><a class="nav-link {{ Request::is('admin/master_jam_pelajaran') ? 'active' : '' }}"
+      href="/admin/master_jam_pelajaran"><i class="bi bi-clock-history me-2"></i>Master Jam Pelajaran</a></li>
+    <li class="nav-item"><a class="nav-link {{ Request::is('admin/jadwal_kelas*') ? 'active' : '' }}"
+      href="/admin/jadwal_kelas"><i class="bi bi-calendar-week me-2"></i>Jadwal Kelas</a></li>
     <li class="nav-item"><a class="nav-link {{ Request::is('admin/list_kelas') ? 'active' : '' }}"
       href="/admin/list_kelas"><i class="bi bi-grid-3x3-gap me-2"></i>Kelas</a></li>
     <li class="nav-item"><a class="nav-link {{ Request::is('admin/listpengumuman') ? 'active' : '' }}"

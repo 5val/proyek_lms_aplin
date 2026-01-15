@@ -12,13 +12,28 @@ class Guru extends Model
 
     protected $table = 'GURU';
     protected $primaryKey = 'ID_GURU';
+    protected $keyType = 'string';
+    public $incrementing = false;
     public $timestamps = false;
 
     protected $casts = [
         'ID_GURU' => 'string',
     ];
-    protected $fillable = ['NAMA_GURU', 'EMAIL_GURU', 'PASSWORD_GURU', 'ALAMAT_GURU', 'NO_TELPON_GURU', 'STATUS_GURU'];
+    protected $fillable = ['NAMA_GURU', 'EMAIL_GURU', 'PASSWORD_GURU', 'ALAMAT_GURU', 'NO_TELPON_GURU', 'FOTO_GURU', 'STATUS_GURU'];
     protected $hidden = ['PASSWORD_GURU'];
+
+    /**
+     * Return placeholder avatar if photo is missing.
+     */
+    public function getFOTO_GURUAttribute($value): string
+    {
+        if (! empty($value)) {
+            return $value;
+        }
+
+        $seed = rawurlencode($this->NAMA_GURU ?? 'Guru');
+        return "https://api.dicebear.com/7.x/initials/svg?seed={$seed}&backgroundColor=b6e3f4";
+    }
 
     /**
      * Get all of the kelas where this guru is the wali kelas.

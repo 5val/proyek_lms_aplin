@@ -77,7 +77,7 @@ class ParentController extends Controller
             ->groupBy('STATUS')
             ->pluck('total', 'STATUS');
 
-        $pengumuman = Pengumuman::orderByDesc('ID')->limit(5)->get();
+        $pengumuman = Pengumuman::orderByDesc('ID_PENGUMUMAN')->limit(5)->get();
 
         return view('orangtua_pages.home', [
             'siswa' => $siswa,

@@ -15,7 +15,7 @@ class Pelajaran extends Model
     protected $keyType = 'string';
     public $incrementing = false;
     public $timestamps = false;
-    protected $fillable = ['ID_PELAJARAN', 'NAMA_PELAJARAN'];
+    protected $fillable = ['ID_PELAJARAN', 'NAMA_PELAJARAN', 'STATUS', 'JML_JAM_WAJIB', 'KELAS_TINGKAT'];
 
     /**
      * Get all of the mata_pelajarans for the Pelajaran.

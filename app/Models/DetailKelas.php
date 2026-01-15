@@ -12,13 +12,10 @@ class DetailKelas extends Model
 
     protected $table = 'DETAIL_KELAS';
     protected $primaryKey = 'ID_DETAIL_KELAS';
-    protected $keyType = 'string';
-    public $incrementing = false;
+    protected $keyType = 'int';
+    public $incrementing = true;
     public $timestamps = false;
-    protected $casts = [
-        'ID_DETAIL_KELAS' => 'string',
-    ];
-    protected $fillable = ['ID_DETAIL_KELAS', 'RUANGAN_KELAS', 'NAMA_KELAS'];
+    protected $fillable = ['KODE_RUANGAN', 'RUANGAN_KELAS', 'NAMA_KELAS'];
 
     /**
      * Get all of the kelas for the DetailKelas.

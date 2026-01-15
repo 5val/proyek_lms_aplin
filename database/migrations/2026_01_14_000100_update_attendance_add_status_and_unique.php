@@ -14,23 +14,30 @@ return new class extends Migration {
             }
         });
 
-        $duplicates = DB::table('attendance')
-            ->select('ID_SISWA', 'ID_PERTEMUAN', DB::raw('MIN(ID_ATTENDANCE) as keep_id'), DB::raw('COUNT(*) as cnt'))
-            ->groupBy('ID_SISWA', 'ID_PERTEMUAN')
-            ->having('cnt', '>', 1)
-            ->get();
+        // Ensure existing duplicates are removed before adding unique index (safe for fresh db)
+        if (Schema::hasTable('attendance')) {
+            $duplicates = DB::table('attendance')
+                ->select('ID_SISWA', 'ID_PERTEMUAN', DB::raw('MIN(ID_ATTENDANCE) as keep_id'), DB::raw('COUNT(*) as cnt'))
+                ->groupBy('ID_SISWA', 'ID_PERTEMUAN')
+                ->having('cnt', '>', 1)
+                ->get();
 
-        foreach ($duplicates as $dup) {
-            DB::table('attendance')
-                ->where('ID_SISWA', $dup->ID_SISWA)
-                ->where('ID_PERTEMUAN', $dup->ID_PERTEMUAN)
-                ->where('ID_ATTENDANCE', '<>', $dup->keep_id)
-                ->delete();
+            foreach ($duplicates as $dup) {
+                DB::table('attendance')
+                    ->where('ID_SISWA', $dup->ID_SISWA)
+                    ->where('ID_PERTEMUAN', $dup->ID_PERTEMUAN)
+                    ->where('ID_ATTENDANCE', '<>', $dup->keep_id)
+                    ->delete();
+            }
+
+            // Add unique index only if not exists
+            $hasIndex = collect(DB::select("SHOW INDEX FROM attendance WHERE Key_name = 'attendance_siswa_pertemuan_unique'"))->isNotEmpty();
+            if (! $hasIndex) {
+                Schema::table('attendance', function (Blueprint $table) {
+                    $table->unique(['ID_SISWA', 'ID_PERTEMUAN'], 'attendance_siswa_pertemuan_unique');
+                });
+            }
         }
-
-        Schema::table('attendance', function (Blueprint $table) {
-            $table->unique(['ID_SISWA', 'ID_PERTEMUAN'], 'attendance_siswa_pertemuan_unique');
-        });
     }
 
     public function down(): void

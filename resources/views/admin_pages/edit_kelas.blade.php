@@ -35,6 +35,10 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <div class="col-md-4">
+                            <label for="namaKelas" class="form-label">Nama Kelas</label>
+                            <input type="text" class="form-control" id="namaKelas" name="nama_kelas" value="<?= $kelas->NAMA_KELAS ?? ($kelas->detailKelas->NAMA_KELAS ?? '') ?>" maxlength="100" required>
+                        </div>
                     </div>
 
                     <div class="mb-3">

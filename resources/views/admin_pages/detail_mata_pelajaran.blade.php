@@ -1,6 +1,14 @@
 @extends('layouts.admin_app')
 
 @section('admin_content')
+<style>
+.absensi-checkbox {
+   width: 22px;
+   height: 22px;
+   transform: scale(1.25);
+   cursor: pointer;
+}
+</style>
     <div class="container mt-5">
         <button onclick="window.history.back()">Back</button>
         <h5 class="mt-3 mb-3">Daftar Absensi Siswa</h5>
@@ -24,7 +32,7 @@
                         <?php foreach ($pertemuan as $p): ?>
                            <?php $a = $absen[$s->siswa->ID_SISWA][$p->ID_PERTEMUAN] ?? null; ?>
                            <td class="text-center">
-                              <input type="checkbox" class="absensi-checkbox" data-siswa="{{ $s->siswa->ID_SISWA }}" data-pertemuan="{{ $p->ID_PERTEMUAN }}" {{ $a ? 'checked' : '' }}>
+                              <input type="checkbox" class="absensi-checkbox" data-siswa="{{ $s->siswa->ID_SISWA }}" data-pertemuan="{{ $p->ID_PERTEMUAN }}" {{ ($a === null || $a) ? 'checked' : '' }}>
                            </td>
                         <?php endforeach; ?>
                   </tr>

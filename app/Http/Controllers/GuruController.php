@@ -21,6 +21,7 @@ use App\Models\Siswa;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class GuruController extends Controller
@@ -122,7 +123,7 @@ class GuruController extends Controller
          ->join('pertemuan as p', 'a.id_pertemuan', '=', 'p.id_pertemuan')
          ->join('siswa as s', 's.id_siswa', '=', 'a.id_siswa')
          ->where('p.id_mata_pelajaran', '=', $id_mata_pelajaran)
-         ->select('a.id_attendance', 'p.id_pertemuan', 's.id_siswa', 's.nama_siswa')
+         ->select('a.id_attendance', 'p.id_pertemuan', 's.id_siswa', 's.nama_siswa', DB::raw('a.status as STATUS'))
          ->get();
       $arrAbsen = [];
       foreach ($absen as $a) {
@@ -131,18 +132,20 @@ class GuruController extends Controller
    $pengumuman = Pengumuman::all();
       return view('guru_pages.detail_pelajaran', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'materi' => $materi, 'tugas' => $tugas, 'siswa' => $siswa, 'pertemuan' => $pertemuan, 'list_nilai_tugas' => $listNilaiTugas, 'rata2_tugas' => $rata2Tugas, 'list_nilai' => $listNilai, 'rata2' => $rata2, 'absen' => $arrAbsen, 'pengumuman' => $pengumuman]);
     }
-    public function editpengumuman(Request $request, $ID)
-    {
-      // $ID = base64_decode($ID);
-        $pengumuman = Pengumuman::findOrFail($ID);
-        $mataPelajaran = $request->query('mata_pelajaran');
-      //   $mataPelajaran = $pengumuman->mataPelajaran; // asumsi relasi `mataPelajaran` ada
-      //   $kelas = Kelas::with('detailKelas')->find($mataPelajaran->ID_KELAS);
-      //   $jumlah = EnrollmentKelas::where('ID_KELAS', $mataPelajaran->ID_KELAS)->count();
-      //   $semester = substr($mataPelajaran->ID_KELAS, -1) == '1' ? 'Ganjil' : 'Genap';
-      //   return view('guru_pages.editpengumuman', ["mata_pelajaran" => $mataPelajaran, 'jumlah' => $jumlah, 'kelas' => $kelas, 'semester' => $semester, 'pengumuman' => $pengumuman]);
-        return view('guru_pages.editpengumuman', ['pengumuman' => $pengumuman, "mata_pelajaran" => $mataPelajaran]);
-    }
+      public function editpengumuman(Request $request, $ID = null)
+      {
+            if (!$ID) {
+                  return redirect()->back()->withErrors(['msg' => 'ID pengumuman wajib diisi.']);
+            }
+
+            $pengumuman = Pengumuman::find($ID);
+            if (!$pengumuman) {
+                  return redirect()->back()->withErrors(['msg' => 'Pengumuman tidak ditemukan.']);
+            }
+
+            $mataPelajaran = $request->query('mata_pelajaran');
+            return view('guru_pages.editpengumuman', ['pengumuman' => $pengumuman, 'mata_pelajaran' => $mataPelajaran]);
+      }
     public function updatepengumuman(Request $request, $ID){
       $ID = base64_decode($ID);
         $pengumuman = Pengumuman::find($ID);
@@ -607,9 +610,43 @@ public function hlm_detail_tugas($id_tugas)
             'DETAIL_PERTEMUAN' => 'required|max:255',
             'TANGGAL_PERTEMUAN' => 'required',
         ]);
-        $pertemuan = Pertemuan::create($validatedData);
+      $validatedData['ID_PERTEMUAN'] = Str::upper(Str::uuid()->toString());
+      $pertemuan = Pertemuan::create($validatedData);
         return redirect(url('/guru/detail_pelajaran/' . base64_encode($request->ID_MATA_PELAJARAN)));
     }
+
+   public function updatepertemuan(Request $request, $id_pertemuan)
+   {
+      $id = base64_decode($id_pertemuan);
+      $pertemuan = Pertemuan::find($id);
+      if (! $pertemuan) {
+         return redirect()->back()->withErrors(['msg' => 'Pertemuan tidak ditemukan.']);
+      }
+
+      $validatedData = $request->validate([
+         'ID_MATA_PELAJARAN' => 'required|max:255',
+         'DETAIL_PERTEMUAN' => 'required|max:255',
+         'TANGGAL_PERTEMUAN' => 'required|date',
+      ]);
+
+      $pertemuan->DETAIL_PERTEMUAN = $validatedData['DETAIL_PERTEMUAN'];
+      $pertemuan->TANGGAL_PERTEMUAN = $validatedData['TANGGAL_PERTEMUAN'];
+      $pertemuan->save();
+
+      return redirect(url('/guru/detail_pelajaran/' . base64_encode($request->ID_MATA_PELAJARAN)));
+   }
+
+   public function deletepertemuan($id_pertemuan)
+   {
+      $id = base64_decode($id_pertemuan);
+      $pertemuan = Pertemuan::find($id);
+      if (! $pertemuan) {
+         return redirect()->back()->withErrors(['msg' => 'Pertemuan tidak ditemukan.']);
+      }
+      $idMapel = $pertemuan->ID_MATA_PELAJARAN;
+      $pertemuan->delete();
+      return redirect(url('/guru/detail_pelajaran/' . base64_encode($idMapel)));
+   }
 
     public function uploadmateri($id_mata_pelajaran)
     {
@@ -757,13 +794,12 @@ public function hlm_detail_tugas($id_tugas)
       $removeSignals = ['false', 'remove', 'hapus'];
 
       if (in_array($statusInput, $removeSignals, true)) {
-         Attendance::where([['ID_SISWA', $id_siswa], ['ID_PERTEMUAN', $id_pertemuan]])->delete();
-         return response()->json(['message' => 'Absensi dihapus.']);
+         $normalizedStatus = 'Alpa'; // simpan sebagai alpa agar tetap tersimpan sebagai tidak hadir
+      } else {
+         $normalizedStatus = in_array($statusInput, $allowedStatuses, true)
+            ? ucfirst($statusInput)
+            : 'Hadir';
       }
-
-      $normalizedStatus = in_array($statusInput, $allowedStatuses, true)
-         ? ucfirst($statusInput)
-         : 'Hadir';
 
       Attendance::updateOrCreate(
          [

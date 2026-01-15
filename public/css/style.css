@@ -291,14 +291,17 @@ button,
 
 .average-card-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; }
 
-.average-table { font-size: 1rem; width: 100%; color: var(--text); }
+.average-table { font-size: 1rem; width: 100%; color: var(--text); border-collapse: separate; border-spacing: 0; }
 .average-table th,
-.average-table td { padding: 15px; text-align: center; border: 1px solid var(--border); }
-.table-header-custom { background-color: var(--bg-soft); font-weight: 700; }
+.average-table td { padding: 14px 16px; text-align: left; border: 1px solid var(--border); }
+.average-table th { background-color: var(--bg-soft); font-weight: 700; letter-spacing: 0.2px; }
 .average-table td { background-color: var(--surface); }
-.average-table-bordered { border: 2px solid var(--border); }
-.table-lg td, .table-lg th { font-size: 1.1rem; }
-.table-responsive-custom { max-height: 400px; overflow-y: auto; }
+.average-table tbody tr:nth-child(even) td { background-color: rgba(255, 255, 255, 0.03); }
+.average-table tbody tr:hover td { background-color: rgba(96, 165, 250, 0.08); }
+.average-table .badge { font-size: 0.9rem; }
+.average-table-bordered { border: 2px solid var(--border); border-radius: 8px; overflow: hidden; }
+.table-lg td, .table-lg th { font-size: 1.05rem; }
+.table-responsive-custom { max-height: 400px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; }
 
 .chart-container {
   position: relative;

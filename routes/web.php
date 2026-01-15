@@ -7,6 +7,7 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\BukuPelajaranController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GeminiController;
 
@@ -84,6 +85,7 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
    Route::get('/list_ruangan', [AdminController::class, 'list_ruangan'])->name('list_ruangan');
    Route::post('/list_ruangan', [AdminController::class, 'add_ruangan']);
    Route::post('/edit_ruangan', [AdminController::class, 'edit_ruangan']);
+   Route::post('/delete_ruangan', [AdminController::class, 'delete_ruangan'])->name('delete_ruangan');
 
 
    // ===================================== Pelajaran =============================================
@@ -92,6 +94,17 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
    Route::get('/tambah_pelajaran', [AdminController::class, 'tambah_pelajaran']);
    Route::post('/tambah_pelajaran', [AdminController::class, 'postpelajaran']);
    Route::put('/update_pelajaran/{id_pelajaran}', [AdminController::class, 'update_pelajaran'])->name('update_pelajaran');
+
+   // ===================================== Master Jam Pelajaran ==================================
+   Route::get('/master_jam_pelajaran', [AdminController::class, 'master_jam_pelajaran'])->name('master_jam_pelajaran');
+   Route::post('/master_jam_pelajaran', [AdminController::class, 'store_master_jam_pelajaran'])->name('master_jam_pelajaran.store');
+   Route::put('/master_jam_pelajaran/{id}', [AdminController::class, 'update_master_jam_pelajaran'])->name('master_jam_pelajaran.update');
+   Route::delete('/master_jam_pelajaran/{id}', [AdminController::class, 'delete_master_jam_pelajaran'])->name('master_jam_pelajaran.delete');
+
+   // ===================================== Jadwal Kelas ===========================================
+   Route::get('/jadwal_kelas', [AdminController::class, 'jadwal_kelas'])->name('jadwal_kelas');
+   Route::get('/jadwal_kelas/{id_kelas}', [AdminController::class, 'jadwal_kelas_detail'])->name('jadwal_kelas.detail');
+   Route::post('/jadwal_kelas/assign', [AdminController::class, 'jadwal_kelas_assign'])->name('jadwal_kelas.assign');
 
    // ===================================== Periode ===============================================
    Route::get('/list_periode', [AdminController::class, 'list_periode'])->name('list_periode');
@@ -133,6 +146,13 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
          abort(404, 'Template file not found.'); //  handle file not found error
       }
    });
+
+   // ======================================== Buku Pelajaran (Admin Manage) =====================
+   Route::get('/buku', [BukuPelajaranController::class, 'adminIndex'])->name('admin.buku.index');
+   Route::post('/buku', [BukuPelajaranController::class, 'store'])->name('admin.buku.store');
+   Route::put('/buku/{id}', [BukuPelajaranController::class, 'update'])->name('admin.buku.update');
+   Route::delete('/buku/{id}', [BukuPelajaranController::class, 'destroy'])->name('admin.buku.delete');
+   Route::get('/buku/{id}/view', [BukuPelajaranController::class, 'stream'])->name('admin.buku.view');
 
    // ======================================== Siswa ==============================================
    Route::get('/list_tambah_siswa_ke_kelas/{id_kelas}', [AdminController::class, 'list_tambah_siswa_ke_kelas'])
@@ -190,13 +210,15 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
 
 Route::middleware(['guru.auth'])->prefix('guru')->group(function () {
    Route::get('/', [GuruController::class, 'index']);
+   Route::get('/buku', [BukuPelajaranController::class, 'library'])->name('guru.buku.index');
+   Route::get('/buku/{id}/view', [BukuPelajaranController::class, 'stream'])->name('guru.buku.view');
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [GuruController::class, 'detail_pelajaran'])->where('id_mata_pelajaran', '.*');
    Route::get('/editmateri/{id_materi}', [GuruController::class, 'editmateri'])
       ->where('id_materi', '.*')
       ->name('guru.editmateri');
    Route::put('/updatemateri/{id_materi}', [GuruController::class, 'updatemateri'])->where('id_materi', '.*')
       ->name('guru.updatemateri');
-   Route::get('/editpengumuman/{ID}', [GuruController::class, 'editpengumuman'])
+   Route::get('/editpengumuman/{ID?}', [GuruController::class, 'editpengumuman'])
       ->where('ID', '.*')
       ->name('guru.editpengumuman');
    Route::put('/updatepengumuman/{ID}', [GuruController::class, 'updatepengumuman'])->where('ID', '.*')
@@ -241,6 +263,8 @@ Route::delete('/deletetugas/{id_tugas}', [GuruController::class, 'deletetugas'])
    Route::post('/tambahpengumuman', [GuruController::class, 'postpengumuman']);
    Route::get('/tambahpertemuan/{id_mata_pelajaran}', [GuruController::class, 'tambahpertemuan'])->where('id_mata_pelajaran', '.*');
    Route::post('/tambahpertemuan', [GuruController::class, 'postpertemuan']);
+   Route::put('/updatepertemuan/{id_pertemuan}', [GuruController::class, 'updatepertemuan'])->where('id_pertemuan', '.*')->name('guru.updatepertemuan');
+   Route::delete('/deletepertemuan/{id_pertemuan}', [GuruController::class, 'deletepertemuan'])->where('id_pertemuan', '.*')->name('guru.deletepertemuan');
    Route::get('/uploadmateri/{id_mata_pelajaran}', [GuruController::class, 'uploadmateri'])
       ->where('id_mata_pelajaran', '.*');
    Route::post('/uploadmateri', [GuruController::class, 'postmateri']);
@@ -263,6 +287,8 @@ Route::delete('/deletetugas/{id_tugas}', [GuruController::class, 'deletetugas'])
 // Portal Orang Tua (menggunakan sesi siswa, ROLE Parent)
 Route::middleware(['siswa.auth'])->prefix('orangtua')->group(function () {
    Route::get('/', [ParentController::class, 'index'])->name('orangtua.dashboard');
+   Route::get('/buku', [BukuPelajaranController::class, 'library'])->name('orangtua.buku.index');
+   Route::get('/buku/{id}/view', [BukuPelajaranController::class, 'stream'])->name('orangtua.buku.view');
    Route::get('/tagihan', [ParentController::class, 'fees'])->name('orangtua.fees');
    Route::post('/tagihan/{fee}/pay', [ParentController::class, 'payFee'])->name('orangtua.fee.pay');
 });
@@ -275,6 +301,8 @@ Route::middleware(['siswa.auth'])->prefix('orangtua')->group(function () {
 
 Route::middleware(['siswa.auth'])->prefix('siswa')->group(function () {
    Route::get('/', [SiswaController::class, 'index']);
+   Route::get('/buku', [BukuPelajaranController::class, 'library'])->name('siswa.buku.index');
+   Route::get('/buku/{id}/view', [BukuPelajaranController::class, 'stream'])->name('siswa.buku.view');
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [SiswaController::class, 'detail_pelajaran'])
       ->where('id_mata_pelajaran', expression: '.*');
    Route::get('/hlm_about', [SiswaController::class, 'hlm_about']);

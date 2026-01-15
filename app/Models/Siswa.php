@@ -14,6 +14,8 @@ class Siswa extends Model
 
     protected $table = 'SISWA';
     protected $primaryKey = 'ID_SISWA';
+    protected $keyType = 'string';
+    public $incrementing = false;
     public $timestamps = false;
     protected $casts = [
         'ID_SISWA' => 'string',
@@ -27,9 +29,23 @@ class Siswa extends Model
         'PASSWORD_ORANGTUA',
         'ALAMAT_SISWA',
         'NO_TELPON_SISWA',
+        'FOTO_SISWA',
         'STATUS_SISWA',
     ];
     protected $hidden = ['PASSWORD_SISWA', 'PASSWORD_ORANGTUA'];
+
+    /**
+     * Return placeholder avatar if photo is missing.
+     */
+    public function getFOTO_SISWAAttribute($value): string
+    {
+        if (! empty($value)) {
+            return $value;
+        }
+
+        $seed = rawurlencode($this->NAMA_SISWA ?? 'Siswa');
+        return "https://api.dicebear.com/7.x/initials/svg?seed={$seed}&backgroundColor=d1d4f9";
+    }
 
     /**
      * Get all of the attendances for the Siswa.

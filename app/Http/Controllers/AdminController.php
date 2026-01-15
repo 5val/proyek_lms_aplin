@@ -16,12 +16,15 @@ use App\Models\Pelajaran;
 use App\Models\Pengumuman;
 use App\Models\Periode;
 use App\Models\Pertemuan;
+use App\Models\JadwalKelas;
+use App\Models\MasterJamPelajaran;
 use App\Models\Siswa;
 use App\Models\Tugas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request as FacadesRequest;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
@@ -45,7 +48,7 @@ class AdminController extends Controller
                     ->where('ID_PERIODE', $latestPeriode->ID_PERIODE);
             }
         )->count();
-        $listPengumuman = Pengumuman::orderByDesc('ID')->limit(10)->get();
+        $listPengumuman = Pengumuman::orderByDesc('ID_PENGUMUMAN')->limit(10)->get();
         return view('admin_pages.home', compact('latestPeriode', 'jumlahSiswa', 'jumlahGuru', 'jumlahKelas', 'jumlahPelajaran', 'jumlahMataPelajaran', 'listPengumuman'));
     }
     // ========================================= Guru ===================================================
@@ -305,6 +308,11 @@ class AdminController extends Controller
     // ========================================= Pelajaran ============================================
     public function list_pelajaran()
     {
+        // Pastikan status terisi; default Active jika kolom tersedia
+        if (Schema::hasColumn('PELAJARAN', 'STATUS')) {
+            Pelajaran::whereNull('STATUS')->update(['STATUS' => 'Active']);
+        }
+
         $kelasList = Pelajaran::all();
         return view('admin_pages.list_pelajaran', compact('kelasList'));
     }
@@ -316,11 +324,16 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:pelajaran,NAMA_PELAJARAN',
+            'required_hours' => 'required|integer|min:0|max:40',
+            'class_level' => 'required|string|max:50',
         ], [
             'name.unique' => 'Nama Pelajaran sudah digunakan. Silakan pilih nama lain.'
         ]);
         Pelajaran::create([
             'NAMA_PELAJARAN' => $request->input('name'),
+            'STATUS' => 'Active',
+            'JML_JAM_WAJIB' => $request->input('required_hours'),
+            'KELAS_TINGKAT' => $request->input('class_level'),
         ]);
         return redirect()->route('list_pelajaran')->with('success', 'Nama berhasil disimpan!');
     }
@@ -343,13 +356,165 @@ class AdminController extends Controller
                 Rule::unique('pelajaran', 'NAMA_PELAJARAN')->ignore($pelajaran->ID_PELAJARAN, 'ID_PELAJARAN'),
             ],
             'status' => 'required|in:Active,Inactive',
+            'required_hours' => 'required|integer|min:0|max:40',
+            'class_level' => 'required|string|max:50',
         ]);
 
         $pelajaran->NAMA_PELAJARAN = $request->input('name');
         $pelajaran->STATUS = $request->input('status');
+        $pelajaran->JML_JAM_WAJIB = $request->input('required_hours');
+        $pelajaran->KELAS_TINGKAT = $request->input('class_level');
         $pelajaran->save();
 
         return redirect()->route('list_pelajaran')->with('success', 'Pelajaran berhasil diperbarui');
+    }
+
+    // ========================================= Master Jam Pelajaran ================================
+    public function master_jam_pelajaran()
+    {
+        $jamList = MasterJamPelajaran::orderBy('HARI_PELAJARAN')
+            ->orderBy('SLOT_KE')
+            ->get();
+
+        return view('admin_pages.master_jam_pelajaran', compact('jamList'));
+    }
+
+    public function store_master_jam_pelajaran(Request $request)
+    {
+        $request->validate([
+            'HARI_PELAJARAN' => 'required|string',
+            'SLOT_KE' => 'required|integer|min:1|max:20',
+            'JAM_MULAI' => 'required|date_format:H:i',
+            'JAM_SELESAI' => 'required|date_format:H:i|after:JAM_MULAI',
+            'JENIS_SLOT' => 'required|in:Pelajaran,Istirahat',
+            'LABEL' => 'nullable|string|max:255',
+        ]);
+
+        MasterJamPelajaran::create([
+            'HARI_PELAJARAN' => $request->HARI_PELAJARAN,
+            'SLOT_KE' => $request->SLOT_KE,
+            'JAM_MULAI' => $request->JAM_MULAI,
+            'JAM_SELESAI' => $request->JAM_SELESAI,
+            'JENIS_SLOT' => $request->JENIS_SLOT,
+            'LABEL' => $request->LABEL,
+        ]);
+
+        return redirect()->route('master_jam_pelajaran')->with('success', 'Jam pelajaran ditambahkan');
+    }
+
+    public function update_master_jam_pelajaran(Request $request, $id)
+    {
+        $jam = MasterJamPelajaran::findOrFail($id);
+
+        $request->validate([
+            'HARI_PELAJARAN' => 'required|string',
+            'SLOT_KE' => 'required|integer|min:1|max:20',
+            'JAM_MULAI' => 'required|date_format:H:i',
+            'JAM_SELESAI' => 'required|date_format:H:i|after:JAM_MULAI',
+            'JENIS_SLOT' => 'required|in:Pelajaran,Istirahat',
+            'LABEL' => 'nullable|string|max:255',
+        ]);
+
+        $jam->update([
+            'HARI_PELAJARAN' => $request->HARI_PELAJARAN,
+            'SLOT_KE' => $request->SLOT_KE,
+            'JAM_MULAI' => $request->JAM_MULAI,
+            'JAM_SELESAI' => $request->JAM_SELESAI,
+            'JENIS_SLOT' => $request->JENIS_SLOT,
+            'LABEL' => $request->LABEL,
+        ]);
+
+        return redirect()->route('master_jam_pelajaran')->with('success', 'Jam pelajaran diperbarui');
+    }
+
+    public function delete_master_jam_pelajaran($id)
+    {
+        $jam = MasterJamPelajaran::findOrFail($id);
+        $jam->delete();
+        return redirect()->route('master_jam_pelajaran')->with('success', 'Jam pelajaran dihapus');
+    }
+
+    // ========================================= Jadwal Kelas =======================================
+    public function jadwal_kelas()
+    {
+        $kelasList = Kelas::with('detailKelas')
+            ->orderBy('ID_KELAS')
+            ->get();
+
+        return view('admin_pages.jadwal_kelas', compact('kelasList'));
+    }
+
+    public function jadwal_kelas_detail($id_kelas)
+    {
+        $kelas = Kelas::with(['detailKelas', 'wali'])->findOrFail($id_kelas);
+
+        $slotList = MasterJamPelajaran::orderBy('HARI_PELAJARAN')
+            ->orderBy('SLOT_KE')
+            ->get();
+
+        $daysOrder = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $slotByDay = $slotList->groupBy('HARI_PELAJARAN');
+
+        $jadwal = JadwalKelas::where('ID_KELAS', $id_kelas)->get()->keyBy('ID_JAM_PELAJARAN');
+
+        $mataList = MataPelajaran::where('ID_KELAS', $id_kelas)
+            ->join('PELAJARAN', 'MATA_PELAJARAN.ID_PELAJARAN', '=', 'PELAJARAN.ID_PELAJARAN')
+            ->leftJoin('GURU', 'MATA_PELAJARAN.ID_GURU', '=', 'GURU.ID_GURU')
+            ->select(
+                'MATA_PELAJARAN.ID_MATA_PELAJARAN',
+                'PELAJARAN.NAMA_PELAJARAN',
+                'GURU.NAMA_GURU'
+            )
+            ->get();
+
+        return view('admin_pages.jadwal_kelas_detail', [
+            'kelas' => $kelas,
+            'slotByDay' => $slotByDay,
+            'daysOrder' => $daysOrder,
+            'jadwal' => $jadwal,
+            'mataList' => $mataList,
+        ]);
+    }
+
+    public function jadwal_kelas_assign(Request $request)
+    {
+        $request->validate([
+            'ID_KELAS' => 'required|string',
+            'ID_JAM_PELAJARAN' => 'required|integer',
+            'ID_MATA_PELAJARAN' => 'nullable|string',
+        ]);
+
+        $idKelas = $request->ID_KELAS;
+        $idJam = $request->ID_JAM_PELAJARAN;
+        $idMapel = $request->ID_MATA_PELAJARAN ?: null;
+
+        $slot = MasterJamPelajaran::findOrFail($idJam);
+
+        if ($idMapel) {
+            $mapelValid = MataPelajaran::where('ID_MATA_PELAJARAN', $idMapel)
+                ->where('ID_KELAS', $idKelas)
+                ->exists();
+            if (!$mapelValid) {
+                return redirect()->back()->withErrors('Mata pelajaran tidak sesuai dengan kelas ini.');
+            }
+        }
+
+        // Untuk slot Istirahat, paksa kosong
+        if ($slot->JENIS_SLOT === 'Istirahat') {
+            $idMapel = null;
+        }
+
+        JadwalKelas::updateOrCreate(
+            [
+                'ID_KELAS' => $idKelas,
+                'ID_JAM_PELAJARAN' => $idJam,
+            ],
+            [
+                'ID_MATA_PELAJARAN' => $idMapel,
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Jadwal diperbarui');
     }
     // ========================================= Periode ===========================================
     public function list_periode()
@@ -411,8 +576,9 @@ class AdminController extends Controller
     public function add_ruangan(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama_ruangan' => 'required',
-            'nama_kelas' => 'required',
+            'kode_ruangan' => 'required|string|unique:DETAIL_KELAS,KODE_RUANGAN',
+            'nama_ruangan' => 'required|string',
+            'nama_kelas' => 'required|string',
         ]);
         $validator->after(function ($validator) use ($request) {
             $nama_ruangan = $request->nama_ruangan;
@@ -423,6 +589,7 @@ class AdminController extends Controller
         });
         $validator->validate();
         DetailKelas::create(attributes: [
+            'KODE_RUANGAN' => $request->kode_ruangan,
             'RUANGAN_KELAS' => $request->nama_ruangan,
             'NAMA_KELAS' => $request->nama_kelas
         ]);
@@ -431,18 +598,37 @@ class AdminController extends Controller
     }
     public function edit_ruangan(Request $request)
     {
-        $validator = Validator::validate($request->all(), [
-            'nama_kelas' => 'required',
+        $validated = Validator::validate($request->all(), [
+            'id_ruangan'   => 'required|integer',
+            'kode_ruangan' => 'required|string|unique:DETAIL_KELAS,KODE_RUANGAN,' . $request->id_ruangan . ',ID_DETAIL_KELAS',
+            'nama_ruangan' => 'required|string',
+            'nama_kelas'   => 'required|string',
         ]);
-        $nama_kelas = $request->nama_kelas;
-        $id_ruangan = $request->id_ruangan;
 
-        $ruangan_kelas = $request->nama_ruangan;
-        $ruanganToEdit = DetailKelas::find($id_ruangan, 'ID_DETAIL_KELAS');
-
-        $ruanganToEdit->NAMA_KELAS = $nama_kelas;
+        $ruanganToEdit = DetailKelas::findOrFail($validated['id_ruangan']);
+        $ruanganToEdit->KODE_RUANGAN = $validated['kode_ruangan'];
+        $ruanganToEdit->RUANGAN_KELAS = $validated['nama_ruangan'];
+        $ruanganToEdit->NAMA_KELAS = $validated['nama_kelas'];
         $ruanganToEdit->save();
-        return redirect()->route('list_ruangan');
+
+        return redirect()->route('list_ruangan')->with('success', 'Ruangan berhasil diperbarui');
+    }
+
+    public function delete_ruangan(Request $request)
+    {
+        $validated = Validator::validate($request->all(), [
+            'id_ruangan' => 'required|integer',
+        ]);
+
+        $ruangan = DetailKelas::find($validated['id_ruangan']);
+
+        if (!$ruangan) {
+            return redirect()->route('list_ruangan')->with('error', 'Ruangan tidak ditemukan');
+        }
+
+        $ruangan->delete();
+
+        return redirect()->route('list_ruangan')->with('success', 'Ruangan berhasil dihapus');
     }
 
     // ========================================= Laporan ============================================
@@ -672,16 +858,22 @@ class AdminController extends Controller
         $classes = Kelas::where('ID_PERIODE', $latestPeriode)
             ->with(['detailKelas', 'wali'])
             ->get();
+        $availableRooms = DetailKelas::whereDoesntHave('kelas', function ($query) use ($latestPeriode) {
+            $query->where('ID_PERIODE', $latestPeriode);
+        })->get();
+        $availableGuru = Guru::whereDoesntHave('waliKelas', function ($query) use ($latestPeriode) {
+            $query->where('ID_PERIODE', $latestPeriode);
+        })->get();
         $kelasList = $classes->map(function ($item) {
             return [
                 'id_kelas' => $item->ID_KELAS ?? '-',
-                'ruangan_kelas' => $item->detailKelas->RUANGAN_KELAS,
-                'nama_kelas' => $item->detailKelas->NAMA_KELAS,
-                'nama_wali' => $item->wali->NAMA_GURU,
+                'ruangan_kelas' => $item->detailKelas->RUANGAN_KELAS ?? '-',
+                'nama_kelas' => $item->NAMA_KELAS ?? ($item->detailKelas->NAMA_KELAS ?? '-'),
+                'nama_wali' => $item->wali->NAMA_GURU ?? '-',
             ];
         });
 
-        return view('admin_pages.list_kelas', compact('kelasList', 'semesters', 'latestPeriode'));
+        return view('admin_pages.list_kelas', compact('kelasList', 'semesters', 'latestPeriode', 'availableRooms', 'availableGuru'));
     }
     public function delete_kelas($id_kelas)
     {
@@ -696,9 +888,9 @@ class AdminController extends Controller
         $kelasList = $classes->map(function ($item) {
             return [
                 'id_kelas' => $item->ID_KELAS ?? '-',
-                'ruangan_kelas' => $item->detailKelas->RUANGAN_KELAS,
-                'nama_kelas' => $item->detailKelas->NAMA_KELAS,
-                'nama_wali' => $item->wali->NAMA_GURU,
+                'ruangan_kelas' => $item->detailKelas->RUANGAN_KELAS ?? '-',
+                'nama_kelas' => $item->NAMA_KELAS ?? ($item->detailKelas->NAMA_KELAS ?? '-'),
+                'nama_wali' => $item->wali->NAMA_GURU ?? '-',
             ];
         });
         return response()->json($kelasList);
@@ -744,10 +936,18 @@ class AdminController extends Controller
             return redirect()->route('list_kelas')->with('error', 'Class not found!');
         }
 
+        $request->validate([
+            'ruangan' => 'required|exists:detail_kelas,ID_DETAIL_KELAS',
+            'wali_kelas' => 'required|exists:guru,ID_GURU',
+            'kapasitas' => 'required|integer|min:1',
+            'nama_kelas' => 'required|string|max:100',
+        ]);
+
         // Update the class details
         $kelas->ID_DETAIL_KELAS = $request->input('ruangan');
         $kelas->ID_GURU = $request->input('wali_kelas');
         $kelas->KAPASITAS = $request->input('kapasitas', 0);
+        $kelas->NAMA_KELAS = $request->input('nama_kelas');
 
         $kelas->save();
 
@@ -762,6 +962,7 @@ class AdminController extends Controller
             'ruangan' => 'required|exists:detail_kelas,ID_DETAIL_KELAS', // Adjust as needed
             'wali_kelas' => 'required|exists:guru,ID_GURU', // Adjust as needed
             'kapasitas' => 'required|integer|min:1',
+            'nama_kelas' => 'required|string|max:100',
         ]);
 
         // Create new class
@@ -770,6 +971,7 @@ class AdminController extends Controller
             'ID_GURU' => $validated['wali_kelas'],
             'ID_PERIODE' => $currPeriode,
             'KAPASITAS' => $validated['kapasitas'],
+            'NAMA_KELAS' => $validated['nama_kelas'],
         ]);
 
         return redirect()->route('list_kelas')->with('success', 'Class added successfully.');

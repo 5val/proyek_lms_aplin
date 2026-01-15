@@ -9,8 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('SISWA', function (Blueprint $table) {
-            $table->string('EMAIL_ORANGTUA')->nullable()->unique()->after('EMAIL_SISWA');
-            $table->string('PASSWORD_ORANGTUA')->nullable()->after('PASSWORD_SISWA');
+            if (! Schema::hasColumn('SISWA', 'EMAIL_ORANGTUA')) {
+                $table->string('EMAIL_ORANGTUA')->nullable()->unique()->after('EMAIL_SISWA');
+            }
+            if (! Schema::hasColumn('SISWA', 'PASSWORD_ORANGTUA')) {
+                $table->string('PASSWORD_ORANGTUA')->nullable()->after('PASSWORD_SISWA');
+            }
         });
     }
 

@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="d-flex flex-wrap gap-2">
-          <a href="/admin/tambah_kelas" class="btn btn-primary btn-sm">Tambah</a>
+          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambahKelas">Tambah</button>
           <a href="/admin/upload_kelas" class="btn btn-primary btn-sm">Upload Kelas</a>
           <a href="/admin/upload_siswa_ke_kelas" class="btn btn-primary btn-sm">Upload Siswa</a>
         </div>
@@ -48,7 +48,7 @@
             <th>Kode Kelas</th>
             <th>Wali Kelas</th>
             <th>Ruangan</th>
-            <th>Kelas</th>
+            <th>Nama Kelas</th>
             <th>Aksi</th>
           </tr>
           </thead>
@@ -66,6 +66,64 @@
           <button class="btn btn-secondary btn-sm" id="prevPage">Previous</button>
           <button class="btn btn-secondary btn-sm" id="nextPage">Next</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Kelas -->
+  <div class="modal fade" id="modalTambahKelas" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content bg-dark text-light border-0">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">Tambah Kelas</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{{ route('add_kelas') }}" method="POST">
+          @csrf
+          <div class="modal-body">
+            @if ($errors->any())
+              <div class="alert alert-danger small">
+                <ul class="mb-0 ps-3">
+                  @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                  @endforeach
+                </ul>
+              </div>
+            @endif
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Nama Kelas</label>
+                <input type="text" name="nama_kelas" class="form-control" placeholder="Contoh: Kelas 6A" maxlength="100" value="{{ old('nama_kelas') }}" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Ruangan Kelas</label>
+                <select name="ruangan" class="form-select" required>
+                  <option value="" disabled {{ old('ruangan') ? '' : 'selected' }}>Pilih Ruangan</option>
+                  @foreach($availableRooms as $ruang)
+                    <option value="{{ $ruang->ID_DETAIL_KELAS }}" {{ old('ruangan') == $ruang->ID_DETAIL_KELAS ? 'selected' : '' }}>{{ $ruang->RUANGAN_KELAS }}</option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Kapasitas (jumlah siswa)</label>
+                <input type="number" name="kapasitas" class="form-control" min="1" placeholder="Contoh: 30" value="{{ old('kapasitas') }}" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Wali Kelas</label>
+                <select name="wali_kelas" class="form-select" required>
+                  <option value="" disabled {{ old('wali_kelas') ? '' : 'selected' }}>Pilih Wali Kelas</option>
+                  @foreach($availableGuru as $guru)
+                    <option value="{{ $guru->ID_GURU }}" {{ old('wali_kelas') == $guru->ID_GURU ? 'selected' : '' }}>{{ $guru->NAMA_GURU }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -205,6 +263,11 @@
       });
 
       loadKelas($semesterSelect.val());
+
+      @if ($errors->any())
+        const tambahKelasModal = new bootstrap.Modal(document.getElementById('modalTambahKelas'));
+        tambahKelasModal.show();
+      @endif
     });
 
   </script>

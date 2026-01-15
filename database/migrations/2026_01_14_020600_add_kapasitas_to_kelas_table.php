@@ -9,14 +9,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('KELAS', function (Blueprint $table) {
-            $table->integer('KAPASITAS')->default(0)->after('ID_PERIODE');
+            if (! Schema::hasColumn('KELAS', 'KAPASITAS')) {
+                $table->integer('KAPASITAS')->default(0)->after('ID_PERIODE');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('KELAS', function (Blueprint $table) {
-            $table->dropColumn('KAPASITAS');
+            if (Schema::hasColumn('KELAS', 'KAPASITAS')) {
+                $table->dropColumn('KAPASITAS');
+            }
         });
     }
 };
