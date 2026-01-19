@@ -10,18 +10,18 @@
         <div class="content-box">
 
        <div class="material-box2">
-         <form action="{{ route('guru.updatepengumuman', base64_encode($pengumuman->ID)) }}" method="POST">
+         <form action="{{ route('guru.updatepengumuman', base64_encode($pengumuman->ID_PENGUMUMAN)) }}" method="POST">
           @csrf
           @method("PUT") 
          <h4 style="text-align: center;">Edit Pengumuman</h4><br>
          <input type="hidden" name="ID_MATA_PELAJARAN" value="{{ $mata_pelajaran }}">
          <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Judul pengumuman</label>
-            <input class="form-control" type="text" aria-label="default input example" name = "Judul" value="{{ old('Judul', $pengumuman->Judul) }}">
+            <input class="form-control" type="text" aria-label="default input example" name = "Judul" value="{{ old('Judul', $pengumuman->JUDUL) }}">
           </div>
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Detail pengumuman</label>
-            <textarea class="form-control" type="text" name="Deskripsi" aria-label="default input example">{{ old('Deskripsi', $pengumuman->Deskripsi) }}</textarea>
+            <textarea class="form-control" type="text" name="Deskripsi" aria-label="default input example">{{ old('Deskripsi', $pengumuman->ISI) }}</textarea>
           </div>
           
           <div class="d-grid gap-2">

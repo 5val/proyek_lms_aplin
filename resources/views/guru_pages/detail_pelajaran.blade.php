@@ -559,13 +559,13 @@
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 d-flex flex-column">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Pengumuman <span> {{ $p->ID }}</span></h5>
-                            <p class="card-text">{{ $p->Judul }}</p>
-                            <p class="card-text flex-grow-1">{{ $p->Deskripsi }}</p>
+                            <h5 class="card-title">Pengumuman <span> {{ $p->ID_PENGUMUMAN }}</span></h5>
+                            <p class="card-text">{{ $p->JUDUL }}</p>
+                            <p class="card-text flex-grow-1">{{ $p->ISI }}</p>
                             <div class="mt-auto">
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-primary w-50" data-bs-toggle="modal" data-bs-target="#modalEditPengumuman{{ $p->ID }}">Edit</button>
-                                   <form action="{{ route('guru.deletepengumuman', $p->ID) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengumuman ini?');" class="w-50">
+                                    <button class="btn btn-sm btn-outline-primary w-50" data-bs-toggle="modal" data-bs-target="#modalEditPengumuman{{ $p->ID_PENGUMUMAN }}">Edit</button>
+                                   <form action="{{ route('guru.deletepengumuman', $p->ID_PENGUMUMAN) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengumuman ini?');" class="w-50">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger w-100">Hapus</button>
@@ -578,25 +578,25 @@
             <?php endforeach ?>
 
                         <?php foreach ($pengumuman as $p): ?>
-                        <div class="modal fade" id="modalEditPengumuman{{ $p->ID }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal fade" id="modalEditPengumuman{{ $p->ID_PENGUMUMAN }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                 <div class="modal-content bg-dark text-light border-0">
                                     <div class="modal-header border-0">
                                         <h5 class="modal-title">Edit Pengumuman</h5>
                                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form action="{{ route('guru.updatepengumuman', base64_encode($p->ID)) }}" method="POST">
+                                    <form action="{{ route('guru.updatepengumuman', base64_encode($p->ID_PENGUMUMAN)) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <div class="modal-body">
                                             <input type="hidden" name="ID_MATA_PELAJARAN" value="{{ $mata_pelajaran->ID_MATA_PELAJARAN }}">
                                             <div class="mb-3">
                                                 <label class="form-label">Judul</label>
-                                                <input type="text" name="Judul" class="form-control" value="{{ $p->Judul }}" required>
+                                                <input type="text" name="Judul" class="form-control" value="{{ $p->JUDUL }}" required>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Deskripsi</label>
-                                                <textarea name="Deskripsi" class="form-control" rows="3" required>{{ $p->Deskripsi }}</textarea>
+                                                <textarea name="Deskripsi" class="form-control" rows="3" required>{{ $p->ISI }}</textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0">

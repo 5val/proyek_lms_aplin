@@ -168,8 +168,8 @@ class AdminController extends Controller
     {
         $id = base64_decode($id);
         $pengumuman = Pengumuman::find($id);
-        $pengumuman->Judul = $request->input('Judul');
-        $pengumuman->Deskripsi = $request->input('Deskripsi');
+        $pengumuman->JUDUL = $request->input('Judul');
+        $pengumuman->ISI = $request->input('Deskripsi');
         $pengumuman->save();
         return redirect('/admin/listpengumuman');
     }
@@ -184,7 +184,11 @@ class AdminController extends Controller
             'Judul' => 'required|max:255',
             'Deskripsi' => 'required',
         ]);
-        $pengumuman = Pengumuman::create($validatedData);
+        // Create with actual column names
+        $pengumuman = Pengumuman::create([
+            'JUDUL' => $validatedData['Judul'],
+            'ISI' => $validatedData['Deskripsi'],
+        ]);
         return redirect('/admin/listpengumuman');
     }
     public function hapuspengumuman($id_pengumuman)

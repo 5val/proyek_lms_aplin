@@ -47,12 +47,19 @@
 
       <!-- Pengumuman -->
       <h5>Pengumuman</h5>
+      <?php if (count($all_pengumuman) === 0): ?>
+      <div class="bg-white shadow-sm rounded p-3 mb-3">
+        <p class="mb-0 text-muted">Belum ada pengumuman.</p>
+      </div>
+      <?php else: ?>
       <?php foreach ($all_pengumuman as $p): ?>
       <div class="bg-white shadow-sm rounded p-3 mb-3">
-        <h6 class="fw-bold">{{ $p->Judul }}</h6>
-        <p>{{ $p->Deskripsi }}</p>
+        <h6 class="fw-bold">{{ $p->JUDUL }}</h6>
+        <p class="mb-1">{{ $p->ISI }}</p>
+        <small class="text-muted">{{ $p->TANGGAL }}</small>
       </div>
       <?php endforeach; ?>
+      <?php endif; ?>
    </div>
 
    <!-- Jadwal Mengajar Guru -->

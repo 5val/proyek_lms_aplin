@@ -52,7 +52,16 @@ class GuruController extends Controller
       $allPengumuman = Pengumuman::all();
       $jadwal = [];
       foreach ($allMataPelajaran as $a) {
-         $jadwal[$a->hari_pelajaran][$a->jam_pelajaran] = $a;
+         $hariKey = ucfirst(strtolower($a->hari_pelajaran));
+
+         // Normalize jam to format "HH:MM-HH:MM" regardless of spacing or dash type
+         $jamRaw = $a->jam_pelajaran;
+         $jamKey = $jamRaw;
+         if (preg_match('/(\d{2}:\d{2})\s*[\-–—]\s*(\d{2}:\d{2})/', $jamRaw, $m)) {
+            $jamKey = $m[1] . '-' . $m[2];
+         }
+
+         $jadwal[$hariKey][$jamKey] = $a;
       }
       if($kelas != null) {
          $waliKelas = DetailKelas::find($kelas->ID_DETAIL_KELAS);
@@ -156,10 +165,11 @@ class GuruController extends Controller
           'Judul' => 'required|string|max:255',
           'Deskripsi' => 'nullable|string',
           'ID_MATA_PELAJARAN' => 'required|max:255',
-        // tambahkan validasi lain sesuai kebutuhan
-        ]);
-        $pengumuman->Judul = $validatedData['Judul'];
-        $pengumuman->Deskripsi = $validatedData['Deskripsi'];
+         // tambahkan validasi lain sesuai kebutuhan
+         ]);
+         // Persist using actual column names
+         $pengumuman->JUDUL = $validatedData['Judul'];
+         $pengumuman->ISI = $validatedData['Deskripsi'];
         $pengumuman->save();
         return redirect(url('/guru/detail_pelajaran/' . base64_encode($request->input('ID_MATA_PELAJARAN'))));
       //   return redirect(url('/guru/detail_pelajaran/' . base64_encode($request)));
@@ -260,26 +270,36 @@ public function hlm_detail_tugas($id_tugas)
 {
    $id_tugas = base64_decode($id_tugas);
    //  $id_tugas = str_replace('+', ' ', $id_tugas);
-    $tugas = Tugas::find($id_tugas);
+   $tugas = Tugas::with('mataPelajaran')->find($id_tugas);
 
     if (!$tugas) {
         return redirect()->back()->withErrors(['msg' => 'Tugas tidak ditemukan.']);
     }
 
-    // Ambil semua siswa
-    $siswaSemua = Siswa::all();
+   $mataPelajaran = $tugas->mataPelajaran;
 
-    // Ambil submission tugas ini
+   if (!$mataPelajaran) {
+      return redirect()->back()->withErrors(['msg' => 'Mata pelajaran untuk tugas ini tidak ditemukan.']);
+   }
+
+   $idKelas = $mataPelajaran->ID_KELAS;
+
+   $siswaKelas = Siswa::whereHas('kelass', function ($query) use ($idKelas) {
+      $query->where('ENROLLMENT_KELAS.ID_KELAS', $idKelas);
+   })->orderBy('NAMA_SISWA')->get();
+
     $submissions = SubmissionTugas::with('siswa')
         ->where('ID_TUGAS', $id_tugas)
+      ->whereHas('siswa.kelass', function ($query) use ($idKelas) {
+         $query->where('ENROLLMENT_KELAS.ID_KELAS', $idKelas);
+      })
         ->get();
 
     // Ambil ID siswa yang sudah mengumpulkan
-    $siswaSudahIds = $submissions->pluck('ID_SISWA')->toArray();
+   $siswaSudahIds = $submissions->pluck('ID_SISWA')->unique()->toArray();
 
-    // Siswa yang sudah dan belum
-    $siswaSudah = Siswa::whereIn('ID_SISWA', $siswaSudahIds)->get();
-    $siswaBelum = Siswa::whereNotIn('ID_SISWA', $siswaSudahIds)->get();
+   $siswaSudah = $siswaKelas->whereIn('ID_SISWA', $siswaSudahIds)->values();
+   $siswaBelum = $siswaKelas->whereNotIn('ID_SISWA', $siswaSudahIds)->values();
 
     return view('guru_pages.hlm_detail_tugas', [
         'tugas' => $tugas,

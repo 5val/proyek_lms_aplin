@@ -10,7 +10,8 @@ class Pengumuman extends Model
     use HasFactory;
 
     protected $table = 'PENGUMUMAN';
-    protected $primaryKey = 'ID';
+    protected $primaryKey = 'ID_PENGUMUMAN';
     public $timestamps = false;
-    protected $fillable = ['Judul', 'Deskripsi'];
+    // Map to actual DB columns
+    protected $fillable = ['JUDUL', 'ISI', 'TANGGAL'];
 }

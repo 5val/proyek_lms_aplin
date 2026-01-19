@@ -57,8 +57,8 @@
     <div>
     <?php foreach ($listPengumuman as $pengumuman):?>
       <div class="announcement-card p-3 mb-3">
-      <h5 class="fw-bold"><?= $pengumuman->Judul?></h5>
-      <p><?= $pengumuman->Deskripsi?></p>
+      <h5 class="fw-bold"><?= $pengumuman->JUDUL?></h5>
+      <p><?= $pengumuman->ISI?></p>
     </div>
     <?php endforeach;?>
     </div>

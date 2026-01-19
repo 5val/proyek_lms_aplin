@@ -80,7 +80,7 @@
         const term = $search.val().toLowerCase();
         const filtered = term
           ? pengumumanData.filter((item) => {
-              const text = `${item.ID} ${item.Judul || ''} ${item.Deskripsi || ''} ${formatTanggal(item)}`.toLowerCase();
+              const text = `${item.ID_PENGUMUMAN} ${item.JUDUL || ''} ${item.ISI || ''} ${formatTanggal(item)}`.toLowerCase();
               return text.includes(term);
             })
           : [...pengumumanData];
@@ -96,11 +96,11 @@
           $tableBody.html('<tr><td colspan="5" class="text-center text-muted py-4">Tidak ada pengumuman.</td></tr>');
         } else {
           const rows = pageItems.map((item) => {
-            const id = escapeHtml(item.ID);
-            const judul = escapeHtml(item.Judul);
-            const deskripsi = escapeHtml((item.Deskripsi || '').slice(0, 120) + ((item.Deskripsi || '').length > 120 ? '...' : ''));
+            const id = escapeHtml(item.ID_PENGUMUMAN);
+            const judul = escapeHtml(item.JUDUL);
+            const deskripsi = escapeHtml((item.ISI || '').slice(0, 120) + ((item.ISI || '').length > 120 ? '...' : ''));
             const tanggal = escapeHtml(formatTanggal(item));
-            const encodedId = btoa(item.ID);
+            const encodedId = btoa(item.ID_PENGUMUMAN);
 
             return `
               <tr>

@@ -116,8 +116,8 @@
         <ul class="list-group list-group-flush">
             @forelse($pengumuman as $p)
                 <li class="list-group-item">
-                    <div class="fw-bold">{{ $p->judul ?? $p->Judul ?? 'Pengumuman' }}</div>
-                    <div class="text-muted small">{{ $p->deskripsi ?? $p->Deskripsi ?? '' }}</div>
+                        <div class="fw-bold">{{ $p->JUDUL ?? $p->Judul ?? 'Pengumuman' }}</div>
+                        <div class="text-muted small">{{ $p->ISI ?? $p->Deskripsi ?? '' }}</div>
                 </li>
             @empty
                 <li class="list-group-item text-muted">Belum ada pengumuman</li>
