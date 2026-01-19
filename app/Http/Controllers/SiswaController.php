@@ -155,18 +155,90 @@ class SiswaController extends Controller
             return response()->json(['message' => 'Siswa tidak ditemukan.'], 404);
         }
 
-        // Ambil nama kelas berdasarkan kelas yang diikuti oleh siswa
-        $kelasInfo = DB::table('ENROLLMENT_KELAS')
-            ->join('KELAS', 'ENROLLMENT_KELAS.ID_KELAS', '=', 'KELAS.ID_KELAS')
-            ->join('DETAIL_KELAS', 'KELAS.ID_DETAIL_KELAS', '=', 'DETAIL_KELAS.ID_DETAIL_KELAS')
-            ->where('ENROLLMENT_KELAS.ID_SISWA', '=', $siswa->ID_SISWA)
-            ->select('DETAIL_KELAS.NAMA_KELAS', 'KELAS.ID_KELAS')
-            ->first(); // Mengambil data kelas siswa
+        // Riwayat kelas yang diikuti siswa beserta periode
+        $kelasHistory = DB::table('ENROLLMENT_KELAS as ek')
+            ->join('KELAS as k', 'ek.ID_KELAS', '=', 'k.ID_KELAS')
+            ->join('DETAIL_KELAS as dk', 'k.ID_DETAIL_KELAS', '=', 'dk.ID_DETAIL_KELAS')
+            ->join('PERIODE as p', 'k.ID_PERIODE', '=', 'p.ID_PERIODE')
+            ->where('ek.ID_SISWA', $siswa->ID_SISWA)
+            ->orderBy('p.ID_PERIODE')
+            ->select('k.ID_KELAS', 'dk.NAMA_KELAS', 'p.PERIODE')
+            ->get();
+
+        $kelasInfo = $kelasHistory->last();
+
+        // Rekap rata-rata nilai akhir per kelas/periode untuk tabel ringkasan
+        $nilaiRingkasan = DB::table('NILAI_KELAS as nk')
+            ->join('MATA_PELAJARAN as mp', 'nk.ID_MATA_PELAJARAN', '=', 'mp.ID_MATA_PELAJARAN')
+            ->join('KELAS as k', 'mp.ID_KELAS', '=', 'k.ID_KELAS')
+            ->join('DETAIL_KELAS as dk', 'k.ID_DETAIL_KELAS', '=', 'dk.ID_DETAIL_KELAS')
+            ->join('PERIODE as p', 'k.ID_PERIODE', '=', 'p.ID_PERIODE')
+            ->where('nk.ID_SISWA', $siswa->ID_SISWA)
+            ->groupBy('k.ID_KELAS', 'dk.NAMA_KELAS', 'p.ID_PERIODE', 'p.PERIODE')
+            ->orderBy('p.ID_PERIODE')
+            ->select('k.ID_KELAS', 'dk.NAMA_KELAS', 'p.PERIODE', DB::raw('AVG(nk.NILAI_AKHIR) as RATA_AKHIR'))
+            ->get();
+
+        // Rekap performa nilai per periode (tahun ke tahun)
+        $nilaiPerPeriode = DB::table('NILAI_KELAS as nk')
+            ->join('MATA_PELAJARAN as mp', 'nk.ID_MATA_PELAJARAN', '=', 'mp.ID_MATA_PELAJARAN')
+            ->join('KELAS as k', 'mp.ID_KELAS', '=', 'k.ID_KELAS')
+            ->join('PERIODE as p', 'k.ID_PERIODE', '=', 'p.ID_PERIODE')
+            ->where('nk.ID_SISWA', $siswa->ID_SISWA)
+            ->groupBy('p.ID_PERIODE', 'p.PERIODE')
+            ->orderBy('p.ID_PERIODE')
+            ->select(
+                'p.PERIODE',
+                DB::raw('AVG(nk.NILAI_AKHIR) as RATA_PERIODE'),
+                DB::raw('COUNT(DISTINCT mp.ID_MATA_PELAJARAN) as JUMLAH_MAPEL')
+            )
+            ->get();
+
+        $nilaiLabels = $nilaiPerPeriode->map(fn($n) => $n->PERIODE);
+        $nilaiValues = $nilaiPerPeriode->pluck('RATA_PERIODE');
+
+        // Rekap aktivitas tugas siswa
+        $tugasStats = DB::table('SUBMISSION_TUGAS')
+            ->where('ID_SISWA', $siswa->ID_SISWA)
+            ->select(
+                DB::raw('COUNT(*) as TOTAL_SUBMISSION'),
+                DB::raw('SUM(CASE WHEN NILAI_TUGAS IS NOT NULL THEN 1 ELSE 0 END) as SUDAH_DINILAI'),
+                DB::raw('AVG(NILAI_TUGAS) as RATA_TUGAS')
+            )
+            ->first();
+
+        // Rekap kehadiran per status untuk setiap periode
+        $attendanceBreakdown = DB::table('ATTENDANCE as a')
+            ->join('PERTEMUAN as pt', 'a.ID_PERTEMUAN', '=', 'pt.ID_PERTEMUAN')
+            ->join('MATA_PELAJARAN as mp', 'pt.ID_MATA_PELAJARAN', '=', 'mp.ID_MATA_PELAJARAN')
+            ->join('KELAS as k', 'mp.ID_KELAS', '=', 'k.ID_KELAS')
+            ->join('PERIODE as p', 'k.ID_PERIODE', '=', 'p.ID_PERIODE')
+            ->where('a.ID_SISWA', $siswa->ID_SISWA)
+            ->groupBy('p.ID_PERIODE', 'p.PERIODE', 'a.STATUS')
+            ->orderBy('p.ID_PERIODE')
+            ->select('p.PERIODE', 'a.STATUS', DB::raw('COUNT(*) as TOTAL'))
+            ->get();
+
+        $attendanceStats = DB::table('ATTENDANCE')
+            ->where('ID_SISWA', $siswa->ID_SISWA)
+            ->select(
+                DB::raw('COUNT(*) as TOTAL_KEHADIRAN'),
+                DB::raw('SUM(CASE WHEN UPPER(STATUS) = "HADIR" THEN 1 ELSE 0 END) as TOTAL_HADIR')
+            )
+            ->first();
 
         // Kirim data siswa dan nama kelas ke view
         return view('siswa_pages.hlm_about', [
             'siswa' => $siswa,
             'kelasInfo' => $kelasInfo,
+            'kelasHistory' => $kelasHistory,
+            'nilaiRingkasan' => $nilaiRingkasan,
+            'nilaiPerPeriode' => $nilaiPerPeriode,
+            'nilaiLabels' => $nilaiLabels,
+            'nilaiValues' => $nilaiValues,
+            'tugasStats' => $tugasStats,
+            'attendanceBreakdown' => $attendanceBreakdown,
+            'attendanceStats' => $attendanceStats,
         ]);
     }
     public function hlm_detail_tugas($id_tugas)
@@ -410,7 +482,8 @@ class SiswaController extends Controller
                     ->from('SUBMISSION_TUGAS')
                     ->where('ID_SISWA', '=', $siswa->ID_SISWA);
             })
-            ->select('PELAJARAN.NAMA_PELAJARAN', 'TUGAS.NAMA_TUGAS', 'TUGAS.ID_TUGAS')
+            ->select('PELAJARAN.NAMA_PELAJARAN', 'TUGAS.NAMA_TUGAS', 'TUGAS.ID_TUGAS', 'TUGAS.DEADLINE_TUGAS')
+            ->orderBy('TUGAS.DEADLINE_TUGAS', 'asc')
             ->get();
 
         // Rata-rata nilai per mata pelajaran periode terpilih

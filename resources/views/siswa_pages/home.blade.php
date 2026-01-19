@@ -98,14 +98,21 @@
 
           </div>
 
-          <!-- Pengumuman -->
-          <h5>Pengumuman</h5>
-                    <?php foreach ($pengumuman as $p): ?>
-                    <div class="announcement-card mb-3">
-                        <h6 class="fw-bold">{{ $p->Judul }}</h6>
-                        <p>{{ $p->Deskripsi }}</p>
-                    </div>
-                    <?php endforeach; ?>
+                    <!-- Pengumuman -->
+                    <h5>Pengumuman</h5>
+                    @forelse($pengumuman as $p)
+                        <div class="announcement-card mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="fw-bold mb-1">{{ $p->JUDUL }}</h6>
+                                <small class="text-muted">{{ \Carbon\Carbon::parse($p->TANGGAL)->format('d M Y') }}</small>
+                            </div>
+                            <p class="mb-0">{{ $p->ISI }}</p>
+                        </div>
+                    @empty
+                        <div class="announcement-card mb-3">
+                            <p class="mb-0 text-muted">Belum ada pengumuman.</p>
+                        </div>
+                    @endforelse
 
           <!-- Timetable -->
           <h5>Jadwal Pelajaran (Senin - Jumat)</h5>

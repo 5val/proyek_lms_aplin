@@ -255,11 +255,48 @@ class GuruController extends Controller
         if (!$guru) {
             return response()->json(['message' => 'Guru tidak ditemukan.'], 404);
         }
-        $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->first();
-        $waliKelas = DetailKelas::find($kelas->ID_DETAIL_KELAS);
+      $kelas = Kelas::where('ID_GURU', '=', session('userActive')->ID_GURU)->first();
+      $waliKelas = $kelas ? DetailKelas::find($kelas->ID_DETAIL_KELAS) : null;
+
+      // Daftar kelas yang diampu lengkap dengan periode
+      $kelasDiampu = DB::table('KELAS as k')
+         ->join('DETAIL_KELAS as dk', 'k.ID_DETAIL_KELAS', '=', 'dk.ID_DETAIL_KELAS')
+         ->join('PERIODE as p', 'k.ID_PERIODE', '=', 'p.ID_PERIODE')
+         ->where('k.ID_GURU', $guru->ID_GURU)
+         ->orderBy('p.ID_PERIODE')
+         ->select('k.ID_KELAS', 'dk.NAMA_KELAS', 'p.PERIODE')
+         ->get();
+
+      // Laporan kinerja per periode
+      $periodeReports = DB::table('KELAS as k')
+         ->join('PERIODE as p', 'k.ID_PERIODE', '=', 'p.ID_PERIODE')
+         ->leftJoin('MATA_PELAJARAN as mp', 'mp.ID_KELAS', '=', 'k.ID_KELAS')
+         ->leftJoin('TUGAS as t', 't.ID_MATA_PELAJARAN', '=', 'mp.ID_MATA_PELAJARAN')
+         ->leftJoin('MATERI as m', 'm.ID_MATA_PELAJARAN', '=', 'mp.ID_MATA_PELAJARAN')
+         ->leftJoin('NILAI_KELAS as nk', 'nk.ID_MATA_PELAJARAN', '=', 'mp.ID_MATA_PELAJARAN')
+         ->where('k.ID_GURU', $guru->ID_GURU)
+         ->groupBy('p.ID_PERIODE', 'p.PERIODE')
+         ->orderBy('p.ID_PERIODE')
+         ->select(
+            'p.PERIODE',
+            DB::raw('COUNT(DISTINCT k.ID_KELAS) as TOTAL_KELAS'),
+            DB::raw('COUNT(DISTINCT mp.ID_MATA_PELAJARAN) as TOTAL_MAPEL'),
+            DB::raw('COUNT(DISTINCT t.ID_TUGAS) as TOTAL_TUGAS'),
+            DB::raw('COUNT(DISTINCT m.ID_MATERI) as TOTAL_MATERI'),
+            DB::raw('AVG(nk.NILAI_AKHIR) as RATA_NILAI_AKHIR')
+         )
+         ->get();
+
+      $chartPeriodeLabels = $periodeReports->map(fn($p) => $p->PERIODE);
+      $chartPeriodeValues = $periodeReports->map(fn($p) => round((float) $p->RATA_NILAI_AKHIR, 2));
+
         return view('guru_pages.hlm_about', [
           'guru' => $guru,
-          'wali_kelas' => $waliKelas
+        'wali_kelas' => $waliKelas,
+        'kelasDiampu' => $kelasDiampu,
+        'periodeReports' => $periodeReports,
+        'chartPeriodeLabels' => $chartPeriodeLabels,
+        'chartPeriodeValues' => $chartPeriodeValues,
         ]);
     }
     public function hlm_detail_pengumuman()
@@ -454,9 +491,12 @@ public function hlm_detail_tugas($id_tugas)
       if($kelas != null) {
          $listNilai = DB::table('submission_tugas as st')
             ->join('tugas as t', 'st.id_tugas', '=', 't.id_tugas')
-            ->join('siswa as s', 'st.id_siswa', '=', 's.id_siswa')
             ->join('mata_pelajaran as mp', 't.id_mata_pelajaran', '=', 'mp.id_mata_pelajaran')
             ->join('pelajaran as p', 'mp.id_pelajaran', '=', 'p.id_pelajaran')
+            ->join('enrollment_kelas as ek', function ($join) {
+                $join->on('ek.id_siswa', '=', 'st.id_siswa')->on('ek.id_kelas', '=', 'mp.id_kelas');
+            })
+            ->join('siswa as s', 'ek.id_siswa', '=', 's.id_siswa')
             ->where('mp.id_kelas', '=', $kelas->ID_KELAS)
             ->select('st.id_submission', 'st.id_siswa', 's.nama_siswa', 't.nama_tugas', 'p.nama_pelajaran', 'st.nilai_tugas')
             ->get();

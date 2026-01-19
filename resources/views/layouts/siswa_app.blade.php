@@ -6,10 +6,12 @@
       @include('layouts.siswa_sidebar')
       <!-- </div> -->
 
-      <div class="col-5 main-content flex-grow-1">
-        @include('layouts.navbar')
+      <div class="col-5 main-content flex-grow-1 d-flex flex-column">
+        <div class="sticky-top">
+          @include('layouts.navbar')
+        </div>
 
-        <div class="p-3 key-content">
+        <div class="p-3 key-content flex-grow-1">
           @yield('siswa_content')
         </div>
       </div>

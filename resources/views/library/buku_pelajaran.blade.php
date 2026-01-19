@@ -25,8 +25,22 @@
       <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    @if($errors->any())
+      <div class="alert alert-danger">{{ $errors->first() }}</div>
+    @endif
+
+    @if(!empty($blockedReason))
+      <div class="alert alert-warning mb-3">{{ $blockedReason }}</div>
+    @endif
+
     @if($books->isEmpty())
-      <div class="text-center text-light py-4">Belum ada buku yang tersedia.</div>
+      <div class="text-center text-light py-4">
+        @if(!empty($blockedReason))
+          Tagihan buku periode ini belum lunas. Silakan selesaikan pembayaran untuk mengakses buku.
+        @else
+          Belum ada buku yang tersedia.
+        @endif
+      </div>
     @else
       <div class="row g-3">
         @foreach($books as $book)

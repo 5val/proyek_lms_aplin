@@ -31,6 +31,18 @@ html, body { height: 100%; }
 
 a { text-decoration: none; color: inherit; }
 
+.text-muted { color: #e5e7eb !important; }
+.list-group-item { color: var(--text); }
+.table td, .table th { color: var(--text); }
+
+/* Keep summary tables readable on light rows */
+.no-data-table td,
+.no-data-table th {
+  color: #0b0f1a !important;
+  background: #f8fafc;
+}
+.no-data-table tr { border-color: #e2e8f0; }
+
 .full-layout { height: 100vh; }
 
 .key-content {

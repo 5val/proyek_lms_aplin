@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\BukuPelajaran;
+use App\Models\EnrollmentKelas;
+use App\Models\FeeComponent;
 use App\Models\Kelas;
+use App\Models\StudentFee;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,6 +15,65 @@ use setasign\Fpdi\Fpdi;
 
 class BukuPelajaranController extends Controller
 {
+    private function getBookAccessBlockReason(Request $request): ?string
+    {
+        if (! $request->is('siswa/*') && ! $request->is('orangtua/*')) {
+            return null;
+        }
+
+        $user = session('userActive');
+        $idSiswa = $user->ID_SISWA ?? null;
+
+        if (! $idSiswa) {
+            return null;
+        }
+
+        $periodeId = EnrollmentKelas::where('ID_SISWA', $idSiswa)
+            ->join('KELAS', 'ENROLLMENT_KELAS.ID_KELAS', '=', 'KELAS.ID_KELAS')
+            ->orderByDesc('KELAS.ID_PERIODE')
+            ->value('KELAS.ID_PERIODE');
+
+        if (! $periodeId) {
+            return null;
+        }
+
+        $bookComponentIds = FeeComponent::where('STATUS', 'Active')
+            ->where(function ($q) {
+                $q->where('NAME', 'like', '%buku%')
+                    ->orWhereHas('category', function ($c) {
+                        $c->where('NAME', 'like', '%buku%');
+                    });
+            })
+            ->pluck('ID_COMPONENT');
+
+        if ($bookComponentIds->isEmpty()) {
+            return null;
+        }
+
+        $hasUnpaid = StudentFee::where('ID_SISWA', $idSiswa)
+            ->where('ID_PERIODE', $periodeId)
+            ->whereIn('ID_COMPONENT', $bookComponentIds)
+            ->whereNotIn('STATUS', ['Paid'])
+            ->exists();
+
+        return $hasUnpaid
+            ? 'Akses buku dikunci hingga tagihan buku pada periode ini dilunasi.'
+            : null;
+    }
+
+    private function redirectBlockedAccess(Request $request, string $message): RedirectResponse
+    {
+        if ($request->is('orangtua/*')) {
+            return redirect()->route('orangtua.buku.index')->withErrors($message);
+        }
+
+        if ($request->is('siswa/*')) {
+            return redirect()->route('siswa.buku.index')->withErrors($message);
+        }
+
+        abort(403, $message);
+    }
+
     // ============================= Admin =============================
     public function adminIndex(): Response
     {
@@ -140,16 +202,27 @@ class BukuPelajaranController extends Controller
 
         $books = $query->get();
         $kelasList = Kelas::orderBy('ID_KELAS')->get();
+        $blockedReason = $this->getBookAccessBlockReason($request);
+
+        if ($blockedReason) {
+            $books = collect();
+        }
 
         return response()->view('library.buku_pelajaran', [
             'books' => $books,
             'kelasList' => $kelasList,
             'kelasFilter' => $kelasFilter,
+            'blockedReason' => $blockedReason,
         ]);
     }
 
     public function stream(int $id)
     {
+        $blockedReason = $this->getBookAccessBlockReason(request());
+        if ($blockedReason) {
+            return $this->redirectBlockedAccess(request(), $blockedReason);
+        }
+
         $book = BukuPelajaran::findOrFail($id);
 
         // Only allow active books in public library

@@ -21,17 +21,17 @@
 
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="text-muted small">Show</span>
+                    <span class="text-light small">Show</span>
                     <select id="pageSizeSelect" class="form-select form-select-sm bg-dark text-light border-secondary" style="width: 80px;">
                         <option value="5">5</option>
                         <option value="10" selected>10</option>
                         <option value="25">25</option>
                         <option value="50">50</option>
                     </select>
-                    <span class="text-muted small">entries</span>
+                    <span class="text-light small">entries</span>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <label for="tableSearch" class="text-muted small mb-0">Search:</label>
+                    <label for="tableSearch" class="text-light small mb-0">Search:</label>
                     <input type="text" class="form-control form-control-sm bg-dark text-light border-secondary" id="tableSearch" placeholder="Cari periode..." style="width: 240px;">
                 </div>
             </div>
@@ -53,7 +53,7 @@
             </div>
 
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
-                <small class="text-muted" id="tableSummary">Showing 0 to 0 of 0 entries</small>
+                <small class="text-light" id="tableSummary">Showing 0 to 0 of 0 entries</small>
                 <div class="d-flex gap-2">
                     <button class="btn btn-secondary btn-sm" id="prevPage">Previous</button>
                     <button class="btn btn-secondary btn-sm" id="nextPage">Next</button>

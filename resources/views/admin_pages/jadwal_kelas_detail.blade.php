@@ -10,7 +10,7 @@
 
   <div class="row g-3">
     @foreach($daysOrder as $day)
-      <div class="col-lg-4">
+      <div class="col-12 col-md-6 col-lg-6">
         <div class="average-card-custom h-100">
           <h6 class="average-card-title mb-2">{{ $day }}</h6>
           <div class="table-responsive">
