@@ -105,7 +105,7 @@
                 <div class="mb-3 d-flex justify-content-center">
                     <img src="{{ asset('images/logo_sekolah2.png') }}" class="rounded-circle" width="120" height="120" alt="Logo">
                 </div>
-                <div class="auth-badge mb-3">SMA Ovaldo • Learning Portal</div>
+                <div class="auth-badge mb-3">ZONA AI School • Learning Portal</div>
                 <h2 class="fw-bold mb-2" style="color:#fff;">Welcome Back</h2>
                 <p class="text-muted mb-4" style="color:#cbd5e1!important;">Sign in to manage classes, grades, and materials.</p>
 
