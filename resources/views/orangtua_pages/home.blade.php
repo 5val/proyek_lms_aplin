@@ -1,7 +1,12 @@
 @extends('layouts.admin_app')
 
 @section('admin_content')
-<div class="container mt-3 text-light">
+<div class="container mt-3 text-light orangtua-page">
+    <style>
+        .orangtua-page .text-muted { color: #0b0f1a !important; }
+        .orangtua-page .list-group-item { color: #0b0f1a; }
+        .orangtua-page .average-card-custom .small { color: #0b0f1a !important; }
+    </style>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="average-card-title mb-0">Beranda Orang Tua</h3>
         <span class="text-muted small">Anak: {{ $siswa->NAMA_SISWA }} ({{ $siswa->ID_SISWA }})</span>

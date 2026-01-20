@@ -626,19 +626,48 @@ public function hlm_laporan_nilai(Request $request)
         )
         ->first(); // Ambil satu record saja karena biasanya siswa hanya di satu kelas per periode
 
+    $minimumMataPelajaran = 10;
+
+    // Siapkan daftar nilai yang sudah ada, lalu tambahkan placeholder sampai minimal 10 mata pelajaran
+    $nilaiSiswaDisplay = $nilaiSiswa->map(function ($row) {
+        $row->IS_PLACEHOLDER = false;
+        return $row;
+    });
+
+    $padCount = max(0, $minimumMataPelajaran - $nilaiSiswaDisplay->count());
+    for ($i = 0; $i < $padCount; $i++) {
+        $nilaiSiswaDisplay->push((object) [
+            'ID_MATA_PELAJARAN' => null,
+            'JAM_PELAJARAN' => null,
+            'HARI_PELAJARAN' => null,
+            'NAMA_PELAJARAN' => 'Mata pelajaran belum dipilih',
+            'NAMA_GURU' => null,
+            'ID_GURU' => null,
+            'NAMA_KELAS' => $nilaiSiswa->first()->NAMA_KELAS ?? ($waliKelas->NAMA_KELAS ?? null),
+            'PERIODE' => $validPeriode->PERIODE ?? null,
+            'ID_NILAI' => null,
+            'NILAI_UTS' => null,
+            'NILAI_UAS' => null,
+            'NILAI_TUGAS' => null,
+            'NILAI_AKHIR' => null,
+            'IS_PLACEHOLDER' => true,
+        ]);
+    }
+
     // Hitung rata-rata nilai per periode (hanya untuk mata pelajaran yang sudah ada nilai)
     $nilaiYangAda = $nilaiSiswa->whereNotNull('NILAI_AKHIR');
     $rataRataNilai = $nilaiYangAda->count() > 0 ? $nilaiYangAda->avg('NILAI_AKHIR') : 0;
 
-    // Hitung total mata pelajaran yang diambil
-    $totalMataPelajaran = $nilaiSiswa->count();
+    // Hitung total mata pelajaran yang diambil dan yang ditampilkan (minimal 10)
+    $totalMataPelajaranDiambil = $nilaiSiswa->count();
+    $totalMataPelajaran = $nilaiSiswaDisplay->count();
 
     // Hitung mata pelajaran yang sudah ada nilai
     $mataPelajaranDenganNilai = $nilaiYangAda->count();
 
     // Status kelulusan berdasarkan nilai rata-rata
     $statusKelulusan = $rataRataNilai >= 70 ? 'LULUS' : 'TIDAK LULUS';
-    if ($mataPelajaranDenganNilai - $totalMataPelajaran != 0 || $mataPelajaranDenganNilai == 0) {
+    if ($mataPelajaranDenganNilai !== $totalMataPelajaranDiambil || $mataPelajaranDenganNilai === 0) {
         $statusKelulusan = "-";
     }
 
@@ -666,8 +695,11 @@ public function hlm_laporan_nilai(Request $request)
 
     return view('siswa_pages.hlm_report_siswa', [
         'nilaiSiswa' => $nilaiSiswa,
+        'nilaiSiswaDisplay' => $nilaiSiswaDisplay,
         'rataRataNilai' => $rataRataNilai,
         'totalMataPelajaran' => $totalMataPelajaran,
+        'totalMataPelajaranDiambil' => $totalMataPelajaranDiambil,
+        'minimumMataPelajaran' => $minimumMataPelajaran,
         'mataPelajaranDenganNilai' => $mataPelajaranDenganNilai,
         'statusKelulusan' => $statusKelulusan,
         'rangkingSiswa' => $rangkingSiswa,

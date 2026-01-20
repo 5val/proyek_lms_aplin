@@ -1,15 +1,15 @@
 @extends('layouts.admin_app')
 
 @section('admin_content')
+@php($enableMidtrans = false)
+
 <div class="container mt-3 text-light">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="average-card-title mb-0">Tagihan Anak</h3>
         <span class="text-muted small">Anak: {{ $siswa->NAMA_SISWA }} ({{ $siswa->ID_SISWA }})</span>
     </div>
 
-    @if(empty($clientKey))
-        <div class="alert alert-warning">Konfigurasi Midtrans belum lengkap. Set nilai MIDTRANS_CLIENT_KEY dan MIDTRANS_SERVER_KEY di .env agar pembayaran dapat digunakan.</div>
-    @endif
+    {{-- Pembayaran online disembunyikan sementara --}}
 
     <div class="average-card-custom p-3 mb-3">
         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -49,8 +49,8 @@
                                 @endif
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-primary" data-pay-fee="{{ $fee->ID_STUDENT_FEE }}" @if($fee->STATUS === 'Paid' || empty($clientKey)) disabled @endif>
-                                    {{ $fee->STATUS === 'Paid' ? 'Lunas' : 'Bayar' }}
+                                <button class="btn btn-sm btn-primary" data-pay-fee="{{ $fee->ID_STUDENT_FEE }}" disabled>
+                                    {{ $fee->STATUS === 'Paid' ? 'Lunas' : 'Bayar (Nonaktif)' }}
                                 </button>
                             </td>
                         </tr>
@@ -66,60 +66,4 @@
 </div>
 @endsection
 
-@if(!empty($clientKey))
-    @push('scripts')
-        <script src="{{ $isProduction ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ $clientKey }}"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const basePayUrl = '{{ url('/orangtua/tagihan') }}';
-                const buttons = document.querySelectorAll('[data-pay-fee]');
-
-                buttons.forEach(btn => {
-                    btn.addEventListener('click', async () => {
-                        const feeId = btn.dataset.payFee;
-                        btn.disabled = true;
-                        const originalText = btn.textContent;
-                        btn.textContent = 'Memproses...';
-
-                        try {
-                            const resp = await fetch(`${basePayUrl}/${feeId}/pay`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                    'Accept': 'application/json',
-                                },
-                            });
-
-                            const data = await resp.json();
-                            if (!resp.ok || !data.token) {
-                                alert(data.message || 'Gagal membuat transaksi');
-                                btn.disabled = false;
-                                btn.textContent = originalText;
-                                return;
-                            }
-
-                            // Tampilkan Snap pop-up
-                            snap.pay(data.token, {
-                                onSuccess: () => window.location.reload(),
-                                onPending: () => window.location.reload(),
-                                onClose: () => {
-                                    btn.disabled = false;
-                                    btn.textContent = originalText;
-                                },
-                                onError: () => {
-                                    alert('Terjadi kesalahan pada pembayaran');
-                                    btn.disabled = false;
-                                    btn.textContent = originalText;
-                                },
-                            });
-                        } catch (error) {
-                            alert('Gagal terhubung ke server');
-                            btn.disabled = false;
-                            btn.textContent = originalText;
-                        }
-                    });
-                });
-            });
-        </script>
-    @endpush
-@endif
+{{-- Midtrans script dinonaktifkan sementara --}}

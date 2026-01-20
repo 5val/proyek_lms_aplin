@@ -153,6 +153,7 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
    Route::put('/buku/{id}', [BukuPelajaranController::class, 'update'])->name('admin.buku.update');
    Route::delete('/buku/{id}', [BukuPelajaranController::class, 'destroy'])->name('admin.buku.delete');
    Route::get('/buku/{id}/view', [BukuPelajaranController::class, 'stream'])->name('admin.buku.view');
+   Route::get('/buku/{id}/preview', [BukuPelajaranController::class, 'preview'])->name('admin.buku.preview');
 
    // ======================================== Siswa ==============================================
    Route::get('/list_tambah_siswa_ke_kelas/{id_kelas}', [AdminController::class, 'list_tambah_siswa_ke_kelas'])
@@ -212,6 +213,7 @@ Route::middleware(['guru.auth'])->prefix('guru')->group(function () {
    Route::get('/', [GuruController::class, 'index']);
    Route::get('/buku', [BukuPelajaranController::class, 'library'])->name('guru.buku.index');
    Route::get('/buku/{id}/view', [BukuPelajaranController::class, 'stream'])->name('guru.buku.view');
+   Route::get('/buku/{id}/preview', [BukuPelajaranController::class, 'preview'])->name('guru.buku.preview');
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [GuruController::class, 'detail_pelajaran'])->where('id_mata_pelajaran', '.*');
    Route::get('/editmateri/{id_materi}', [GuruController::class, 'editmateri'])
       ->where('id_materi', '.*')
@@ -289,6 +291,7 @@ Route::middleware(['siswa.auth'])->prefix('orangtua')->group(function () {
    Route::get('/', [ParentController::class, 'index'])->name('orangtua.dashboard');
    Route::get('/buku', [BukuPelajaranController::class, 'library'])->name('orangtua.buku.index');
    Route::get('/buku/{id}/view', [BukuPelajaranController::class, 'stream'])->name('orangtua.buku.view');
+   Route::get('/buku/{id}/preview', [BukuPelajaranController::class, 'preview'])->name('orangtua.buku.preview');
    Route::get('/tagihan', [ParentController::class, 'fees'])->name('orangtua.fees');
    Route::post('/tagihan/{fee}/pay', [ParentController::class, 'payFee'])->name('orangtua.fee.pay');
 });
@@ -303,6 +306,7 @@ Route::middleware(['siswa.auth'])->prefix('siswa')->group(function () {
    Route::get('/', [SiswaController::class, 'index']);
    Route::get('/buku', [BukuPelajaranController::class, 'library'])->name('siswa.buku.index');
    Route::get('/buku/{id}/view', [BukuPelajaranController::class, 'stream'])->name('siswa.buku.view');
+   Route::get('/buku/{id}/preview', [BukuPelajaranController::class, 'preview'])->name('siswa.buku.preview');
    Route::get('/detail_pelajaran/{id_mata_pelajaran}', [SiswaController::class, 'detail_pelajaran'])
       ->where('id_mata_pelajaran', expression: '.*');
    Route::get('/hlm_about', [SiswaController::class, 'hlm_about']);

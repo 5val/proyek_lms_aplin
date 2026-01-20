@@ -189,6 +189,15 @@ class BukuPelajaranController extends Controller
     public function library(Request $request): Response
     {
         $kelasFilter = $request->query('kelas');
+        $context = 'admin';
+
+        if ($request->is('guru/*')) {
+            $context = 'guru';
+        } elseif ($request->is('orangtua/*')) {
+            $context = 'orangtua';
+        } elseif ($request->is('siswa/*')) {
+            $context = 'siswa';
+        }
 
         $query = BukuPelajaran::with('kelas')
             ->where('STATUS', 'Active')
@@ -208,11 +217,78 @@ class BukuPelajaranController extends Controller
             $books = collect();
         }
 
-        return response()->view('library.buku_pelajaran', [
+        $viewName = $context === 'siswa'
+            ? 'siswa_pages.buku_pelajaran'
+            : 'library.buku_pelajaran';
+
+        $previewRoute = [
+            'admin' => 'admin.buku.preview',
+            'guru' => 'guru.buku.preview',
+            'orangtua' => 'orangtua.buku.preview',
+            'siswa' => 'siswa.buku.preview',
+        ][$context];
+
+        $streamRoute = [
+            'admin' => 'admin.buku.view',
+            'guru' => 'guru.buku.view',
+            'orangtua' => 'orangtua.buku.view',
+            'siswa' => 'siswa.buku.view',
+        ][$context];
+
+        return response()->view($viewName, [
             'books' => $books,
             'kelasList' => $kelasList,
             'kelasFilter' => $kelasFilter,
             'blockedReason' => $blockedReason,
+            'previewRoute' => $previewRoute,
+            'streamRoute' => $streamRoute,
+            'context' => $context,
+        ]);
+    }
+
+    public function preview(Request $request, int $id): Response
+    {
+        $blockedReason = $this->getBookAccessBlockReason($request);
+        if ($blockedReason) {
+            return $this->redirectBlockedAccess($request, $blockedReason);
+        }
+
+        $book = BukuPelajaran::findOrFail($id);
+
+        if ($book->STATUS !== 'Active' && ! $request->is('admin/*')) {
+            abort(404);
+        }
+
+        $context = 'admin';
+        if ($request->is('guru/*')) {
+            $context = 'guru';
+        } elseif ($request->is('orangtua/*')) {
+            $context = 'orangtua';
+        } elseif ($request->is('siswa/*')) {
+            $context = 'siswa';
+        }
+
+        $streamRoute = [
+            'admin' => 'admin.buku.view',
+            'guru' => 'guru.buku.view',
+            'orangtua' => 'orangtua.buku.view',
+            'siswa' => 'siswa.buku.view',
+        ][$context];
+
+        $backRoute = [
+            'admin' => 'admin.buku.index',
+            'guru' => 'guru.buku.index',
+            'orangtua' => 'orangtua.buku.index',
+            'siswa' => 'siswa.buku.index',
+        ][$context];
+
+        $fileUrl = route($streamRoute, $book->ID_BUKU);
+
+        return response()->view('library.buku_preview', [
+            'book' => $book,
+            'fileUrl' => $fileUrl,
+            'context' => $context,
+            'backRoute' => $backRoute,
         ]);
     }
 
@@ -242,7 +318,47 @@ class BukuPelajaranController extends Controller
     {
         $watermarkText = $book->WATERMARK_TEXT ?: config('app.name', 'LMS');
 
-        $pdf = new Fpdi();
+        // Extend FPDI to support simple rotation for diagonal watermark
+        $pdf = new class extends Fpdi {
+            protected $angle = 0;
+
+            public function Rotate($angle, $x = -1, $y = -1): void
+            {
+                if ($x === -1) {
+                    $x = $this->x;
+                }
+                if ($y === -1) {
+                    $y = $this->y;
+                }
+                if ($this->angle !== 0) {
+                    $this->_out('Q');
+                }
+                $this->angle = $angle;
+                if ($angle !== 0) {
+                    $angle *= M_PI / 180;
+                    $c = cos($angle);
+                    $s = sin($angle);
+                    $cx = $x * $this->k;
+                    $cy = ($this->h - $y) * $this->k;
+                    $this->_out(sprintf('q %.5F %.5F %.5F %.5F %.5F %.5F cm 1 0 0 1 %.5F %.5F cm', $c, $s, -$s, $c, $cx, $cy, -$cx, -$cy));
+                }
+            }
+
+            public function _endpage()
+            {
+                if ($this->angle !== 0) {
+                    $this->angle = 0;
+                    $this->_out('Q');
+                }
+                parent::_endpage();
+            }
+
+            public function SetTextRenderingMode(int $mode, float $lineWidth = 0.3): void
+            {
+                // mode: 0 fill, 1 stroke, 2 fill+stroke
+                $this->_out(sprintf('%.3F w %d Tr', $lineWidth, $mode));
+            }
+        };
         $pageCount = $pdf->setSourceFile($fullPath);
 
         for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
@@ -252,11 +368,17 @@ class BukuPelajaranController extends Controller
             $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
             $pdf->useTemplate($tplId);
 
-            // Simple watermark at top-left; light gray
-            $pdf->SetFont('Arial', 'B', 18);
-            $pdf->SetTextColor(180, 180, 180);
-            $pdf->SetXY(12, 12);
-            $pdf->Cell(0, 10, $watermarkText, 0, 0, 'L');
+            // Diagonal watermark across the page
+            $pdf->SetFont('Arial', 'B', 60);
+            $pdf->SetTextColor(200, 200, 200); // outline stroke color
+            $centerX = $size['width'] / 2;
+            $centerY = $size['height'] / 2;
+            $pdf->Rotate(45, $centerX, $centerY);
+            $textWidth = $pdf->GetStringWidth($watermarkText);
+            $pdf->SetTextRenderingMode(1, 0.5); // stroke only
+            $pdf->Text($centerX - ($textWidth / 2), $centerY, $watermarkText);
+            $pdf->SetTextRenderingMode(0, 0.2); // reset to fill mode
+            $pdf->Rotate(0);
         }
 
         $output = $pdf->Output('S');
@@ -264,6 +386,9 @@ class BukuPelajaranController extends Controller
         return response($output, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . basename($book->FILE_PATH) . '"',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+            'X-Content-Type-Options' => 'nosniff',
         ]);
     }
 }

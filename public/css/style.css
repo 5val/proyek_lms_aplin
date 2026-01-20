@@ -35,13 +35,42 @@ a { text-decoration: none; color: inherit; }
 .list-group-item { color: var(--text); }
 .table td, .table th { color: var(--text); }
 
-/* Keep summary tables readable on light rows */
+/* DataTables on dark background */
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate,
+.dataTables_wrapper .dataTables_paginate a,
+.dataTables_wrapper .dataTables_paginate span {
+  color: var(--text) !important;
+}
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+  color: var(--text) !important;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+table.dataTable tbody td,
+table.dataTable thead th,
+table.dataTable tfoot th {
+  color: var(--text);
+}
+
+/* Keep summary tables readable while respecting theme */
 .no-data-table td,
 .no-data-table th {
-  color: #0b0f1a !important;
-  background: #f8fafc;
+  color: var(--text);
+  background: var(--surface);
 }
-.no-data-table tr { border-color: #e2e8f0; }
+
+.no-data-table.bg-white td,
+.no-data-table.bg-white th {
+  color: #0b0f1a !important;
+  background: #f8fafc !important;
+}
+
+.no-data-table tr { border-color: var(--border); }
+.no-data-table.bg-white tr { border-color: #e2e8f0; }
 
 .full-layout { height: 100vh; }
 

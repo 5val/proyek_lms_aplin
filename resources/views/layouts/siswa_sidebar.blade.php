@@ -19,6 +19,9 @@
         href="/siswa/hlm_jadwal">
         <i class='bx  bx-calendar-alt'></i>
         Jadwal</a></li>
+    <li class="nav-item"><a class="nav-link {{ Request::is('siswa/buku*') ? 'active' : '' }}" href="/siswa/buku">
+      <i class='bx  bx-book'></i>
+      Buku</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="collapse" href="#submenuLaporan" role="button"
         aria-expanded="false" aria-controls="submenuLaporan">
         Laporan

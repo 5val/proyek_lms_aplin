@@ -2,8 +2,6 @@
 
 @section('siswa_content')
 <h4 class="mb-3">Home Siswa</h4>
-          <p><strong>Kelas:</strong> {{ $kelas->NAMA_KELAS }} &nbsp; | &nbsp; <strong>Periode:</strong> {{ $kelas->PERIODE }}</p>
-
           <!-- Pelajaran Siswa -->
           <h5 class="mt-4">Pelajaran</h5>
           <button class="toggle-btn" id="toggleBtn">Tampilkan Semua Pelajaran</button>

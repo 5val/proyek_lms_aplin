@@ -98,31 +98,30 @@ class K12Seeder extends Seeder
             ]));
         }
 
-        // Master jam pelajaran: Senin-Jumat, 5 slot sesuai tampilan guru
-        if (MasterJamPelajaran::count() === 0) {
-            $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-            $timeSlots = [
-                ['07:00', '08:30', 'Jam 1'],
-                ['08:30', '10:00', 'Jam 2'],
-                ['10:00', '11:30', 'Jam 3'],
-                ['12:00', '13:30', 'Jam 4'],
-                ['13:30', '15:00', 'Jam 5'],
-            ];
-            $defaultSlots = [];
-            foreach ($days as $day) {
-                foreach ($timeSlots as $idx => [$mulai, $selesai, $label]) {
-                    $defaultSlots[] = [
-                        'HARI_PELAJARAN' => $day,
-                        'SLOT_KE' => $idx + 1,
-                        'JENIS_SLOT' => 'Pelajaran',
-                        'JAM_MULAI' => $mulai,
-                        'JAM_SELESAI' => $selesai,
-                        'LABEL' => $label,
-                    ];
-                }
+        // Master jam pelajaran: always rebuild Senin-Jumat 5 slot
+        MasterJamPelajaran::truncate();
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+        $timeSlots = [
+            ['07:00', '08:30', 'Jam 1'],
+            ['08:30', '10:00', 'Jam 2'],
+            ['10:00', '11:30', 'Jam 3'],
+            ['12:00', '13:30', 'Jam 4'],
+            ['13:30', '15:00', 'Jam 5'],
+        ];
+        $defaultSlots = [];
+        foreach ($days as $day) {
+            foreach ($timeSlots as $idx => [$mulai, $selesai, $label]) {
+                $defaultSlots[] = [
+                    'HARI_PELAJARAN' => $day,
+                    'SLOT_KE' => $idx + 1,
+                    'JENIS_SLOT' => 'Pelajaran',
+                    'JAM_MULAI' => $mulai,
+                    'JAM_SELESAI' => $selesai,
+                    'LABEL' => $label,
+                ];
             }
-            MasterJamPelajaran::insert($defaultSlots);
         }
+        MasterJamPelajaran::insert($defaultSlots);
 
         $lessonSlots = MasterJamPelajaran::orderBy('HARI_PELAJARAN')
             ->orderBy('SLOT_KE')

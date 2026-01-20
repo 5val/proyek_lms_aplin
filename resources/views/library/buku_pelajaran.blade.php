@@ -61,7 +61,7 @@
                 <p class="flex-grow-1 small text-muted">{{ $book->DESKRIPSI ?? 'Tidak ada deskripsi.' }}</p>
                 <div class="d-flex justify-content-between align-items-center mt-2">
                   <span class="small text-muted">{{ number_format($book->FILE_SIZE / 1024 / 1024, 2) }} MB</span>
-                  <a href="{{ url(request()->path().'/'.$book->ID_BUKU.'/view') }}" class="btn btn-primary btn-sm" target="_blank">Lihat</a>
+                  <a href="{{ route($previewRoute ?? 'admin.buku.preview', $book->ID_BUKU) }}" class="btn btn-primary btn-sm">Lihat</a>
                 </div>
               </div>
             </div>
